@@ -1,19 +1,14 @@
 import unittest
 import numpy as np
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.cluster import AgglomerativeClustering
-from reval import relative_validation
+from reval import relative_validation, config
 from reval.relative_validation import RelativeValidation
-import warnings
-
-warnings.filterwarnings('error', category=RuntimeWarning)
 
 
 class TestReval(unittest.TestCase):
     @classmethod
     def setUp(cls):
-        cls.s = KNeighborsClassifier(n_neighbors=15)
-        cls.c = AgglomerativeClustering(n_clusters=2)
+        cls.s = config.CLASSIFIER
+        cls.c = config.CLUSTERING
         cls.reval_cls = RelativeValidation(cls.s, cls.c)
 
     def test_revaltraining(self):
@@ -22,7 +17,7 @@ class TestReval(unittest.TestCase):
         misclass, model, labels = self.reval_cls.train(data_tr)
         self.assertSequenceEqual([misclass] + [lab.tolist() for lab in labels.values()],
                                  [0.0, [1, 0] * 20, [1, 0] * 20])
-        self.assertIsInstance(model, KNeighborsClassifier)
+        self.assertEqual(type(model), type(self.s))
 
     def test_revaltest(self):
         data_tr = np.array([[0] * 10,
@@ -33,6 +28,19 @@ class TestReval(unittest.TestCase):
         misclass, labels = self.reval_cls.test(data_ts, model)
         self.assertSequenceEqual([misclass] + [lab.tolist() for lab in labels.values()],
                                  [0.0, [1, 0] * 10, [1, 0] * 10])
+
+    def test_rndlabels(self):
+        data_tr = np.array([[0] * 10,
+                            [1] * 10] * 20)
+        labels_tr = np.array([0, 1] * 20)
+        data_ts = np.array([[0] * 10,
+                            [1] * 10] * 10)
+        labels_ts = np.array([0, 1] * 10)
+        misclass_tr, misclass_ts = self.reval_cls.rndlabels_traineval(data_tr,
+                                                                      data_ts,
+                                                                      labels_tr,
+                                                                      labels_ts)
+        self.assertTrue(misclass_tr > 0 and misclass_ts > 0)
 
     def test_khun_munkres_algorithm(self):
         true_lab = np.array([1, 1, 1, 0, 0, 0])

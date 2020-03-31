@@ -71,7 +71,7 @@ class RelativeValidation:
 
         return misclass, labels
 
-    def rndlabels_train(self, train_data, train_labels):
+    def rndlabels_traineval(self, train_data, test_data, train_labels, test_labels):
         """"
         Method performing random labeling training
         N times
@@ -86,12 +86,16 @@ class RelativeValidation:
             list of fitted classification models
         """
         np.random.seed(0)
-        shuf_tr = [list(map(lambda x: np.random.permutation(x),
-                            train_labels)) for _ in range(config.RNDLABELS_ITER)]
-        model_tr = [self.class_method.fit(train_data, lab) for lab in shuf_tr]
-        misclass_tr = [zero_one_loss(x, y.predict(train_data)) for x, y in
-                       zip(shuf_tr, model_tr)]
-        return np.mean(misclass_tr), model_tr
+        shuf_tr = [np.random.permutation(train_labels)
+                   for _ in range(config.RNDLABELS_ITER)]
+        misclass_tr, misclass_ts = [], []
+        for lab in shuf_tr:
+            self.class_method.fit(train_data, lab)
+            misclass_tr.append(zero_one_loss(lab, self.class_method.predict(train_data)))
+            misclass_ts.append(zero_one_loss(test_labels,
+                                             _kuhn_munkres_algorithm(test_labels,
+                                                                     self.class_method.predict(test_data))))
+        return np.mean(misclass_tr), np.mean(misclass_ts)
 
     @staticmethod
     def rndlabels_test(test_data, test_labels, model_list):
@@ -109,7 +113,9 @@ class RelativeValidation:
         """
         misclass_ts = [zero_one_loss(test_labels,
                                      _kuhn_munkres_algorithm(test_labels,
-                                                             mod.predict(test_data))) for mod in model_list]
+                                                             mod.predict(test_data))) for mod in
+                       model_list]
+        print(misclass_ts)
         return np.mean(misclass_ts)
 
 
