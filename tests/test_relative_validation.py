@@ -9,14 +9,17 @@ class TestReval(unittest.TestCase):
     def setUp(cls):
         cls.s = config.CLASSIFIER
         cls.c = config.CLUSTERING
-        cls.reval_cls = RelativeValidation(cls.s, cls.c)
+        cls.nrand = config.RNDLABELS_ITER
+        cls.reval_cls = RelativeValidation(cls.s, cls.c, cls.nrand)
 
     def test_revaltraining(self):
         data_tr = np.array([[0] * 10,
                             [1] * 10] * 20)
         misclass, model, labels = self.reval_cls.train(data_tr)
-        self.assertSequenceEqual([misclass] + [lab.tolist() for lab in labels.values()],
-                                 [0.0, [1, 0] * 20, [1, 0] * 20])
+        # self.assertSequenceEqual([misclass] + [lab.tolist() for lab in labels.values()],
+        #                          [0.0, [1, 0] * 20, [1, 0] * 20])
+        self.assertSequenceEqual([misclass] + [labels.tolist()],
+                                 [0.0, [1, 0] * 20])
         self.assertEqual(type(model), type(self.s))
 
     def test_revaltest(self):
@@ -26,8 +29,10 @@ class TestReval(unittest.TestCase):
                             [1] * 10] * 10)
         model = self.s.fit(data_tr, [1, 0] * 20)
         misclass, labels = self.reval_cls.test(data_ts, model)
-        self.assertSequenceEqual([misclass] + [lab.tolist() for lab in labels.values()],
-                                 [0.0, [1, 0] * 10, [1, 0] * 10])
+        # self.assertSequenceEqual([misclass] + [lab.tolist() for lab in labels.values()],
+        #                          [0.0, [1, 0] * 10, [1, 0] * 10])
+        self.assertSequenceEqual([misclass] + [labels.tolist()],
+                                 [0.0, [1, 0] * 10])
 
     def test_rndlabels(self):
         data_tr = np.array([[0] * 10,
