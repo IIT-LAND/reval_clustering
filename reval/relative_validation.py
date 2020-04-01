@@ -44,8 +44,6 @@ class RelativeValidation:
         classlab_tr = fitclass_tr.predict(train_data)
 
         misclass = zero_one_loss(clustlab_tr, classlab_tr)
-        # labels = {'classification': classlab_tr,
-        #           'clustering': clustlab_tr}
         return misclass, fitclass_tr, clustlab_tr
 
     def test(self, test_data, fit_model):
@@ -66,9 +64,6 @@ class RelativeValidation:
         classlab_ts = fit_model.predict(test_data)
         bestperm = _kuhn_munkres_algorithm(clustlab_ts, classlab_ts)  # array of integers
         misclass = zero_one_loss(clustlab_ts, bestperm)
-        # labels = {'classification': classlab_ts,
-        #           'clustering': clustlab_ts}
-
         return misclass, clustlab_ts
 
     def rndlabels_traineval(self, train_data, test_data, train_labels, test_labels):

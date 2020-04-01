@@ -1,5 +1,6 @@
 from sklearn.model_selection import StratifiedKFold, KFold
 from reval.relative_validation import RelativeValidation
+from collections import namedtuple
 import numpy as np
 import math
 
@@ -13,18 +14,17 @@ class FindBestClustCV(RelativeValidation):
     misclassification error.
 
     Initialized with:
-    S: inherited classification object
-    C: inherited clustering object
+    s: inherited classification object
+    c: inherited clustering object
     nfold: number of fold for CV (int)
-    strat_vect: array, pd Series for stratification (strings, objects or integers)
-                (n_samples, )
-    n_clust: max number  of clusters to look for (int)
-    min_cl: int, minimum number of clusters
+    n_clust_range: list with minimum number and maximum number
+        of clusters to look for
 
     Methods
     -------
-    search_best_clust()
-    evaluate()
+    best_nclust(): return the best number of clusters according to
+        stability-based relative validation method.
+    evaluate(): applies clustering with k clusters on test set
     """
 
     def __init__(self, nfold, nclust_range, s, c, nrand):
@@ -33,6 +33,23 @@ class FindBestClustCV(RelativeValidation):
         self.nclust_range = nclust_range
 
     def best_nclust(self, data, strat_vect=None):
+        """
+        This method takes as input the training dataset and the
+        stratification vector (if available) and performs a
+        CV to select the best number of clusters that minimizes
+        normalized stability.
+
+        Parameters
+        ----------
+        data: numpy ndarray
+        strat_vect: numpy array
+        Returns
+        -------
+        metrics: dictionary
+            with CV metrics for training and validation sets
+        bestncl: int
+            best number of clusters.
+        """
         data_array = np.array(data)
         reval = RelativeValidation(self.class_method, self.clust_method, self.nrand)
         metrics = {'train': {}, 'val': {}}
@@ -63,6 +80,32 @@ class FindBestClustCV(RelativeValidation):
         bestncl = max(np.transpose(np.argwhere(val_score == bestscore))[0]) + self.nclust_range[0]
         return metrics, bestncl
 
+    def evaluate(self, data_tr, data_ts, nclust):
+        """
+        Function that applies clustering algorithm with the best number of clusters
+        to the test set. It returns the clustering labels.
+        Parameters
+        ----------
+        data_tr: numpy ndarray
+            training set
+        data_ts: numpy ndarray
+            test set
+        nclust: int
+            best number of clusters as returned by best_nclust
+        Returns
+        -------
+        namedtuple: field_names
+            train_cllab (clustering labels for training set); train_acc (accuracy)
+            test_cllab (clustering labels for test set); test_acc (accuracy)
+        """
+        self.clust_method.n_clusters = nclust
+        tr_misc, modelfit, labels_tr = super().train(data_tr)
+        ts_misc, labels_ts = super().test(data_ts, modelfit)
+        Eval = namedtuple('Eval',
+                          ['train_cllab', 'train_acc', 'test_cllab', 'test_acc'])
+        out = Eval(labels_tr, 1 - tr_misc, labels_ts, 1 - ts_misc)
+        return out
+
 
 def _confint(vect):
     """
@@ -72,7 +115,6 @@ def _confint(vect):
     Returns
     ------
     tuple : mean and error
-
     """
     error = 1.96 * (np.std(vect) / math.sqrt(len(vect)))
     mean = np.mean(vect)

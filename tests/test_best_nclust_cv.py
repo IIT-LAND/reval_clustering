@@ -26,6 +26,17 @@ class TestBestNclusterCV(unittest.TestCase):
         m_val = metrics['val'][best_nclust][0]
         self.assertSequenceEqual([m_tr, m_val, best_nclust], [0, 0, 2])
 
+    def test_evaluate(self):
+        data_tr = np.array([[0] * 20,
+                            [1] * 20] * 100)
+        data_ts = np.array([[0] * 20,
+                            [1] * 20] * 50)
+        out = self.findbest.evaluate(data_tr, data_ts, 2)
+        self.assertSequenceEqual([out.train_cllab.tolist(), out.train_acc,
+                                  out.test_cllab.tolist(), out.test_acc], [[1, 0] * 100,
+                                                                           1, [1, 0] * 50,
+                                                                           1])
+
     def test_confint(self):
         dist = np.random.normal(0, 1, 1000000)
         m, error = _confint(dist)
