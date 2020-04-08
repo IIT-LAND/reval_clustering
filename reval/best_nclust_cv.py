@@ -1,6 +1,7 @@
 from sklearn.model_selection import StratifiedKFold, KFold
 from reval.relative_validation import RelativeValidation
 from collections import namedtuple
+from scipy import stats
 import numpy as np
 import math
 
@@ -53,6 +54,7 @@ class FindBestClustCV(RelativeValidation):
         data_array = np.array(data)
         reval = RelativeValidation(self.class_method, self.clust_method, self.nrand)
         metrics = {'train': {}, 'val': {}}
+        check_dist = {'train': {}, 'val': {}}
         for ncl in range(self.nclust_range[0], self.nclust_range[1]):
             if strat_vect is not None:
                 kfold = StratifiedKFold(n_splits=self.nfold)
@@ -71,6 +73,8 @@ class FindBestClustCV(RelativeValidation):
                                                                               val_labels)
                 norm_stab_tr.append(miscl_tr / rndmisc_mean_tr)
                 norm_stab_val.append(miscl_val / rndmisc_mean_val)
+                check_dist['train'].setdefault(ncl, list()).append(miscl_tr / rndmisc_mean_tr)
+                check_dist['val'].setdefault(ncl, list()).append(miscl_val / rndmisc_mean_val)
             metrics['train'][ncl] = (np.mean(norm_stab_tr), _confint(norm_stab_tr))
             metrics['val'][ncl] = (np.mean(norm_stab_val), _confint(norm_stab_val))
         val_score = np.array([val[0] for val in metrics['val'].values()])
@@ -78,7 +82,7 @@ class FindBestClustCV(RelativeValidation):
         # select the cluster with the minimum misclassification error
         # and the maximum number of clusters
         bestncl = max(np.transpose(np.argwhere(val_score == bestscore))[0]) + self.nclust_range[0]
-        return metrics, bestncl
+        return metrics, bestncl, check_dist
 
     def evaluate(self, data_tr, data_ts, nclust):
         """
@@ -116,6 +120,6 @@ def _confint(vect):
     ------
     tuple : mean and error
     """
-    error = 1.96 * (np.std(vect) / math.sqrt(len(vect)))
+    error = stats.t.ppf(1 - (0.05/2), len(vect) - 1) * (np.std(vect) / math.sqrt(len(vect)))
     mean = np.mean(vect)
     return mean, error

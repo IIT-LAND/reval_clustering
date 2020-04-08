@@ -3,7 +3,7 @@ import numpy as np
 from reval.best_nclust_cv import FindBestClustCV, _confint
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import AgglomerativeClustering
-
+import math
 
 class TestBestNclusterCV(unittest.TestCase):
 
@@ -40,7 +40,9 @@ class TestBestNclusterCV(unittest.TestCase):
     def test_confint(self):
         dist = np.random.normal(0, 1, 1000000)
         m, error = _confint(dist)
-        self.assertTrue(abs(round(m, 2)) <= 0.01 and round(error * 1000, 2) == 1.96)
+        print(m, error)
+        self.assertTrue(abs(round(m, 2)) <= 0.01 and
+                        round(error * math.sqrt(len(dist)), 2) == 1.96)
 
 
 if __name__ == 'main':
