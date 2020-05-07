@@ -5,6 +5,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import AgglomerativeClustering
 import math
 
+
 class TestBestNclusterCV(unittest.TestCase):
 
     @classmethod
@@ -20,8 +21,8 @@ class TestBestNclusterCV(unittest.TestCase):
         data = np.array([[0] * 20,
                          [1] * 20] * 20)
         strat_vect = np.array([0, 1] * 20)
-        metrics, best_nclust = self.findbest.best_nclust(data,
-                                                         strat_vect=strat_vect)
+        metrics, best_nclust, _ = self.findbest.best_nclust(data,
+                                                            strat_vect=strat_vect)
         m_tr = metrics['train'][best_nclust][0]
         m_val = metrics['val'][best_nclust][0]
         self.assertSequenceEqual([m_tr, m_val, best_nclust], [0, 0, 2])
@@ -40,7 +41,6 @@ class TestBestNclusterCV(unittest.TestCase):
     def test_confint(self):
         dist = np.random.normal(0, 1, 1000000)
         m, error = _confint(dist)
-        print(m, error)
         self.assertTrue(abs(round(m, 2)) <= 0.01 and
                         round(error * math.sqrt(len(dist)), 2) == 1.96)
 

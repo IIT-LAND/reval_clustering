@@ -80,19 +80,38 @@ class RelativeValidation:
         Returns
         -------
         float: averaged misclassification error
-        float: averaged misclassification error
         """
         np.random.seed(0)
         shuf_tr = [np.random.permutation(train_labels)
                    for _ in range(self.nrand)]
-        misclass_tr, misclass_ts = [], []
-        for lab in shuf_tr:
-            self.class_method.fit(train_data, lab)
-            misclass_tr.append(zero_one_loss(lab, self.class_method.predict(train_data)))
-            misclass_ts.append(zero_one_loss(test_labels,
-                                             _kuhn_munkres_algorithm(test_labels,
-                                                                     self.class_method.predict(test_data))))
-        return np.mean(misclass_tr), np.mean(misclass_ts)
+        # misclass_tr, misclass_ts = [], []
+        # for lab in shuf_tr:
+        #     self.class_method.fit(train_data, lab)
+        #     misclass_tr.append(zero_one_loss(lab, self.class_method.predict(train_data)))
+        #     misclass_ts.append(zero_one_loss(test_labels,
+        #                                      _kuhn_munkres_algorithm(test_labels,
+        #                                                              self.class_method.predict(test_data))))
+        misclass_ts = list(map(lambda x: self._rescale_score_(train_data, test_data, x, test_labels), shuf_tr))
+        return np.mean(misclass_ts)
+
+    def _rescale_score_(self, Xtr, Xts, randlabtr, labts):
+        """
+        Private function that computes the misclassification error when predicting test labels
+        with classification model fitted to training random labels
+        Parameters
+        ----------
+        Xtr: array training data
+        Xts: array test data
+        randlabtr: array random labels
+        labts: array test labels
+        Returns
+        -------
+        float: misclassification error
+
+        """
+        self.class_method.fit(Xtr, randlabtr)
+        me_ts = zero_one_loss(labts, _kuhn_munkres_algorithm(labts, self.class_method.predict(Xts)))
+        return me_ts
 
 
 def _kuhn_munkres_algorithm(true_lab, pred_lab):
@@ -113,15 +132,15 @@ def _kuhn_munkres_algorithm(true_lab, pred_lab):
         wmat = np.zeros((nclass, nclass))
         for lab in range(nclass):
             for plab in range(lab, nclass):
-                n_intersec = len(set(np.transpose(np.argwhere(true_lab == lab))[0]).intersection(
-                    set(np.transpose(np.argwhere(pred_lab == plab))[0])))
+                n_intersec = len(set(np.flatnonzero(true_lab == lab)).intersection(
+                    set(np.flatnonzero(pred_lab == plab))))
                 w = (nobs - n_intersec) / nobs
                 if lab == plab:
                     wmat[lab, plab] = w
                 else:
                     wmat[lab, plab] = w
-                    n_intersec = len(set(np.transpose(np.argwhere(true_lab == plab))[0]).intersection(
-                        set(np.transpose(np.argwhere(pred_lab == lab))[0])))
+                    n_intersec = len(set(np.flatnonzero(true_lab == plab)).intersection(
+                        set(np.flatnonzero(pred_lab == lab))))
                     w = (nobs - n_intersec) / nobs
                     wmat[plab, lab] = w
         new_pred_lab = list(linear_sum_assignment(wmat)[1])

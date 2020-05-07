@@ -41,11 +41,11 @@ class TestReval(unittest.TestCase):
         data_ts = np.array([[0] * 10,
                             [1] * 10] * 10)
         labels_ts = np.array([0, 1] * 10)
-        misclass_tr, misclass_ts = self.reval_cls.rndlabels_traineval(data_tr,
-                                                                      data_ts,
-                                                                      labels_tr,
-                                                                      labels_ts)
-        self.assertTrue(misclass_tr > 0 and misclass_ts > 0)
+        misclass_ts = self.reval_cls.rndlabels_traineval(data_tr,
+                                                         data_ts,
+                                                         labels_tr,
+                                                         labels_ts)
+        self.assertTrue(misclass_ts > 0)
 
     def test_khun_munkres_algorithm(self):
         true_lab = np.array([1, 1, 1, 0, 0, 0])

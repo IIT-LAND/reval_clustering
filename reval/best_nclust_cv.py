@@ -68,20 +68,21 @@ class FindBestClustCV(RelativeValidation):
                 reval.clust_method.n_clusters = ncl
                 miscl_tr, modelfit, tr_labels = reval.train(tr_set)
                 miscl_val, val_labels = reval.test(val_set, modelfit)
-                rndmisc_mean_tr, rndmisc_mean_val = reval.rndlabels_traineval(tr_set, val_set,
-                                                                              tr_labels,
-                                                                              val_labels)
-                norm_stab_tr.append(miscl_tr / rndmisc_mean_tr)
-                norm_stab_val.append(miscl_val / rndmisc_mean_val)
-                check_dist['train'].setdefault(ncl, list()).append(miscl_tr / rndmisc_mean_tr)
-                check_dist['val'].setdefault(ncl, list()).append(miscl_val / rndmisc_mean_val)
+                rndmisc_mean_val = reval.rndlabels_traineval(tr_set, val_set,
+                                                             tr_labels,
+                                                             val_labels)
+                ms_val = miscl_val / rndmisc_mean_val
+                norm_stab_tr.append(miscl_tr)
+                norm_stab_val.append(ms_val)
+                check_dist['train'].setdefault(ncl, list()).append(miscl_tr)
+                check_dist['val'].setdefault(ncl, list()).append(ms_val)
             metrics['train'][ncl] = (np.mean(norm_stab_tr), _confint(norm_stab_tr))
             metrics['val'][ncl] = (np.mean(norm_stab_val), _confint(norm_stab_val))
         val_score = np.array([val[0] for val in metrics['val'].values()])
         bestscore = min(val_score)
         # select the cluster with the minimum misclassification error
         # and the maximum number of clusters
-        bestncl = max(np.transpose(np.argwhere(val_score == bestscore))[0]) + self.nclust_range[0]
+        bestncl = np.flatnonzero(val_score == bestscore)[-1] + self.nclust_range[0]
         return metrics, bestncl, check_dist
 
     def evaluate(self, data_tr, data_ts, nclust):
@@ -120,6 +121,6 @@ def _confint(vect):
     ------
     tuple : mean and error
     """
-    error = stats.t.ppf(1 - (0.05/2), len(vect) - 1) * (np.std(vect) / math.sqrt(len(vect)))
+    error = stats.t.ppf(1 - (0.05 / 2), len(vect) - 1) * (np.std(vect) / math.sqrt(len(vect)))
     mean = np.mean(vect)
     return mean, error
