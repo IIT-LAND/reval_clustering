@@ -7,49 +7,42 @@ import math
 
 
 class FindBestClustCV(RelativeValidation):
-    """
-    Child class of RelativeValidation
-
+    """Child class of :class:`reval.relative_validation.RelativeValidation`.
     It performs cross validation on the training set to
     select the best number of clusters, i.e., the number that minimizes the
     misclassification error.
 
-    Initialized with:
-    s: inherited classification object
-    c: inherited clustering object
-    nfold: number of fold for CV (int)
-    n_clust_range: list with minimum number and maximum number
-        of clusters to look for
-
-    Methods
-    -------
-    best_nclust(): return the best number of clusters according to
-        stability-based relative validation method.
-    evaluate(): applies clustering with k clusters on test set
+    :param nfold: number of CV folds
+    :type nfold: int
+    :param nclust_range: list with minimum and maximum cluster numbers to look for
+    :type nclust_range: list ([int, int])
+    :param s: classification object inherited from :class:`reval.relative_validation.RelativeValidation`
+    :type s: class
+    :param s: classification object inherited from :class:`reval.relative_validation.RelativeValidation`
+    :type c: class
+    :param nrand: number of iterations for normalized misclassification error, inherited from
+        :class:`reval.relative_validation.RelativeValidation` class
     """
 
     def __init__(self, nfold, nclust_range, s, c, nrand):
+        """Construct method
+        """
         super().__init__(s, c, nrand)
         self.nfold = nfold
         self.nclust_range = nclust_range
 
     def best_nclust(self, data, strat_vect=None):
-        """
-        This method takes as input the training dataset and the
+        """This method takes as input the training dataset and the
         stratification vector (if available) and performs a
         CV to select the best number of clusters that minimizes
-        normalized stability.
+        normalized misclassification error.
 
-        Parameters
-        ----------
-        data: numpy ndarray
-        strat_vect: numpy array
-        Returns
-        -------
-        metrics: dictionary
-            with CV metrics for training and validation sets
-        bestncl: int
-            best number of clusters.
+        :param data: training dataset
+        :type data: ndarray, (n_samples, n_features)
+        :param strat_vect: vector for stratification, defaults to None
+        :type strat_vect: ndarray, (n_samples,)
+        :return: CV metrics for training and validation sets, best number of clusters
+        :rtype: dictionary, int
         """
         data_array = np.array(data)
         reval = RelativeValidation(self.class_method, self.clust_method, self.nrand)
@@ -86,22 +79,17 @@ class FindBestClustCV(RelativeValidation):
         return metrics, bestncl, check_dist
 
     def evaluate(self, data_tr, data_ts, nclust):
-        """
-        Function that applies clustering algorithm with the best number of clusters
+        """Method that applies clustering algorithm with the best number of clusters
         to the test set. It returns the clustering labels.
-        Parameters
-        ----------
-        data_tr: numpy ndarray
-            training set
-        data_ts: numpy ndarray
-            test set
-        nclust: int
-            best number of clusters as returned by best_nclust
-        Returns
-        -------
-        namedtuple: field_names
-            train_cllab (clustering labels for training set); train_acc (accuracy)
-            test_cllab (clustering labels for test set); test_acc (accuracy)
+
+        :param data_tr: training dataset
+        :type data_tr: ndarray, (n_samples, n_features)
+        :param data_ts: test dataset
+        :type data_ts: ndarray, (n_samples, n_features)
+        :param nclust: best number of clusters
+        :type nclust: int
+        :return: labels and accuracy for both training and test sets
+        :rtype: namedtuple, (train_cllab, train_acc, test_cllab, test_acc)
         """
         self.clust_method.n_clusters = nclust
         tr_misc, modelfit, labels_tr = super().train(data_tr)
@@ -113,13 +101,11 @@ class FindBestClustCV(RelativeValidation):
 
 
 def _confint(vect):
-    """
-    Parameters
-    ----------
-    vect: list (of performance scores)
-    Returns
-    ------
-    tuple : mean and error
+    """Private function to compute the confidence interva.
+    :param vect: performance scores
+    :type vect: list
+    :return: mean and error
+    :rtype: tuple
     """
     error = stats.t.ppf(1 - (0.05 / 2), len(vect) - 1) * (np.std(vect) / math.sqrt(len(vect)))
     mean = np.mean(vect)

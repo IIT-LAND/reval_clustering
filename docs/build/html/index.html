@@ -1,0 +1,428 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Module best_nclust_cv &mdash; Clustering validation 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installing" href="installing.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> Clustering validation
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Clustering validation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>Module <cite>best_nclust_cv</cite></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
+</ul>
+</div>
+<div class="section" id="module-reval.best_nclust_cv">
+<span id="module-best-nclust-cv"></span><h1>Module <cite>best_nclust_cv</cite><a class="headerlink" href="#module-reval.best_nclust_cv" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="reval.best_nclust_cv.FindBestClustCV">
+<em class="property">class </em><code class="sig-prename descclassname">reval.best_nclust_cv.</code><code class="sig-name descname">FindBestClustCV</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nfold</span></em>, <em class="sig-param"><span class="n">nclust_range</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">nrand</span></em><span class="sig-paren">)</span><a class="headerlink" href="#reval.best_nclust_cv.FindBestClustCV" title="Permalink to this definition">¶</a></dt>
+<dd><p>Child class of <a class="reference internal" href="#reval.relative_validation.RelativeValidation" title="reval.relative_validation.RelativeValidation"><code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation</span></code></a>.
+It performs cross validation on the training set to
+select the best number of clusters, i.e., the number that minimizes the
+misclassification error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nfold</strong> (<em>int</em>) – number of CV folds</p></li>
+<li><p><strong>nclust_range</strong> (<em>list</em><em> (</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em><em>)</em>) – list with minimum and maximum cluster numbers to look for</p></li>
+<li><p><strong>s</strong> (<em>class</em>) – classification object inherited from <a class="reference internal" href="#reval.relative_validation.RelativeValidation" title="reval.relative_validation.RelativeValidation"><code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation</span></code></a></p></li>
+<li><p><strong>s</strong> – classification object inherited from <a class="reference internal" href="#reval.relative_validation.RelativeValidation" title="reval.relative_validation.RelativeValidation"><code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation</span></code></a></p></li>
+<li><p><strong>nrand</strong> – number of iterations for normalized misclassification error, inherited from
+<a class="reference internal" href="#reval.relative_validation.RelativeValidation" title="reval.relative_validation.RelativeValidation"><code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation</span></code></a> class</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="reval.best_nclust_cv.FindBestClustCV.best_nclust">
+<code class="sig-name descname">best_nclust</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">strat_vect</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#reval.best_nclust_cv.FindBestClustCV.best_nclust" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method takes as input the training dataset and the
+stratification vector (if available) and performs a
+CV to select the best number of clusters that minimizes
+normalized misclassification error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – training dataset</p></li>
+<li><p><strong>strat_vect</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>,</em><em>)</em>) – vector for stratification, defaults to None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>CV metrics for training and validation sets, best number of clusters</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary, int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="reval.best_nclust_cv.FindBestClustCV.evaluate">
+<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_tr</span></em>, <em class="sig-param"><span class="n">data_ts</span></em>, <em class="sig-param"><span class="n">nclust</span></em><span class="sig-paren">)</span><a class="headerlink" href="#reval.best_nclust_cv.FindBestClustCV.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that applies clustering algorithm with the best number of clusters
+to the test set. It returns the clustering labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_tr</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – training dataset</p></li>
+<li><p><strong>data_ts</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – test dataset</p></li>
+<li><p><strong>nclust</strong> (<em>int</em>) – best number of clusters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>labels and accuracy for both training and test sets</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>namedtuple, (train_cllab, train_acc, test_cllab, test_acc)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="reval.best_nclust_cv._confint">
+<code class="sig-prename descclassname">reval.best_nclust_cv.</code><code class="sig-name descname">_confint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">vect</span></em><span class="sig-paren">)</span><a class="headerlink" href="#reval.best_nclust_cv._confint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Private function to compute the confidence interva.
+:param vect: performance scores
+:type vect: list
+:return: mean and error
+:rtype: tuple</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-reval.relative_validation">
+<span id="module-relative-validation"></span><h1>Module <cite>relative_validation</cite><a class="headerlink" href="#module-reval.relative_validation" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="reval.relative_validation.RelativeValidation">
+<em class="property">class </em><code class="sig-prename descclassname">reval.relative_validation.</code><code class="sig-name descname">RelativeValidation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">nrand</span></em><span class="sig-paren">)</span><a class="headerlink" href="#reval.relative_validation.RelativeValidation" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class allows to perform the relative clustering validation procedure.
+A supervised algorithm is required to test cluster stability.
+Labels output from a clustering algorithm are used as true labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>class</em>) – initialized class for the supervised method</p></li>
+<li><p><strong>c</strong> (<em>class</em>) – initialized class for clustering algorithm</p></li>
+<li><p><strong>nrand</strong> – number of iterations to normalize cluster stability</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="reval.relative_validation.RelativeValidation._rescale_score_">
+<code class="sig-name descname">_rescale_score_</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xtr</span></em>, <em class="sig-param"><span class="n">xts</span></em>, <em class="sig-param"><span class="n">randlabtr</span></em>, <em class="sig-param"><span class="n">labts</span></em><span class="sig-paren">)</span><a class="headerlink" href="#reval.relative_validation.RelativeValidation._rescale_score_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Private method that computes the misclassification error when predicting test labels
+with classification model fitted on training random labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xtr</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – training dataset</p></li>
+<li><p><strong>xts</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – test dataset</p></li>
+<li><p><strong>randlabtr</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>,</em><em>)</em>) – random labels</p></li>
+<li><p><strong>labts</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>,</em><em>)</em>) – test set labels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>misclassification error</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="reval.relative_validation.RelativeValidation.rndlabels_traineval">
+<code class="sig-name descname">rndlabels_traineval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">train_data</span></em>, <em class="sig-param"><span class="n">test_data</span></em>, <em class="sig-param"><span class="n">train_labels</span></em>, <em class="sig-param"><span class="n">test_labels</span></em><span class="sig-paren">)</span><a class="headerlink" href="#reval.relative_validation.RelativeValidation.rndlabels_traineval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that performs random labeling on the training set
+(N times according to
+<code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation.nrand</span></code> instance attribute) and evaluates
+the fitted models on the test set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>train_data</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – training dataset</p></li>
+<li><p><strong>test_data</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – test dataset</p></li>
+<li><p><strong>train_labels</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>,</em><em>)</em>) – training set clustering labels</p></li>
+<li><p><strong>test_labels</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>,</em><em>)</em>) – test set clustering labels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>averaged misclassification error on the test set</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="reval.relative_validation.RelativeValidation.test">
+<code class="sig-name descname">test</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">test_data</span></em>, <em class="sig-param"><span class="n">fit_model</span></em><span class="sig-paren">)</span><a class="headerlink" href="#reval.relative_validation.RelativeValidation.test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that compares the clustering labels on the test set (i.e., A(X’), computed by
+<code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation.clust_method</span></code>) against
+the (permuted) labels obtained through the classification algorithm fitted to the training set
+(i.e., f(X’), computed by
+<code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation.class_method</span></code>).
+It return the misclassification error., together with
+both the clustering and classification labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_data</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – test dataset</p></li>
+<li><p><strong>fit_model</strong> (<em>class</em>) – fitted supervised model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>misclassification error, clustering and classification labels</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float, dictionary of ndarrays (n_samples,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="reval.relative_validation.RelativeValidation.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">train_data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#reval.relative_validation.RelativeValidation.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that performs the training. It compares the clustering labels on training set
+(i.e., A(X) computed by <code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation.clust_method</span></code>) against
+the labels obtained through the classification algorithm
+(i.e., f(X), computed by <code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation.class_method</span></code>).
+It returns the misclassification error, the supervised model fitted to the data,
+and both clustering and classification labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>train_data</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – training dataset</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>misclassification error, fitted supervised model object, clustering and classification labels</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float, object, dictionary of ndarray (n_samples,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="reval.relative_validation._kuhn_munkres_algorithm">
+<code class="sig-prename descclassname">reval.relative_validation.</code><code class="sig-name descname">_kuhn_munkres_algorithm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">true_lab</span></em>, <em class="sig-param"><span class="n">pred_lab</span></em><span class="sig-paren">)</span><a class="headerlink" href="#reval.relative_validation._kuhn_munkres_algorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Private function that implements the Hungarian method. It selects the best label permutation of the
+classification output that minimizes the
+misclassification error when compared to the clustering labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>true_lab</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>)</em>) – clustering algorithm labels</p></li>
+<li><p><strong>pred_lab</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>)</em>) – classification algorithm labels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>permuted labels that minimize the misclassification error</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray, (n_samples)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="installing.html" class="btn btn-neutral float-right" title="Installing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Isotta Landi
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
