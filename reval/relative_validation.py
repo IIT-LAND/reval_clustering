@@ -4,82 +4,85 @@ from sklearn.metrics import zero_one_loss
 
 
 class RelativeValidation:
-    """
-    This class is initialized with the supervised algorithm to test cluster stability and
-    the clustering algorithm whose labels are used as true labels.
+    """This class allows to perform the relative clustering validation procedure.
+    A supervised algorithm is required to test cluster stability.
+    Labels output from a clustering algorithm are used as true labels.
 
-    Methods:
-        train() -- it compares the clustering labels on training set (i.e., A(X)) against
-        the labels obtained through the classification algorithm (i.e., f(X)).
-        It returns the misclassification error and the supervised model fitted to the data.
-
-        test() -- it compares the clustering labels on the test set (i.e., A(X')) against
-        the (permuted) labels obtained through the classification algorithm fitted to the training set
-        (i.e., f(X')).
-        It return the misclassification error.
-
+    :param s: initialized class for the supervised method
+    :type s: class
+    :param c: initialized class for clustering algorithm
+    :type c: class
+    :param nrand: number of iterations to normalize cluster stability
     """
 
     def __init__(self, s, c, nrand):
+        """Construct method
+        """
         self.class_method = s
         self.clust_method = c
         self.nrand = nrand
 
     def train(self, train_data):
-        """
-        Parameters
-        ----------
-        train_data: array with the training data
-                    (n_samples, n_features)
-        Returns
-        -------
-        misclass: float
-        fit_model: fitted model object
-        labels: dictionary of clustering and classification labels
-                (array of integers (n_samples,))
+        """Method that performs the training. It compares the clustering labels on training set
+        (i.e., A(X) computed by :class:`reval.relative_validation.RelativeValidation.clust_method`) against
+        the labels obtained through the classification algorithm
+        (i.e., f(X), computed by :class:`reval.relative_validation.RelativeValidation.class_method`).
+        It returns the misclassification error, the supervised model fitted to the data,
+        and both clustering and classification labels.
+
+        :param train_data: training dataset
+        :type train_data: ndarray, (n_samples, n_features)
+        :return: misclassification error, fitted supervised model object, clustering and classification labels
+        :rtype: float, object, dictionary of ndarray (n_samples,)
         """
 
         clustlab_tr = self.clust_method.fit_predict(train_data)  # A_k(X)
         fitclass_tr = self.class_method.fit(train_data, clustlab_tr)
         classlab_tr = fitclass_tr.predict(train_data)
-
         misclass = zero_one_loss(clustlab_tr, classlab_tr)
         return misclass, fitclass_tr, clustlab_tr
 
     def test(self, test_data, fit_model):
-        """
-        Parameters
-        ----------
-        test_data: array with test data
-                   (n_samples, n_features)
-        fit_model: object, fitted model
+        """Method that compares the clustering labels on the test set (i.e., A(X'), computed by
+        :class:`reval.relative_validation.RelativeValidation.clust_method`) against
+        the (permuted) labels obtained through the classification algorithm fitted to the training set
+        (i.e., f(X'), computed by
+        :class:`reval.relative_validation.RelativeValidation.class_method`).
+        It return the misclassification error., together with
+        both the clustering and classification labels.
 
-        Returns
-        -------
-        misclass: float
-        labels: dictionary of clustering and classification labels
-                (array of integers (n_samples, ))
+        :param test_data: test dataset
+        :type test_data: ndarray, (n_samples, n_features)
+        :param fit_model: fitted supervised model
+        :type fit_model: class
+        :return: misclassification error, clustering and classification labels
+        :rtype: float, dictionary of ndarrays (n_samples,)
         """
         clustlab_ts = self.clust_method.fit_predict(test_data)  # A_k(X')
         classlab_ts = fit_model.predict(test_data)
-        bestperm = _kuhn_munkres_algorithm(clustlab_ts, classlab_ts)  # array of integers
-        misclass = zero_one_loss(clustlab_ts, bestperm)
-        return misclass, clustlab_ts
+        # bestperm = _kuhn_munkres_algorithm(clustlab_ts, classlab_ts)  # array of integers
+        bestperm = _kuhn_munkres_algorithm(classlab_ts, clustlab_ts)  # array of integers
+        # misclass = zero_one_loss(clustlab_ts, bestperm)
+        misclass = zero_one_loss(classlab_ts, bestperm)
+        # return misclass, clustlab_ts
+        return misclass, bestperm
 
     def rndlabels_traineval(self, train_data, test_data, train_labels, test_labels):
-        """"
-        Method that performs random labeling on the training set
-        (N times according to config.RNDLABELS_ITER value) and evaluates
+        """Method that performs random labeling on the training set
+        (N times according to
+        :class:`reval.relative_validation.RelativeValidation.nrand` instance attribute) and evaluates
         the fitted models on the test set.
-        Parameters
-        ----------
-        train_data: numpy array
-        test_data: numpy array
-        train_labels: numpy array
-        test_labels: numpy array
-        Returns
-        -------
-        float: averaged misclassification error
+
+        :param train_data: training dataset
+        :type train_data: ndarray, (n_samples, n_features)
+        :param test_data: test dataset
+        :type test_data: ndarray, (n_samples, n_features)
+        :param train_labels: training set clustering labels
+        :type train_labels: ndarray, (n_samples,)
+        :param test_labels: test set clustering labels
+        :type test_labels: ndarray, (n_samples,)
+        :return: averaged misclassification error on the test set
+        :rtype: float
         """
         np.random.seed(0)
         shuf_tr = [np.random.permutation(train_labels)
@@ -94,38 +97,37 @@ class RelativeValidation:
         misclass_ts = list(map(lambda x: self._rescale_score_(train_data, test_data, x, test_labels), shuf_tr))
         return np.mean(misclass_ts)
 
-    def _rescale_score_(self, Xtr, Xts, randlabtr, labts):
-        """
-        Private function that computes the misclassification error when predicting test labels
-        with classification model fitted to training random labels
-        Parameters
-        ----------
-        Xtr: array training data
-        Xts: array test data
-        randlabtr: array random labels
-        labts: array test labels
-        Returns
-        -------
-        float: misclassification error
+    def _rescale_score_(self, xtr, xts, randlabtr, labts):
+        """Private method that computes the misclassification error when predicting test labels
+        with classification model fitted on training random labels.
 
+        :param xtr: training dataset
+        :type xtr: ndarray, (n_samples, n_features)
+        :param xts: test dataset
+        :type xts: ndarray, (n_samples, n_features)
+        :param randlabtr: random labels
+        :type randlabtr: ndarray, (n_samples,)
+        :param labts: test set labels
+        :type labts: ndarray, (n_samples,)
+        :return: misclassification error
+        :rtype: float
         """
-        self.class_method.fit(Xtr, randlabtr)
-        me_ts = zero_one_loss(labts, _kuhn_munkres_algorithm(labts, self.class_method.predict(Xts)))
+        self.class_method.fit(xtr, randlabtr)
+        me_ts = zero_one_loss(labts, _kuhn_munkres_algorithm(labts, self.class_method.predict(xts)))
         return me_ts
 
 
 def _kuhn_munkres_algorithm(true_lab, pred_lab):
-    """
-    Implementation of the Hungarian method that selects the best label permutation that minimizes the
-    misclassification error
-    Parameters
-    ----------
-    true_lab: array as output from the clustering algorithm (n_samples, )
-    pred_lab: array as output from the classification algorithm (n_samples, )
+    """Private function that implements the Hungarian method. It selects the best label permutation of the
+    classification output that minimizes the
+    misclassification error when compared to the clustering labels.
 
-    Returns
-    -------
-    pred_perm: array of permuted labels (n_samples, )
+    :param true_lab: clustering algorithm labels
+    :type true_lab: ndarray, (n_samples)
+    :param pred_lab: classification algorithm labels
+    :type pred_lab: ndarray, (n_samples)
+    :return: permuted labels that minimize the misclassification error
+    :rtype: ndarray, (n_samples)
     """
     if isinstance(true_lab, np.ndarray) and isinstance(pred_lab, np.ndarray):
         nclass, nobs = len(set(true_lab)), len(true_lab)
@@ -144,7 +146,15 @@ def _kuhn_munkres_algorithm(true_lab, pred_lab):
                     w = (nobs - n_intersec) / nobs
                     wmat[plab, lab] = w
         new_pred_lab = list(linear_sum_assignment(wmat)[1])
-        pred_perm = np.array([new_pred_lab.index(i) for i in pred_lab])
+        try:
+            pred_perm = np.array([new_pred_lab.index(i) for i in pred_lab])
+        except ValueError:
+            pred_perm = np.array([], dtype=int)
+            for i in pred_lab:
+                if len(new_pred_lab) <= i:
+                    pred_perm = np.append(pred_perm, i)
+                else:
+                    pred_perm = np.append(pred_perm, new_pred_lab.index(i))
         return pred_perm
     else:
         raise TypeError(f'input variables should be (np.ndarray, np.ndarray)'
