@@ -17,7 +17,7 @@ sys.setrecursionlimit(1500)
 
 # -- Project information -----------------------------------------------------
 
-project = 'Clustering validation'
+project = 'Relative clustering validation'
 copyright = '2020, Isotta Landi'
 author = 'Isotta Landi'
 
