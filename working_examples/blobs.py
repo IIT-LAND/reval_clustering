@@ -10,7 +10,7 @@ import logging
 # Generate 1,000 samples for 5 blobs
 classifier = KNeighborsClassifier()
 clustering = AgglomerativeClustering()
-for n in [5000, 10000, 20000, 50000]:
+for n in [100, 500, 1000, 1500, 2000]:
     for feat in [10, 100, 1000]:
         start = time.time()
         data = make_blobs(n, feat, 5, random_state=42)
@@ -21,7 +21,7 @@ for n in [5000, 10000, 20000, 50000]:
 
         # Apply relative clustering validation with KNN and Hierarchical clustering
 
-        findbestclust = FindBestClustCV(nfold=10, nclust_range=[2, 11],
+        findbestclust = FindBestClustCV(nfold=10, nclust_range=[2, 7],
                                         s=classifier, c=clustering, nrand=100)
         metrics, nbest, chk_dist = findbestclust.best_nclust(X_tr, y_tr)
         out = findbestclust.evaluate(X_tr, X_ts, nbest)

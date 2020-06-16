@@ -85,22 +85,9 @@ bibliography: paper.bib
  obtained from $100$ iterations of the algorithm with random labels. For this reason the
  computational cost tends to increase with dataset size (see \autoref{fig:1} for an example of
  execution time performances).
- 
- | Number of samples      | Number of features | Execution time (s) |
- | ---------------------- | ------------------ | ------------------ |
- | $1000$                 | $10$               | $29.50$            |
- | $1000$                 | $100$              | $55.85$            |
- | $1000$                 | $1000$             | $387.55$           |
- | $5000$                 | $10$               | $158.94$           |
- | $5000$                 | $100$              | $613.63$           |
- | $5000$                 | $1000$             | $$           |
- | $10000$                | $10$               | $$           |
- | $10000$                | $100$              | $$           |
- | $10000$                | $1000$             | $$           |
- 
 
  ![`best_nclust_cv` module applied to simulation data with 5 blobs and varying number of samples and 
-  features. Execution time in seconds is reported for algorithm performance. \label{fig:1}](figure_perf.png)
+  features. Execution time in seconds is reported for algorithm performance. \label{fig:1}](makeblobs_performance.png)
  
 # Key references
  Libraries and methods for the automated selection of the best number of clusters are 
