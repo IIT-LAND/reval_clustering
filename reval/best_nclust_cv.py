@@ -101,7 +101,9 @@ class FindBestClustCV(RelativeValidation):
 
 
 def _confint(vect):
-    """Private function to compute the confidence interval.
+    """
+    Private function to compute confidence interval.
+
     :param vect: performance scores
     :type vect: list
     :return: mean and error

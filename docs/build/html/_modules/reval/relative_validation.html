@@ -1,0 +1,354 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>reval.relative_validation &mdash; Relative clustering validation 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Relative clustering validation
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">User Guide / Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code_description.html">Code description</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Relative clustering validation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>reval.relative_validation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for reval.relative_validation</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">linear_sum_assignment</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">zero_one_loss</span>
+
+
+<div class="viewcode-block" id="RelativeValidation"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation.RelativeValidation">[docs]</a><span class="k">class</span> <span class="nc">RelativeValidation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;This class allows to perform the relative clustering validation procedure.</span>
+<span class="sd">    A supervised algorithm is required to test cluster stability.</span>
+<span class="sd">    Labels output from a clustering algorithm are used as true labels.</span>
+
+<span class="sd">    :param s: initialized class for the supervised method</span>
+<span class="sd">    :type s: class</span>
+<span class="sd">    :param c: initialized class for clustering algorithm</span>
+<span class="sd">    :type c: class</span>
+<span class="sd">    :param nrand: number of iterations to normalize cluster stability</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">nrand</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">class_method</span> <span class="o">=</span> <span class="n">s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span> <span class="o">=</span> <span class="n">c</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nrand</span> <span class="o">=</span> <span class="n">nrand</span>
+
+<div class="viewcode-block" id="RelativeValidation.train"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation.RelativeValidation.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method that performs the training. It compares the clustering labels on training set</span>
+<span class="sd">        (i.e., A(X) computed by :class:`reval.relative_validation.RelativeValidation.clust_method`) against</span>
+<span class="sd">        the labels obtained through the classification algorithm</span>
+<span class="sd">        (i.e., f(X), computed by :class:`reval.relative_validation.RelativeValidation.class_method`).</span>
+<span class="sd">        It returns the misclassification error, the supervised model fitted to the data,</span>
+<span class="sd">        and both clustering and classification labels.</span>
+
+<span class="sd">        :param train_data: training dataset</span>
+<span class="sd">        :type train_data: ndarray, (n_samples, n_features)</span>
+<span class="sd">        :return: misclassification error, fitted supervised model object, clustering and classification labels</span>
+<span class="sd">        :rtype: float, object, dictionary of ndarray (n_samples,)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">clustlab_tr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>  <span class="c1"># A_k(X)</span>
+        <span class="n">fitclass_tr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_method</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">clustlab_tr</span><span class="p">)</span>
+        <span class="n">classlab_tr</span> <span class="o">=</span> <span class="n">fitclass_tr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>
+        <span class="n">misclass</span> <span class="o">=</span> <span class="n">zero_one_loss</span><span class="p">(</span><span class="n">clustlab_tr</span><span class="p">,</span> <span class="n">classlab_tr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">misclass</span><span class="p">,</span> <span class="n">fitclass_tr</span><span class="p">,</span> <span class="n">clustlab_tr</span></div>
+
+<div class="viewcode-block" id="RelativeValidation.test"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation.RelativeValidation.test">[docs]</a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">fit_model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method that compares the clustering labels on the test set (i.e., A(X&#39;), computed by</span>
+<span class="sd">        :class:`reval.relative_validation.RelativeValidation.clust_method`) against</span>
+<span class="sd">        the (permuted) labels obtained through the classification algorithm fitted to the training set</span>
+<span class="sd">        (i.e., f(X&#39;), computed by</span>
+<span class="sd">        :class:`reval.relative_validation.RelativeValidation.class_method`).</span>
+<span class="sd">        It return the misclassification error., together with</span>
+<span class="sd">        both the clustering and classification labels.</span>
+
+<span class="sd">        :param test_data: test dataset</span>
+<span class="sd">        :type test_data: ndarray, (n_samples, n_features)</span>
+<span class="sd">        :param fit_model: fitted supervised model</span>
+<span class="sd">        :type fit_model: class</span>
+<span class="sd">        :return: misclassification error, clustering and classification labels</span>
+<span class="sd">        :rtype: float, dictionary of ndarrays (n_samples,)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">clustlab_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>  <span class="c1"># A_k(X&#39;)</span>
+        <span class="n">classlab_ts</span> <span class="o">=</span> <span class="n">fit_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+        <span class="c1"># bestperm = _kuhn_munkres_algorithm(clustlab_ts, classlab_ts)  # array of integers</span>
+        <span class="n">bestperm</span> <span class="o">=</span> <span class="n">_kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">classlab_ts</span><span class="p">,</span> <span class="n">clustlab_ts</span><span class="p">)</span>  <span class="c1"># array of integers</span>
+        <span class="c1"># misclass = zero_one_loss(clustlab_ts, bestperm)</span>
+        <span class="n">misclass</span> <span class="o">=</span> <span class="n">zero_one_loss</span><span class="p">(</span><span class="n">classlab_ts</span><span class="p">,</span> <span class="n">bestperm</span><span class="p">)</span>
+        <span class="c1"># return misclass, clustlab_ts</span>
+        <span class="k">return</span> <span class="n">misclass</span><span class="p">,</span> <span class="n">bestperm</span></div>
+
+<div class="viewcode-block" id="RelativeValidation.rndlabels_traineval"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation.RelativeValidation.rndlabels_traineval">[docs]</a>    <span class="k">def</span> <span class="nf">rndlabels_traineval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">,</span> <span class="n">test_labels</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method that performs random labeling on the training set</span>
+<span class="sd">        (N times according to</span>
+<span class="sd">        :class:`reval.relative_validation.RelativeValidation.nrand` instance attribute) and evaluates</span>
+<span class="sd">        the fitted models on the test set.</span>
+
+<span class="sd">        :param train_data: training dataset</span>
+<span class="sd">        :type train_data: ndarray, (n_samples, n_features)</span>
+<span class="sd">        :param test_data: test dataset</span>
+<span class="sd">        :type test_data: ndarray, (n_samples, n_features)</span>
+<span class="sd">        :param train_labels: training set clustering labels</span>
+<span class="sd">        :type train_labels: ndarray, (n_samples,)</span>
+<span class="sd">        :param test_labels: test set clustering labels</span>
+<span class="sd">        :type test_labels: ndarray, (n_samples,)</span>
+<span class="sd">        :return: averaged misclassification error on the test set</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">shuf_tr</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">train_labels</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nrand</span><span class="p">)]</span>
+        <span class="c1"># misclass_tr, misclass_ts = [], []</span>
+        <span class="c1"># for lab in shuf_tr:</span>
+        <span class="c1">#     self.class_method.fit(train_data, lab)</span>
+        <span class="c1">#     misclass_tr.append(zero_one_loss(lab, self.class_method.predict(train_data)))</span>
+        <span class="c1">#     misclass_ts.append(zero_one_loss(test_labels,</span>
+        <span class="c1">#                                      _kuhn_munkres_algorithm(test_labels,</span>
+        <span class="c1">#                                                              self.class_method.predict(test_data))))</span>
+        <span class="n">misclass_ts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rescale_score_</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">test_labels</span><span class="p">),</span> <span class="n">shuf_tr</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">misclass_ts</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RelativeValidation._rescale_score_"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation.RelativeValidation._rescale_score_">[docs]</a>    <span class="k">def</span> <span class="nf">_rescale_score_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xtr</span><span class="p">,</span> <span class="n">xts</span><span class="p">,</span> <span class="n">randlabtr</span><span class="p">,</span> <span class="n">labts</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Private method that computes the misclassification error when predicting test labels</span>
+<span class="sd">        with classification model fitted on training random labels.</span>
+
+<span class="sd">        :param xtr: training dataset</span>
+<span class="sd">        :type xtr: ndarray, (n_samples, n_features)</span>
+<span class="sd">        :param xts: test dataset</span>
+<span class="sd">        :type xts: ndarray, (n_samples, n_features)</span>
+<span class="sd">        :param randlabtr: random labels</span>
+<span class="sd">        :type randlabtr: ndarray, (n_samples,)</span>
+<span class="sd">        :param labts: test set labels</span>
+<span class="sd">        :type labts: ndarray, (n_samples,)</span>
+<span class="sd">        :return: misclassification error</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">class_method</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">xtr</span><span class="p">,</span> <span class="n">randlabtr</span><span class="p">)</span>
+        <span class="n">me_ts</span> <span class="o">=</span> <span class="n">zero_one_loss</span><span class="p">(</span><span class="n">labts</span><span class="p">,</span> <span class="n">_kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">labts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_method</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xts</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">me_ts</span></div></div>
+
+
+<div class="viewcode-block" id="_kuhn_munkres_algorithm"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation._kuhn_munkres_algorithm">[docs]</a><span class="k">def</span> <span class="nf">_kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">true_lab</span><span class="p">,</span> <span class="n">pred_lab</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Private function that implements the Hungarian method. It selects the best label permutation of the</span>
+<span class="sd">    classification output that minimizes the</span>
+<span class="sd">    misclassification error when compared to the clustering labels.</span>
+
+<span class="sd">    :param true_lab: clustering algorithm labels</span>
+<span class="sd">    :type true_lab: ndarray, (n_samples,)</span>
+<span class="sd">    :param pred_lab: classification algorithm labels</span>
+<span class="sd">    :type pred_lab: ndarray, (n_samples,)</span>
+<span class="sd">    :return: permuted labels that minimize the misclassification error</span>
+<span class="sd">    :rtype: ndarray, (n_samples,)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">true_lab</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pred_lab</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">nclass</span><span class="p">,</span> <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">true_lab</span><span class="p">)),</span> <span class="nb">len</span><span class="p">(</span><span class="n">true_lab</span><span class="p">)</span>
+        <span class="n">wmat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nclass</span><span class="p">,</span> <span class="n">nclass</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">lab</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nclass</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">plab</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">nclass</span><span class="p">):</span>
+                <span class="n">n_intersec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">true_lab</span> <span class="o">==</span> <span class="n">lab</span><span class="p">))</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
+                    <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">pred_lab</span> <span class="o">==</span> <span class="n">plab</span><span class="p">))))</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">n_intersec</span><span class="p">)</span> <span class="o">/</span> <span class="n">nobs</span>
+                <span class="k">if</span> <span class="n">lab</span> <span class="o">==</span> <span class="n">plab</span><span class="p">:</span>
+                    <span class="n">wmat</span><span class="p">[</span><span class="n">lab</span><span class="p">,</span> <span class="n">plab</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">wmat</span><span class="p">[</span><span class="n">lab</span><span class="p">,</span> <span class="n">plab</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span>
+                    <span class="n">n_intersec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">true_lab</span> <span class="o">==</span> <span class="n">plab</span><span class="p">))</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
+                        <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">pred_lab</span> <span class="o">==</span> <span class="n">lab</span><span class="p">))))</span>
+                    <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">n_intersec</span><span class="p">)</span> <span class="o">/</span> <span class="n">nobs</span>
+                    <span class="n">wmat</span><span class="p">[</span><span class="n">plab</span><span class="p">,</span> <span class="n">lab</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span>
+        <span class="n">new_pred_lab</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">linear_sum_assignment</span><span class="p">(</span><span class="n">wmat</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pred_perm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">new_pred_lab</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pred_lab</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">pred_perm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pred_lab</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_pred_lab</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="p">:</span>
+                    <span class="n">pred_perm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pred_perm</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">pred_perm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pred_perm</span><span class="p">,</span> <span class="n">new_pred_lab</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">pred_perm</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;input variables should be (np.ndarray, np.ndarray)&#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39; not (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">true_lab</span><span class="p">)</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pred_lab</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Isotta Landi
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

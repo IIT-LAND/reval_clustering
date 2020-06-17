@@ -7,19 +7,17 @@ from matplotlib import pyplot as plt
 
 def plot_metrics(cv_score, title, figsize=(20, 10), save_fig=None):
     """
-    Function that plot the average performance (i.e., normalized stability) over cross-validation
+    Function that plots the average performance (i.e., normalized stability) over cross-validation
     for training and validation sets.
 
-    Parameters
-    ----------
-    cv_score: collection of cv scores
-    type cv_score: dictionary
-    title: figure title
-    type title: str
-    figsize: (width, height)
-    type figsize: tuple
-    save_fig: file name for saving figure in png format, default None
-    type save_fig: str
+    :param cv_score: collection of cv scores
+    :type cv_score: dictionary
+    :param title: figure title
+    :type title: str
+    :param figsize: (width, height)
+    :type figsize: tuple
+    :param save_fig: file name for saving figure in png format, default None
+    :type save_fig: str
     """
     fig, ax = plt.subplots(figsize=figsize)
     ax.plot(list(cv_score['train'].keys()),
@@ -52,7 +50,7 @@ def scatter_plot(mtx,
                  title='',
                  save_fig=None):
     """
-    Bokeh scatterplot to visualize in jupyter clusters and row info.
+    Bokeh scatterplot to visualize clusters and row info.
 
     :param mtx: Array with dataset (after dimensionality reduction)
     :type mtx: numpy array
