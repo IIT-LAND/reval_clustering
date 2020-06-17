@@ -1,11 +1,9 @@
 ---
 title: '`reval`: a Python package to determine the best number of clusters with stability-based relative clustering validation.'
-
 tags:
 - Python
 - Machine learning
 - Clustering
-
 authors:
 - name: Isotta Landi
 - affiliation: 1
@@ -13,7 +11,6 @@ authors:
 - affiliation: 1, 2
 - name: Michael V. Lombardo
 - affiliation: 1, 3
-
 affiliations:
 - name: Laboratory for Autism and Neurodevelopmental Disorders, Center for Neuroscience and Cognitive Systems @UniTn, Istituto Italiano di Tecnologia, Rovereto, Italy
  index: 1
@@ -21,9 +18,7 @@ affiliations:
  index: 2
 - name: Autism Research Centre, Department of Psychiatry, University of Cambridge, Cambridge, United Kingdom
  index: 3
-
 date: 15 June 2020
-
 bibliography: paper.bib
 ---
 
@@ -38,16 +33,10 @@ In contrast to internal criteria, relative validation techniques transform the p
 Internal and relative indices can exhibit similar behavior with respect to clustering errors, with the advantage of the former being less computationally expensive [@brun2007]. However, in the case of complex models and clusters, an approach based on prediction error is more indicative of clustering performance, because internal indices tend to fail to correlate well with errors [@brun2007]. Another advantage of the model selection approach within a cross-validation framework is that it allows for selection of the solution that best generalizes to new data and to investigate replicability of the results in an automated fashion. On the contrary, internal indices are highly tied to the characteristics of the data at hand. Hence, they are not suited to assess clustering generalizability and replicability.
 
 The `reval` library has three modules:
-
 - `relative_validation`: This module includes training and test methods that return the misclassification errors obtained by comparing classification labels, permuted according to the Kuhn-Munkres algorithm [@kuhn1955; @munkres1957], and the clustering labels. Within this module, the `relative_validation.RelativeValidation.rndlabel_traineval` method allows users to compute the asymptotic misclassification rate via random labeling.
-
 - `best_nclust_cv`: This module implements the cross-validation procedure and returns the best number of clusters along with the normalized stability scores, obtained from the average of the misclassification scores divided by the asymptotic misclassification rate. The `nest_nclust_cv.FindBestClustCV.evaluate` method applies the fitted model with the returned number of clusters to the held-out dataset.
-
 - `visualization`: This module includes functions to plot cross-validated performance metrics with 95% confidence intervals for varying number of cluster solutions and scatterplots that display the clustering solution. Note that scatterplots first require the application of a dimensionality reduction algorithm to the dataset (e.g., PCA, UMAP, t-SNE).
-
 Method details can be found in [@lange2004], code and documentation with working examples can be found [here](https://github.com/landiisotta/relative_validation_clustering).
-
-
 
 # Statement of needs
 
@@ -55,14 +44,9 @@ The `reval` package allows users the ability to apply unsupervised clustering te
 1) apply two clustering algorithms, one to each fold;
 2) fit a classifier to the training set and evaluate it on the test set;
 3) normalize the stability measure after estimating the stability from $N$ iterations of random labeling.
-
 For these reasons, the computational cost tends to increase with dataset size (see \autoref{fig:1} for an example of execution time performances).
 
 ![`best_nclust_cv` module applied to simulation blob data with 5 clusters and varying number of samples and features. Number of clusters ranges from 2 to 6. We report execution time in seconds for algorithm performance. \label{fig:1}](makeblobs_performance.png)
-
-
-
-
 
 # Key references
 
