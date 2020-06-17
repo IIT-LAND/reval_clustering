@@ -12,6 +12,7 @@
 #
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('../../'))
 sys.setrecursionlimit(1500)
 
@@ -19,11 +20,10 @@ sys.setrecursionlimit(1500)
 
 project = 'Relative clustering validation'
 copyright = '2020, Isotta Landi'
-author = 'Isotta Landi'
+authors = 'Isotta Landi'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
-
 
 # -- General configuration ---------------------------------------------------
 import sphinx_rtd_theme
@@ -32,16 +32,23 @@ import sphinx_rtd_theme
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc',
-'sphinx_rtd_theme']
+              'sphinx_rtd_theme',
+              "sphinx.ext.intersphinx",
+              "sphinx.ext.mathjax",
+              "sphinx.ext.viewcode",
+              ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
+
+master_doc = "index"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
+pygments_style = "sphinx"
 
 # -- Options for HTML output -------------------------------------------------
 

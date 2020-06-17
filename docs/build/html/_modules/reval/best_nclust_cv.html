@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>reval.best_nclust_cv &mdash; Relative clustering validation 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Relative clustering validation
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">User Guide / Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../code_description.html">Code description</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Relative clustering validation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>reval.best_nclust_cv</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for reval.best_nclust_cv</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">StratifiedKFold</span><span class="p">,</span> <span class="n">KFold</span>
+<span class="kn">from</span> <span class="nn">reval.relative_validation</span> <span class="kn">import</span> <span class="n">RelativeValidation</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+
+<div class="viewcode-block" id="FindBestClustCV"><a class="viewcode-back" href="../../code_description.html#reval.best_nclust_cv.FindBestClustCV">[docs]</a><span class="k">class</span> <span class="nc">FindBestClustCV</span><span class="p">(</span><span class="n">RelativeValidation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Child class of :class:`reval.relative_validation.RelativeValidation`.</span>
+<span class="sd">    It performs cross validation on the training set to</span>
+<span class="sd">    select the best number of clusters, i.e., the number that minimizes the</span>
+<span class="sd">    misclassification error.</span>
+
+<span class="sd">    :param nfold: number of CV folds</span>
+<span class="sd">    :type nfold: int</span>
+<span class="sd">    :param nclust_range: list with minimum and maximum cluster numbers to look for</span>
+<span class="sd">    :type nclust_range: list ([int, int])</span>
+<span class="sd">    :param s: classification object inherited from :class:`reval.relative_validation.RelativeValidation`</span>
+<span class="sd">    :type s: class</span>
+<span class="sd">    :param s: classification object inherited from :class:`reval.relative_validation.RelativeValidation`</span>
+<span class="sd">    :type c: class</span>
+<span class="sd">    :param nrand: number of iterations for normalized misclassification error, inherited from</span>
+<span class="sd">        :class:`reval.relative_validation.RelativeValidation` class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nfold</span><span class="p">,</span> <span class="n">nclust_range</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">nrand</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">nrand</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nfold</span> <span class="o">=</span> <span class="n">nfold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nclust_range</span> <span class="o">=</span> <span class="n">nclust_range</span>
+
+<div class="viewcode-block" id="FindBestClustCV.best_nclust"><a class="viewcode-back" href="../../code_description.html#reval.best_nclust_cv.FindBestClustCV.best_nclust">[docs]</a>    <span class="k">def</span> <span class="nf">best_nclust</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">strat_vect</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method takes as input the training dataset and the</span>
+<span class="sd">        stratification vector (if available) and performs a</span>
+<span class="sd">        CV to select the best number of clusters that minimizes</span>
+<span class="sd">        normalized misclassification error.</span>
+
+<span class="sd">        :param data: training dataset</span>
+<span class="sd">        :type data: ndarray, (n_samples, n_features)</span>
+<span class="sd">        :param strat_vect: vector for stratification, defaults to None</span>
+<span class="sd">        :type strat_vect: ndarray, (n_samples,)</span>
+<span class="sd">        :return: CV metrics for training and validation sets, best number of clusters</span>
+<span class="sd">        :rtype: dictionary, int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">reval</span> <span class="o">=</span> <span class="n">RelativeValidation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">class_method</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nrand</span><span class="p">)</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;train&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+        <span class="n">check_dist</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;train&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+        <span class="k">for</span> <span class="n">ncl</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nclust_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nclust_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">strat_vect</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">kfold</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nfold</span><span class="p">)</span>
+                <span class="n">fold_gen</span> <span class="o">=</span> <span class="n">kfold</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">data_array</span><span class="p">,</span> <span class="n">strat_vect</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">kfold</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nfold</span><span class="p">)</span>
+                <span class="n">fold_gen</span> <span class="o">=</span> <span class="n">kfold</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">data_array</span><span class="p">)</span>
+            <span class="n">norm_stab_tr</span><span class="p">,</span> <span class="n">norm_stab_val</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">tr_idx</span><span class="p">,</span> <span class="n">val_idx</span> <span class="ow">in</span> <span class="n">fold_gen</span><span class="p">:</span>
+                <span class="n">tr_set</span><span class="p">,</span> <span class="n">val_set</span> <span class="o">=</span> <span class="n">data_array</span><span class="p">[</span><span class="n">tr_idx</span><span class="p">],</span> <span class="n">data_array</span><span class="p">[</span><span class="n">val_idx</span><span class="p">]</span>
+                <span class="n">reval</span><span class="o">.</span><span class="n">clust_method</span><span class="o">.</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="n">ncl</span>
+                <span class="n">miscl_tr</span><span class="p">,</span> <span class="n">modelfit</span><span class="p">,</span> <span class="n">tr_labels</span> <span class="o">=</span> <span class="n">reval</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">tr_set</span><span class="p">)</span>
+                <span class="n">miscl_val</span><span class="p">,</span> <span class="n">val_labels</span> <span class="o">=</span> <span class="n">reval</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">val_set</span><span class="p">,</span> <span class="n">modelfit</span><span class="p">)</span>
+                <span class="n">rndmisc_mean_val</span> <span class="o">=</span> <span class="n">reval</span><span class="o">.</span><span class="n">rndlabels_traineval</span><span class="p">(</span><span class="n">tr_set</span><span class="p">,</span> <span class="n">val_set</span><span class="p">,</span>
+                                                             <span class="n">tr_labels</span><span class="p">,</span>
+                                                             <span class="n">val_labels</span><span class="p">)</span>
+                <span class="n">ms_val</span> <span class="o">=</span> <span class="n">miscl_val</span> <span class="o">/</span> <span class="n">rndmisc_mean_val</span>
+                <span class="n">norm_stab_tr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">miscl_tr</span><span class="p">)</span>
+                <span class="n">norm_stab_val</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ms_val</span><span class="p">)</span>
+                <span class="n">check_dist</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">ncl</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">miscl_tr</span><span class="p">)</span>
+                <span class="n">check_dist</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">ncl</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ms_val</span><span class="p">)</span>
+            <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">][</span><span class="n">ncl</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">norm_stab_tr</span><span class="p">),</span> <span class="n">_confint</span><span class="p">(</span><span class="n">norm_stab_tr</span><span class="p">))</span>
+            <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">][</span><span class="n">ncl</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">norm_stab_val</span><span class="p">),</span> <span class="n">_confint</span><span class="p">(</span><span class="n">norm_stab_val</span><span class="p">))</span>
+        <span class="n">val_score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+        <span class="n">bestscore</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">val_score</span><span class="p">)</span>
+        <span class="c1"># select the cluster with the minimum misclassification error</span>
+        <span class="c1"># and the maximum number of clusters</span>
+        <span class="n">bestncl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">val_score</span> <span class="o">==</span> <span class="n">bestscore</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nclust_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">bestncl</span><span class="p">,</span> <span class="n">check_dist</span></div>
+
+<div class="viewcode-block" id="FindBestClustCV.evaluate"><a class="viewcode-back" href="../../code_description.html#reval.best_nclust_cv.FindBestClustCV.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_tr</span><span class="p">,</span> <span class="n">data_ts</span><span class="p">,</span> <span class="n">nclust</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method that applies clustering algorithm with the best number of clusters</span>
+<span class="sd">        to the test set. It returns the clustering labels.</span>
+
+<span class="sd">        :param data_tr: training dataset</span>
+<span class="sd">        :type data_tr: ndarray, (n_samples, n_features)</span>
+<span class="sd">        :param data_ts: test dataset</span>
+<span class="sd">        :type data_ts: ndarray, (n_samples, n_features)</span>
+<span class="sd">        :param nclust: best number of clusters</span>
+<span class="sd">        :type nclust: int</span>
+<span class="sd">        :return: labels and accuracy for both training and test sets</span>
+<span class="sd">        :rtype: namedtuple, (train_cllab, train_acc, test_cllab, test_acc)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span><span class="o">.</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="n">nclust</span>
+        <span class="n">tr_misc</span><span class="p">,</span> <span class="n">modelfit</span><span class="p">,</span> <span class="n">labels_tr</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">data_tr</span><span class="p">)</span>
+        <span class="n">ts_misc</span><span class="p">,</span> <span class="n">labels_ts</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">data_ts</span><span class="p">,</span> <span class="n">modelfit</span><span class="p">)</span>
+        <span class="n">Eval</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Eval&#39;</span><span class="p">,</span>
+                          <span class="p">[</span><span class="s1">&#39;train_cllab&#39;</span><span class="p">,</span> <span class="s1">&#39;train_acc&#39;</span><span class="p">,</span> <span class="s1">&#39;test_cllab&#39;</span><span class="p">,</span> <span class="s1">&#39;test_acc&#39;</span><span class="p">])</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">Eval</span><span class="p">(</span><span class="n">labels_tr</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">tr_misc</span><span class="p">,</span> <span class="n">labels_ts</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">ts_misc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div></div>
+
+
+<div class="viewcode-block" id="_confint"><a class="viewcode-back" href="../../code_description.html#reval.best_nclust_cv._confint">[docs]</a><span class="k">def</span> <span class="nf">_confint</span><span class="p">(</span><span class="n">vect</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Private function to compute confidence interval.</span>
+
+<span class="sd">    :param vect: performance scores</span>
+<span class="sd">    :type vect: list</span>
+<span class="sd">    :return: mean and error</span>
+<span class="sd">    :rtype: tuple</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mf">0.05</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">vect</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">vect</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vect</span><span class="p">)))</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vect</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">error</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Isotta Landi
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

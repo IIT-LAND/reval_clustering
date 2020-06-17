@@ -118,16 +118,17 @@ class RelativeValidation:
 
 
 def _kuhn_munkres_algorithm(true_lab, pred_lab):
-    """Private function that implements the Hungarian method. It selects the best label permutation of the
+    """
+    Private function that implements the Hungarian method. It selects the best label permutation of the
     classification output that minimizes the
     misclassification error when compared to the clustering labels.
 
     :param true_lab: clustering algorithm labels
-    :type true_lab: ndarray, (n_samples)
+    :type true_lab: ndarray, (n_samples,)
     :param pred_lab: classification algorithm labels
-    :type pred_lab: ndarray, (n_samples)
+    :type pred_lab: ndarray, (n_samples,)
     :return: permuted labels that minimize the misclassification error
-    :rtype: ndarray, (n_samples)
+    :rtype: ndarray, (n_samples,)
     """
     if isinstance(true_lab, np.ndarray) and isinstance(pred_lab, np.ndarray):
         nclass, nobs = len(set(true_lab)), len(true_lab)

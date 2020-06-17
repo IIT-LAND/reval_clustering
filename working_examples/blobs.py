@@ -10,8 +10,8 @@ import logging
 # Generate 1,000 samples for 5 blobs
 classifier = KNeighborsClassifier()
 clustering = AgglomerativeClustering()
-for n in [100, 500, 1000, 1500, 2000]:
-    for feat in [10, 100, 1000]:
+for n in [3000]:
+    for feat in [500]:
         start = time.time()
         data = make_blobs(n, feat, 5, random_state=42)
         # Split them into training and test set (30% of data)
