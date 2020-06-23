@@ -81,6 +81,9 @@
               <p class="caption"><span class="caption-text">User Guide / Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code_usage.html">How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../experiments.html">Performance on baseline datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datadimension.html">Examples of how things can go wrong</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Code Guide</span></p>
 <ul>
@@ -179,7 +182,7 @@
                 <span class="p">[</span><span class="n">me</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">me</span> <span class="ow">in</span> <span class="n">cv_score</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()],</span>
                 <span class="n">linewidth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;validation set&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([</span><span class="n">lab</span> <span class="k">for</span> <span class="n">lab</span> <span class="ow">in</span> <span class="n">cv_score</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Number of clusters&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
@@ -190,81 +193,6 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-
-<div class="viewcode-block" id="scatter_plot"><a class="viewcode-back" href="../../code_description.html#reval.visualization.scatter_plot">[docs]</a><span class="k">def</span> <span class="nf">scatter_plot</span><span class="p">(</span><span class="n">mtx</span><span class="p">,</span>
-                 <span class="n">el_cl_list</span><span class="p">,</span>
-                 <span class="n">colors</span><span class="p">,</span>
-                 <span class="n">fig_height</span><span class="p">,</span>
-                 <span class="n">fig_width</span><span class="p">,</span>
-                 <span class="n">label</span><span class="p">,</span>
-                 <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
-                 <span class="n">save_fig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Bokeh scatterplot to visualize clusters and row info.</span>
-
-<span class="sd">    :param mtx: Array with dataset (after dimensionality reduction)</span>
-<span class="sd">    :type mtx: numpy array</span>
-<span class="sd">    :param el_cl_list: list of data elements (i.e., rows) ordered as in mtx and cluster labels</span>
-<span class="sd">    :type el_cl_list: list of tuples</span>
-<span class="sd">    :param colors: Color list</span>
-<span class="sd">    :type colors: list</span>
-<span class="sd">    :param fig_height: figure height</span>
-<span class="sd">    :type fig_height: int</span>
-<span class="sd">    :param fig_width: figure width</span>
-<span class="sd">    :type fig_width: int</span>
-<span class="sd">    :param label: dictionary of class numbers and subtype labels, e.g. {1: &#39;cluster 1&#39;, 2: &#39;cluster 2&#39;}</span>
-<span class="sd">    :type label: dict</span>
-<span class="sd">    :param title: figure title</span>
-<span class="sd">    :type title: str</span>
-<span class="sd">    :param save_fig: flag to enable figure saving, defaults to None</span>
-<span class="sd">    :type save_fig: str</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">el_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">el_cl_list</span><span class="p">))</span>
-    <span class="n">subc_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">el_cl_list</span><span class="p">))</span>
-    <span class="n">df_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">mtx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
-               <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">mtx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
-               <span class="s1">&#39;pid_list&#39;</span><span class="p">:</span> <span class="n">el_list</span><span class="p">,</span>
-               <span class="s1">&#39;subc_list&#39;</span><span class="p">:</span> <span class="n">subc_list</span><span class="p">}</span>
-
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df_dict</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;subc_list&#39;</span><span class="p">)</span>
-
-    <span class="n">source</span> <span class="o">=</span> <span class="n">ColumnDataSource</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
-        <span class="n">y</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
-        <span class="n">el</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;el_list&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
-        <span class="n">subc</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">label</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;subc_list&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())),</span>
-        <span class="n">col_class</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;subc_list&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]))</span>
-
-    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;subc_list&#39;</span><span class="p">]]</span>
-    <span class="n">cmap</span> <span class="o">=</span> <span class="n">CategoricalColorMapper</span><span class="p">(</span><span class="n">factors</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">)),</span>
-                                  <span class="n">palette</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
-    <span class="n">TOOLTIPS</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;el&#39;</span><span class="p">,</span> <span class="s1">&#39;@el&#39;</span><span class="p">),</span>
-                <span class="p">(</span><span class="s1">&#39;subc&#39;</span><span class="p">,</span> <span class="s1">&#39;@subc&#39;</span><span class="p">)]</span>
-
-    <span class="n">plotTools</span> <span class="o">=</span> <span class="s1">&#39;box_zoom, wheel_zoom, pan,  crosshair, reset, save&#39;</span>
-
-    <span class="n">output_notebook</span><span class="p">()</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span><span class="n">plot_width</span><span class="o">=</span><span class="n">fig_width</span> <span class="o">*</span> <span class="mi">80</span><span class="p">,</span> <span class="n">plot_height</span><span class="o">=</span><span class="n">fig_height</span> <span class="o">*</span> <span class="mi">80</span><span class="p">,</span>
-               <span class="n">tools</span><span class="o">=</span><span class="n">plotTools</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">add_tools</span><span class="p">(</span><span class="n">HoverTool</span><span class="p">(</span><span class="n">tooltips</span><span class="o">=</span><span class="n">TOOLTIPS</span><span class="p">))</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">legend_group</span><span class="o">=</span><span class="s1">&#39;subc&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
-             <span class="n">color</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;field&#39;</span><span class="p">:</span> <span class="s1">&#39;col_class&#39;</span><span class="p">,</span>
-                    <span class="s2">&quot;transform&quot;</span><span class="p">:</span> <span class="n">cmap</span><span class="p">},</span> <span class="n">size</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">major_tick_line_color</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">minor_tick_line_color</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">major_tick_line_color</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">minor_tick_line_color</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">major_label_text_color</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">major_label_text_color</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">grid_line_color</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">text_font_size</span> <span class="o">=</span> <span class="s1">&#39;13pt&#39;</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">label_text_font_size</span> <span class="o">=</span> <span class="s1">&#39;18pt&#39;</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="s1">&#39;top_left&#39;</span>
-    <span class="k">if</span> <span class="n">save_fig</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">export_png</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;./plot/</span><span class="si">{</span><span class="n">save_fig</span><span class="si">}</span><span class="s1">.png&#39;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">show</span><span class="p">(</span><span class="n">p</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

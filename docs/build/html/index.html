@@ -82,6 +82,9 @@
               <p class="caption"><span class="caption-text">User Guide / Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code_usage.html">How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="experiments.html">Performance on baseline datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datadimension.html">Examples of how things can go wrong</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Code Guide</span></p>
 <ul>
@@ -158,18 +161,33 @@ a clustering algorithm into a supervised classification problem and selects the 
 that lead to the minimum expected misclassification error, i.e., stability.</p>
 <p>This library allows to:</p>
 <ol class="arabic simple">
-<li><p>Select any classification algorithm, provided that <code class="docutils literal notranslate"><span class="pre">fit()</span></code> and <code class="docutils literal notranslate"><span class="pre">transform()</span></code> methods are available;</p></li>
-<li><p>Select any clustering algorithm with <code class="docutils literal notranslate"><span class="pre">n_clusters</span></code> parameter;</p></li>
-<li><p>Perform <em>k</em>-fold cross-validation to determine the best number of clusters;</p></li>
-<li><p>Test the final model on an held-out dataset.</p></li>
+<li><p>Select any classification algorithm from <code class="docutils literal notranslate"><span class="pre">sklearn</span></code> library;</p></li>
 </ol>
+<p>2. Select a clustering algorithm with <code class="docutils literal notranslate"><span class="pre">n_clusters</span></code> parameter, i.e., choose among <code class="docutils literal notranslate"><span class="pre">sklearn.cluster.KMeans</span></code>,
+<code class="docutils literal notranslate"><span class="pre">sklearn.cluster.AgglomerativeClustering</span></code>, <code class="docutils literal notranslate"><span class="pre">sklearn.cluster.SpectralClustering</span></code>;
+3. Perform <em>k</em>-fold cross-validation to determine the best number of clusters;
+4. Test the final model on an held-out dataset.</p>
 <p>Underlying mathematics can be found in (Lange et al., 2004), whereas code can be found on <a class="reference external" href="https://github.com">github</a>.</p>
+<p>The analysis steps performed by <code class="docutils literal notranslate"><span class="pre">reval</span></code> package are displayed below.</p>
+<img alt="_images/revalpipeline.png" src="_images/revalpipeline.png" />
 <p>Lange, T., Roth, V., Braun, M. L., &amp; Buhmann, J. M. (2004).
 Stability-based validation of clustering solutions. <em>Neural computation</em>, 16(6), 1299-1323.</p>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">User Guide / Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code_usage.html">How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="experiments.html">Performance on baseline datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="experiments.html#gaussian-blobs">Gaussian blobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="experiments.html#gaussian-blobs-with-noise">Gaussian blobs with noise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="experiments.html#mnist-dataset">MNIST dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="datadimension.html">Examples of how things can go wrong</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datadimension.html#number-of-features-when-enough-is-enough">Number of features: when enough is enough?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datadimension.html#number-of-samples-too-few-not-good">Number of samples: too few, not good</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">

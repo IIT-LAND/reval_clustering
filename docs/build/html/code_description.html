@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="experiments.html" /> 
+    <link rel="prev" title="Examples and performance" href="experiments.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,6 +82,8 @@
               <p class="caption"><span class="caption-text">User Guide / Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code_usage.html">How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="experiments.html">Examples and performance</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Code Guide</span></p>
 <ul class="current">
@@ -393,8 +395,7 @@ misclassification error when compared to the clustering labels.</p>
 </div>
 <div class="section" id="visualization">
 <h2>Visualization<a class="headerlink" href="#visualization" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">reval.visualization</span></code> enables plotting the cross-validation performance and the scatterplot with the
-clustering solution selected by the model (it requires pre-processed dataset with dimensionality reduction methods).</p>
+<p><code class="docutils literal notranslate"><span class="pre">reval.visualization</span></code> enables plotting the cross-validation performance.</p>
 <span class="target" id="module-reval.visualization"></span><dl class="py function">
 <dt id="reval.visualization.plot_metrics">
 <code class="sig-prename descclassname">reval.visualization.</code><code class="sig-name descname">plot_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cv_score</span></em>, <em class="sig-param"><span class="n">title</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">20, 10</span></em>, <em class="sig-param"><span class="n">save_fig</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/visualization.html#plot_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.visualization.plot_metrics" title="Permalink to this definition">¶</a></dt>
@@ -412,26 +413,6 @@ for training and validation sets.</p>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt id="reval.visualization.scatter_plot">
-<code class="sig-prename descclassname">reval.visualization.</code><code class="sig-name descname">scatter_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mtx</span></em>, <em class="sig-param"><span class="n">el_cl_list</span></em>, <em class="sig-param"><span class="n">colors</span></em>, <em class="sig-param"><span class="n">fig_height</span></em>, <em class="sig-param"><span class="n">fig_width</span></em>, <em class="sig-param"><span class="n">label</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">save_fig</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/visualization.html#scatter_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.visualization.scatter_plot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bokeh scatterplot to visualize clusters and row info.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>mtx</strong> (<em>numpy array</em>) – Array with dataset (after dimensionality reduction)</p></li>
-<li><p><strong>el_cl_list</strong> (<em>list of tuples</em>) – list of data elements (i.e., rows) ordered as in mtx and cluster labels</p></li>
-<li><p><strong>colors</strong> (<em>list</em>) – Color list</p></li>
-<li><p><strong>fig_height</strong> (<em>int</em>) – figure height</p></li>
-<li><p><strong>fig_width</strong> (<em>int</em>) – figure width</p></li>
-<li><p><strong>label</strong> (<em>dict</em>) – dictionary of class numbers and subtype labels, e.g. {1: ‘cluster 1’, 2: ‘cluster 2’}</p></li>
-<li><p><strong>title</strong> (<em>str</em>) – figure title</p></li>
-<li><p><strong>save_fig</strong> (<em>str</em>) – flag to enable figure saving, defaults to None</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 </div>
 </div>
 
@@ -444,7 +425,7 @@ for training and validation sets.</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="experiments.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="experiments.html" class="btn btn-neutral float-left" title="Examples and performance" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
