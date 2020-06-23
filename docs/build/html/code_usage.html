@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>&lt;no title&gt; &mdash; Relative clustering validation 0.0.1 documentation</title>
+  <title>How to Use reval &mdash; Relative clustering validation 0.0.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="experiments.html" />
+    <link rel="next" title="Performance on baseline datasets" href="experiments.html" />
     <link rel="prev" title="Installing" href="installing.html" /> 
 </head>
 
@@ -81,8 +81,11 @@
             
             
               <p class="caption"><span class="caption-text">User Guide / Tutorial</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="experiments.html">Performance on baseline datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datadimension.html">Examples of how things can go wrong</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Code Guide</span></p>
 <ul>
@@ -132,7 +135,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>&lt;no title&gt;</li>
+      <li>How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code></li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -151,7 +154,78 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  
+  <div class="section" id="how-to-use-reval">
+<h1>How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code><a class="headerlink" href="#how-to-use-reval" title="Permalink to this headline">¶</a></h1>
+<p>In the following, we are going to simulate N = 1,000 samples of dataset with two groups and two features
+(for visualization purposes), then we will show how to apply the <code class="docutils literal notranslate"><span class="pre">reval</span></code> package and investigate
+the result types. We will use hierarchical clustering and KNN classification algorithms.</p>
+<p>First, let us import a bunch of useful libraries and our class <code class="docutils literal notranslate"><span class="pre">reval.best_nclust_cv.FindBestClustCV</span></code>:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">reval.best_nclust_cv</span> <span class="kn">import</span> <span class="n">FindBestClustCV</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_blobs</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">KNeighborsClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">AgglomerativeClustering</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<p>Then we simulate the toy dataset and visualize it:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">make_blobs</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="n">c</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;rainbow_r&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/useblobs.png" class="align-center" src="_images/useblobs.png" />
+<p>Then, we split the dataset into training and test sets:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_tr</span><span class="p">,</span> <span class="n">X_ts</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">y_ts</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                          <span class="n">test_size</span><span class="o">=</span><span class="mf">0.30</span><span class="p">,</span>
+                                          <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+                                          <span class="n">stratify</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>We apply the stability-based relative clustering validation approach with 10-fold cross-validation,
+100 iterations of random labeling, and number of clusters ranging from 2 to 10.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">classifier</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
+<span class="n">clustering</span> <span class="o">=</span> <span class="n">AgglomerativeClustering</span><span class="p">()</span>
+<span class="n">findbestclust</span> <span class="o">=</span> <span class="n">FindBestClustCV</span><span class="p">(</span><span class="n">nfold</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                <span class="n">nclust_range</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span>
+                                <span class="n">s</span><span class="o">=</span><span class="n">classifier</span><span class="p">,</span>
+                                <span class="n">c</span><span class="o">=</span><span class="n">clustering</span><span class="p">,</span>
+                                <span class="n">nrand</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">metrics</span><span class="p">,</span> <span class="n">nbest</span><span class="p">,</span> <span class="n">chk_dist</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">)</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">X_ts</span><span class="p">,</span> <span class="n">nbest</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To obtain the training stability and the normalized validation stability for the
+selected number of clusters we need to call:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">nbest</span>
+<span class="c1"># 2</span>
+<span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">][</span><span class="n">nbest</span><span class="p">]</span>
+<span class="c1"># (0.0, (0.0, 0.0)) (stab, CI)</span>
+<span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">][</span><span class="n">nbest</span><span class="p">]</span>
+<span class="c1"># (0.0, (0.0, 0.0)) (stab, CI)</span>
+</pre></div>
+</div>
+<p>In <code class="docutils literal notranslate"><span class="pre">chk_dist</span></code> we have access to the misclassification errors during
+cross-validation. <code class="docutils literal notranslate"><span class="pre">out</span></code> returns train/test accuracies and test set clustering labels.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">out</span><span class="o">.</span><span class="n">train_cllab</span>
+<span class="c1"># array([0, 1, 0, 1, 0, 0, 1...</span>
+<span class="n">out</span><span class="o">.</span><span class="n">test_cllab</span>
+<span class="c1"># array([0, 0, 0, 0, 1...</span>
+<span class="n">out</span><span class="o">.</span><span class="n">train_acc</span>
+<span class="c1"># 1.0</span>
+<span class="n">out</span><span class="o">.</span><span class="n">test_acc</span>
+<span class="c1"># 1.0</span>
+</pre></div>
+</div>
+<p>To visualize performance metrics:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">reval.visualization</span> <span class="kn">import</span> <span class="n">plot_metrics</span>
+<span class="n">plot_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Reval metrics&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/performanceexample.png" class="align-center" src="_images/performanceexample.png" />
+</div>
+
 
            </div>
            
@@ -160,7 +234,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="experiments.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="experiments.html" class="btn btn-neutral float-right" title="Performance on baseline datasets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="installing.html" class="btn btn-neutral float-left" title="Installing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

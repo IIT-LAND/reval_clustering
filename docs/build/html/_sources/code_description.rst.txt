@@ -42,8 +42,7 @@ The ``reval.best_nclust_cv._confint`` computes 95% confidence interval using ``s
 Visualization
 -------------
 
-``reval.visualization`` enables plotting the cross-validation performance and the scatterplot with the
-clustering solution selected by the model (it requires pre-processed dataset with dimensionality reduction methods).
+``reval.visualization`` enables plotting the cross-validation performance.
 
 .. automodule:: reval.visualization
    :members:
