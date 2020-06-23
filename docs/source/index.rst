@@ -20,7 +20,7 @@ This library allows to:
 4. Test the final model on an held-out dataset.
 
 Underlying mathematics can be found in (Lange et al., 2004), whereas code can be found on `github
-<https://github.com>`__.
+<https://github.com/IIT-LAND/reval_clustering>`__.
 
 The analysis steps performed by ``reval`` package are displayed below.
 
