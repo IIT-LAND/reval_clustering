@@ -89,7 +89,7 @@ model with the returned number of clusters to the held-out dataset.
 metrics with 95% confidence intervals for varying number of clustering solutions.
 
 Method details can be found in [@lange2004], code and documentation with working examples can be found 
-[here](https://github.com/). An overview of the `reval` framework is reported in figure \autoref{fig:framework}.
+[here](https://github.com/IIT-LAND/reval_clustering). An overview of the `reval` framework is reported in figure \autoref{fig:framework}.
 
 ![Visualization of `reval` framework \label{fig:framework}](revalpipeline.png)
 
