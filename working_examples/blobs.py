@@ -88,7 +88,7 @@ plt.title("True labels")
 
 plt.scatter(Xnoise_ts[:, 0], Xnoise_ts[:, 1],
             c=perm_lab_noise, cmap='rainbow_r')
-plt.title("Clustering labels")
+plt.title("Clustering labels for test set")
 
 # Pre-processing with UMAP
 from umap import UMAP

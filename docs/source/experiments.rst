@@ -1,15 +1,15 @@
-Performance on baseline datasets
-================================
+Performance on benchmark datasets
+=================================
 
 We present here three examples to test ``reval`` performance. Code can be found in
-*relative_validation_clustering/working_examples* folder.
+*reval_clustering/working_examples* folder.
 
 1. N = 1,000 Gaussian blob samples with 10 features divided into 5 clusters (code in ``blobs.py``);
 
 2. N = 1,000 Gaussian blob samples with 10 features divided into 5 clusters with noise parameter *cluster_std*
 set at 3 (code in ``blobs.py``);
 
-3. N = 28,000 samples from the MNIST handwritten digits dataset (code in ``mnist.py``).
+3. N = 14,000 samples from the MNIST handwritten digits dataset (code in ``mnist.py``).
 
 Gaussian blobs
 --------------
@@ -62,11 +62,11 @@ using the function ``plot_metrics`` from the ``reval.visualization`` module.
 .. code:: python3
 
     findbestclust = FindBestClustCV(nfold=10,
-                                nclust_range=[2, 7],
-                                s=classifier,
-                                c=clustering,
-                                nrand=100)
-    metrics, nbest, chk_dist = findbestclust.best_nclust(X_tr, y_tr)
+                                    nclust_range=[2, 7],
+                                    s=classifier,
+                                    c=clustering,
+                                    nrand=100)
+    metrics, nbest, _ = findbestclust.best_nclust(X_tr, y_tr)
     out = findbestclust.evaluate(X_tr, X_ts, nbest)
     plot_metrics(metrics, title="Reval performance")
 
@@ -75,9 +75,9 @@ We obtain that the best number of clusters returned by the model is 5 (see perfo
 .. image:: images/performanceblobs1.png
     :align: center
 
-Normalized stability in validation is 0.0 (i.e., perfect prediction) and test set accuracy is equal 1.0.
+Normalized stability in validation is 0.0 (i.e., perfect prediction) and test set accuracy is equal to 1.0.
 
-We are now interested into comparing the clustering labels from the test set with the true labels.
+We are now interested in comparing the clustering labels from the test set with the true labels.
 Hence, we first apply Kuhn-Munkres algorithm to permute the labels returned by the model. This
 because they may not be ordered as the true labels and lead to an unreliable classification error.
 
@@ -87,7 +87,8 @@ because they may not be ordered as the true labels and lead to an unreliable cla
 
 Then we compute the classification accuracy and the
 `adjusted mutual information score (AMI) <https://scikit-learn.org/stable/modules/generated/sklearn.metrics.adjusted_mutual_info_score.html#sklearn.metrics.adjusted_mutual_info_score>`__
-to compare two partitions (this score is independent of label permutations):
+to compare two partitions (this score is independent of label permutations and is equal to 1.0 when two partitions
+are identical:
 
 .. code:: python3
 
@@ -122,15 +123,20 @@ method is highly influenced by noise. We will show the importance of data pre-pr
 .. code:: python3
 
     Xnoise_tr, Xnoise_ts, ynoise_tr, ynoise_ts = train_test_split(data_noisy[0],
-                                                              data_noisy[1],
-                                                              test_size=0.30,
-                                                              random_state=42,
-                                                              stratify=data_noisy[1])
+                                                                  data_noisy[1],
+                                                                  test_size=0.30,
+                                                                  random_state=42,
+                                                                  stratify=data_noisy[1])
 
-    metrics_noise, nbest_noise, chk_dist_noise = findbestclust.best_nclust(Xnoise_tr, ynoise_tr)
+    metrics_noise, nbest_noise, _ = findbestclust.best_nclust(Xnoise_tr, ynoise_tr)
     out_noise = findbestclust.evaluate(Xnoise_tr, Xnoise_ts, nbest_noise)
 
     plot_metrics(metrics_noise, title="Reval performance")
+
+    plt.scatter(Xnoise_ts[:, 0], Xnoise_ts[:, 1],
+                c=perm_lab_noise, cmap='rainbow_r')
+    plt.title("Clustering labels for test set")
+
 
 We observe that the best number of clusters selected is equal to 2, which does not reflect the true label
 distributions of the synthetic dataset, although the misclassification performance during training is equal to 0
@@ -142,7 +148,7 @@ distributions of the synthetic dataset, although the misclassification performan
 .. image:: images/predlabnoisy.png
     :align: center
 
-ADI score and accuracy value suggest that the model generalizes poorly on test set.
+AMI score and accuracy value suggest that the model generalizes poorly on test set.
 
 .. parsed-literal::
 
@@ -150,9 +156,9 @@ ADI score and accuracy value suggest that the model generalizes poorly on test s
 
 Uniform Manifold Approximation and Projection for Dimensionality Reduction (UMAP; McInnes et al., 2018) is a
 topology-based dimensionality reduction tool that can be used to pre-process data for clustering
-(see `link <https://umap-learn.readthedocs.io/en/latest/clustering.html>`__). Applied to our noisy dataset with
-suggested parameters we obtain that clusters are correctly identified visually as dense and separated blobs,
-that ``reval`` now easily identifies.
+(see `here <https://umap-learn.readthedocs.io/en/latest/clustering.html>`__). Applied to our noisy dataset with
+suggested parameters, we obtain that clusters are correctly identified visually as dense and separated blobs,
+that ``reval`` now easily detects.
 
 McInnes, L, Healy, J, *UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction*,
 ArXiv e-prints 1802.03426, 2018.
@@ -279,7 +285,10 @@ number of features (from 784 to 10), see scatterplots below.
     :align: center
 
 We now apply ``reval`` with 10-fold cross-validation, number of clusters ranging from 2 to 11 and random
-labeling iterated 100 times.
+labeling iterated 100 times. We again select hierarchical clustering with k-nearest neighbors classifier for
+number of cluster selection.
+
+
 
 .. code:: python3
 
@@ -325,7 +334,7 @@ are low and high, respectively.
 .. image:: images/performancemnist.png
     :align: center
 
-We observe that the classes correctly identified are those that after UMAP reduction show good cohesion and separation,
+We observe that the classes correctly identified are those that, after UMAP reduction, show good cohesion and separation,
 which is why the model performance is good.
 On the contrary, clusters that are closer together receive the same labels (see scatterplot below) and are misclassified.
 This lowers the external ACC score although returning a high AMI score, which is based on cluster overlaps.

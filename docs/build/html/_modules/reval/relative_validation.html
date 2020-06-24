@@ -78,14 +78,14 @@
               
             
             
-              <p class="caption"><span class="caption-text">User Guide / Tutorial</span></p>
+              <p class="caption"><span class="caption-text">User guide / Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../code_usage.html">How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../experiments.html">Performance on baseline datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code_usage.html">How to use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../experiments.html">Performance on benchmark datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../datadimension.html">Examples of how things can go wrong</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Code Guide</span></p>
+<p class="caption"><span class="caption-text">Code guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../code_description.html">Code description</a></li>
 </ul>
@@ -157,7 +157,8 @@
 
 
 <div class="viewcode-block" id="RelativeValidation"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation.RelativeValidation">[docs]</a><span class="k">class</span> <span class="nc">RelativeValidation</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;This class allows to perform the relative clustering validation procedure.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class allows to perform the relative clustering validation procedure.</span>
 <span class="sd">    A supervised algorithm is required to test cluster stability.</span>
 <span class="sd">    Labels output from a clustering algorithm are used as true labels.</span>
 
@@ -166,19 +167,22 @@
 <span class="sd">    :param c: initialized class for clustering algorithm</span>
 <span class="sd">    :type c: class</span>
 <span class="sd">    :param nrand: number of iterations to normalize cluster stability</span>
+<span class="sd">    :type nrand: int</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">nrand</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Construct method</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct method</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">class_method</span> <span class="o">=</span> <span class="n">s</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span> <span class="o">=</span> <span class="n">c</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nrand</span> <span class="o">=</span> <span class="n">nrand</span>
 
 <div class="viewcode-block" id="RelativeValidation.train"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation.RelativeValidation.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Method that performs the training. It compares the clustering labels on training set</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method that performs training. It compares the clustering labels on training set</span>
 <span class="sd">        (i.e., A(X) computed by :class:`reval.relative_validation.RelativeValidation.clust_method`) against</span>
-<span class="sd">        the labels obtained through the classification algorithm</span>
+<span class="sd">        the labels obtained from the classification algorithm</span>
 <span class="sd">        (i.e., f(X), computed by :class:`reval.relative_validation.RelativeValidation.class_method`).</span>
 <span class="sd">        It returns the misclassification error, the supervised model fitted to the data,</span>
 <span class="sd">        and both clustering and classification labels.</span>
@@ -196,13 +200,14 @@
         <span class="k">return</span> <span class="n">misclass</span><span class="p">,</span> <span class="n">fitclass_tr</span><span class="p">,</span> <span class="n">clustlab_tr</span></div>
 
 <div class="viewcode-block" id="RelativeValidation.test"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation.RelativeValidation.test">[docs]</a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">fit_model</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Method that compares the clustering labels on the test set (i.e., A(X&#39;), computed by</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method that compares test set clustering labels (i.e., A(X&#39;), computed by</span>
 <span class="sd">        :class:`reval.relative_validation.RelativeValidation.clust_method`) against</span>
 <span class="sd">        the (permuted) labels obtained through the classification algorithm fitted to the training set</span>
 <span class="sd">        (i.e., f(X&#39;), computed by</span>
 <span class="sd">        :class:`reval.relative_validation.RelativeValidation.class_method`).</span>
-<span class="sd">        It return the misclassification error., together with</span>
-<span class="sd">        both the clustering and classification labels.</span>
+<span class="sd">        It returns the misclassification error, together with</span>
+<span class="sd">        both clustering and classification labels.</span>
 
 <span class="sd">        :param test_data: test dataset</span>
 <span class="sd">        :type test_data: ndarray, (n_samples, n_features)</span>
@@ -213,18 +218,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">clustlab_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>  <span class="c1"># A_k(X&#39;)</span>
         <span class="n">classlab_ts</span> <span class="o">=</span> <span class="n">fit_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
-        <span class="c1"># bestperm = _kuhn_munkres_algorithm(clustlab_ts, classlab_ts)  # array of integers</span>
         <span class="n">bestperm</span> <span class="o">=</span> <span class="n">_kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">classlab_ts</span><span class="p">,</span> <span class="n">clustlab_ts</span><span class="p">)</span>  <span class="c1"># array of integers</span>
-        <span class="c1"># misclass = zero_one_loss(clustlab_ts, bestperm)</span>
         <span class="n">misclass</span> <span class="o">=</span> <span class="n">zero_one_loss</span><span class="p">(</span><span class="n">classlab_ts</span><span class="p">,</span> <span class="n">bestperm</span><span class="p">)</span>
-        <span class="c1"># return misclass, clustlab_ts</span>
         <span class="k">return</span> <span class="n">misclass</span><span class="p">,</span> <span class="n">bestperm</span></div>
 
 <div class="viewcode-block" id="RelativeValidation.rndlabels_traineval"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation.RelativeValidation.rndlabels_traineval">[docs]</a>    <span class="k">def</span> <span class="nf">rndlabels_traineval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">,</span> <span class="n">test_labels</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Method that performs random labeling on the training set</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method that performs random labeling on the training set</span>
 <span class="sd">        (N times according to</span>
 <span class="sd">        :class:`reval.relative_validation.RelativeValidation.nrand` instance attribute) and evaluates</span>
-<span class="sd">        the fitted models on the test set.</span>
+<span class="sd">        the fitted models on test set.</span>
 
 <span class="sd">        :param train_data: training dataset</span>
 <span class="sd">        :type train_data: ndarray, (n_samples, n_features)</span>
@@ -240,19 +243,13 @@
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">shuf_tr</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">train_labels</span><span class="p">)</span>
                    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nrand</span><span class="p">)]</span>
-        <span class="c1"># misclass_tr, misclass_ts = [], []</span>
-        <span class="c1"># for lab in shuf_tr:</span>
-        <span class="c1">#     self.class_method.fit(train_data, lab)</span>
-        <span class="c1">#     misclass_tr.append(zero_one_loss(lab, self.class_method.predict(train_data)))</span>
-        <span class="c1">#     misclass_ts.append(zero_one_loss(test_labels,</span>
-        <span class="c1">#                                      _kuhn_munkres_algorithm(test_labels,</span>
-        <span class="c1">#                                                              self.class_method.predict(test_data))))</span>
         <span class="n">misclass_ts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rescale_score_</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">test_labels</span><span class="p">),</span> <span class="n">shuf_tr</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">misclass_ts</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="RelativeValidation._rescale_score_"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation.RelativeValidation._rescale_score_">[docs]</a>    <span class="k">def</span> <span class="nf">_rescale_score_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xtr</span><span class="p">,</span> <span class="n">xts</span><span class="p">,</span> <span class="n">randlabtr</span><span class="p">,</span> <span class="n">labts</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Private method that computes the misclassification error when predicting test labels</span>
-<span class="sd">        with classification model fitted on training random labels.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Private method that computes the misclassification error when predicting test labels</span>
+<span class="sd">        with classification model fitted on training set with random labels.</span>
 
 <span class="sd">        :param xtr: training dataset</span>
 <span class="sd">        :type xtr: ndarray, (n_samples, n_features)</span>
@@ -272,7 +269,7 @@
 
 <div class="viewcode-block" id="_kuhn_munkres_algorithm"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation._kuhn_munkres_algorithm">[docs]</a><span class="k">def</span> <span class="nf">_kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">true_lab</span><span class="p">,</span> <span class="n">pred_lab</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Private function that implements the Hungarian method. It selects the best label permutation of the</span>
+<span class="sd">    Private function that implements the Kuhn-Munkres algorithm method. It selects the best label permutation of the</span>
 <span class="sd">    classification output that minimizes the</span>
 <span class="sd">    misclassification error when compared to the clustering labels.</span>
 

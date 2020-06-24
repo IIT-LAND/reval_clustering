@@ -18,9 +18,9 @@ Functions
 ---------
 
 Useful functions that can be used on their own are also available. In particular,
-``reval.relative_validation._kuhn_munkres_algorithm`` performs consistent permutation of predicted labels
-in order to minimize the misclassification error with respect to true labels. Kuhn-Munkres algorithm is used
-(Kuhn, 1955; Munkres, 1957)
+``reval.relative_validation._kuhn_munkres_algorithm`` is an implementation of the Kuhn-Munkres algorithm
+(Kuhn, 1955; Munkres, 1957), that performs consistent permutation of predicted labels
+in order to minimize the misclassification error with respect to true labels.
 
 Kuhn, H. W. (1955). The Hungarian method for the assignment problem. *Naval research logistics quarterly*,
 2(1‐2), 83-97.

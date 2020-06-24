@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Examples and performance" href="experiments.html" /> 
+    <link rel="prev" title="Examples of how things can go wrong" href="datadimension.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -79,13 +79,14 @@
               
             
             
-              <p class="caption"><span class="caption-text">User Guide / Tutorial</span></p>
+              <p class="caption"><span class="caption-text">User guide / Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="code_usage.html">How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="experiments.html">Examples and performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code_usage.html">How to use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="experiments.html">Performance on benchmark datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datadimension.html">Examples of how things can go wrong</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Code Guide</span></p>
+<p class="caption"><span class="caption-text">Code guide</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Code description</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#classes">Classes</a></li>
@@ -173,7 +174,7 @@ Labels output from a clustering algorithm are used as true labels.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>s</strong> (<em>class</em>) – initialized class for the supervised method</p></li>
 <li><p><strong>c</strong> (<em>class</em>) – initialized class for clustering algorithm</p></li>
-<li><p><strong>nrand</strong> – number of iterations to normalize cluster stability</p></li>
+<li><p><strong>nrand</strong> (<em>int</em>) – number of iterations to normalize cluster stability</p></li>
 </ul>
 </dd>
 </dl>
@@ -181,7 +182,7 @@ Labels output from a clustering algorithm are used as true labels.</p>
 <dt id="reval.relative_validation.RelativeValidation._rescale_score_">
 <code class="sig-name descname">_rescale_score_</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xtr</span></em>, <em class="sig-param"><span class="n">xts</span></em>, <em class="sig-param"><span class="n">randlabtr</span></em>, <em class="sig-param"><span class="n">labts</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/relative_validation.html#RelativeValidation._rescale_score_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.relative_validation.RelativeValidation._rescale_score_" title="Permalink to this definition">¶</a></dt>
 <dd><p>Private method that computes the misclassification error when predicting test labels
-with classification model fitted on training random labels.</p>
+with classification model fitted on training set with random labels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -206,7 +207,7 @@ with classification model fitted on training random labels.</p>
 <dd><p>Method that performs random labeling on the training set
 (N times according to
 <code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation.nrand</span></code> instance attribute) and evaluates
-the fitted models on the test set.</p>
+the fitted models on test set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -228,13 +229,13 @@ the fitted models on the test set.</p>
 <dl class="py method">
 <dt id="reval.relative_validation.RelativeValidation.test">
 <code class="sig-name descname">test</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">test_data</span></em>, <em class="sig-param"><span class="n">fit_model</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/relative_validation.html#RelativeValidation.test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.relative_validation.RelativeValidation.test" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method that compares the clustering labels on the test set (i.e., A(X’), computed by
+<dd><p>Method that compares test set clustering labels (i.e., A(X’), computed by
 <code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation.clust_method</span></code>) against
 the (permuted) labels obtained through the classification algorithm fitted to the training set
 (i.e., f(X’), computed by
 <code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation.class_method</span></code>).
-It return the misclassification error., together with
-both the clustering and classification labels.</p>
+It returns the misclassification error, together with
+both clustering and classification labels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -254,9 +255,9 @@ both the clustering and classification labels.</p>
 <dl class="py method">
 <dt id="reval.relative_validation.RelativeValidation.train">
 <code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">train_data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/relative_validation.html#RelativeValidation.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.relative_validation.RelativeValidation.train" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method that performs the training. It compares the clustering labels on training set
+<dd><p>Method that performs training. It compares the clustering labels on training set
 (i.e., A(X) computed by <code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation.clust_method</span></code>) against
-the labels obtained through the classification algorithm
+the labels obtained from the classification algorithm
 (i.e., f(X), computed by <code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation.class_method</span></code>).
 It returns the misclassification error, the supervised model fitted to the data,
 and both clustering and classification labels.</p>
@@ -279,17 +280,17 @@ and both clustering and classification labels.</p>
 <dt id="reval.best_nclust_cv.FindBestClustCV">
 <em class="property">class </em><code class="sig-prename descclassname">reval.best_nclust_cv.</code><code class="sig-name descname">FindBestClustCV</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nfold</span></em>, <em class="sig-param"><span class="n">nclust_range</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">nrand</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/best_nclust_cv.html#FindBestClustCV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.best_nclust_cv.FindBestClustCV" title="Permalink to this definition">¶</a></dt>
 <dd><p>Child class of <a class="reference internal" href="#reval.relative_validation.RelativeValidation" title="reval.relative_validation.RelativeValidation"><code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation</span></code></a>.
-It performs cross validation on the training set to
+It performs k-fold cross validation on the training set to
 select the best number of clusters, i.e., the number that minimizes the
-misclassification error.</p>
+normalized stability (i.e., average misclassification error/asymptotic misclassification rate).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nfold</strong> (<em>int</em>) – number of CV folds</p></li>
 <li><p><strong>nclust_range</strong> (<em>list</em><em> (</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em><em>)</em>) – list with minimum and maximum cluster numbers to look for</p></li>
 <li><p><strong>s</strong> (<em>class</em>) – classification object inherited from <a class="reference internal" href="#reval.relative_validation.RelativeValidation" title="reval.relative_validation.RelativeValidation"><code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation</span></code></a></p></li>
-<li><p><strong>s</strong> – classification object inherited from <a class="reference internal" href="#reval.relative_validation.RelativeValidation" title="reval.relative_validation.RelativeValidation"><code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation</span></code></a></p></li>
-<li><p><strong>nrand</strong> – number of iterations for normalized misclassification error, inherited from
+<li><p><strong>c</strong> (<em>class</em>) – clustering object inherited from <a class="reference internal" href="#reval.relative_validation.RelativeValidation" title="reval.relative_validation.RelativeValidation"><code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation</span></code></a></p></li>
+<li><p><strong>nrand</strong> (<em>int</em>) – number of random labeling iterations to compute asymptotic misclassification rate, inherited from
 <a class="reference internal" href="#reval.relative_validation.RelativeValidation" title="reval.relative_validation.RelativeValidation"><code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation</span></code></a> class</p></li>
 </ul>
 </dd>
@@ -300,7 +301,7 @@ misclassification error.</p>
 <dd><p>This method takes as input the training dataset and the
 stratification vector (if available) and performs a
 CV to select the best number of clusters that minimizes
-normalized misclassification error.</p>
+normalized stability.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -309,10 +310,11 @@ normalized misclassification error.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>CV metrics for training and validation sets, best number of clusters</p>
+<dd class="field-even"><p>CV metrics for training and validation sets, best number of clusters,
+misclassification errors at each CV iteration</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dictionary, int</p>
+<dd class="field-odd"><p>dictionary, int, dictionary</p>
 </dd>
 </dl>
 </dd></dl>
@@ -320,8 +322,8 @@ normalized misclassification error.</p>
 <dl class="py method">
 <dt id="reval.best_nclust_cv.FindBestClustCV.evaluate">
 <code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_tr</span></em>, <em class="sig-param"><span class="n">data_ts</span></em>, <em class="sig-param"><span class="n">nclust</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/best_nclust_cv.html#FindBestClustCV.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.best_nclust_cv.FindBestClustCV.evaluate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method that applies clustering algorithm with the best number of clusters
-to the test set. It returns the clustering labels.</p>
+<dd><p>Method that applies the selected clustering algorithm with the best number of clusters
+to the test set. It returns clustering labels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -345,9 +347,9 @@ to the test set. It returns the clustering labels.</p>
 <div class="section" id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
 <p>Useful functions that can be used on their own are also available. In particular,
-<code class="docutils literal notranslate"><span class="pre">reval.relative_validation._kuhn_munkres_algorithm</span></code> performs consistent permutation of predicted labels
-in order to minimize the misclassification error with respect to true labels. Kuhn-Munkres algorithm is used
-(Kuhn, 1955; Munkres, 1957)</p>
+<code class="docutils literal notranslate"><span class="pre">reval.relative_validation._kuhn_munkres_algorithm</span></code> is an implementation of the Kuhn-Munkres algorithm
+(Kuhn, 1955; Munkres, 1957), that performs consistent permutation of predicted labels
+in order to minimize the misclassification error with respect to true labels.</p>
 <p>Kuhn, H. W. (1955). The Hungarian method for the assignment problem. <em>Naval research logistics quarterly</em>,
 2(1‐2), 83-97.</p>
 <p>Munkres, J. (1957). Algorithms for the assignment and transportation problems.
@@ -355,7 +357,7 @@ in order to minimize the misclassification error with respect to true labels. Ku
 <span class="target" id="module-reval.relative_validation"></span><dl class="py function">
 <dt id="reval.relative_validation._kuhn_munkres_algorithm">
 <code class="sig-prename descclassname">reval.relative_validation.</code><code class="sig-name descname">_kuhn_munkres_algorithm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">true_lab</span></em>, <em class="sig-param"><span class="n">pred_lab</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/relative_validation.html#_kuhn_munkres_algorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.relative_validation._kuhn_munkres_algorithm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Private function that implements the Hungarian method. It selects the best label permutation of the
+<dd><p>Private function that implements the Kuhn-Munkres algorithm method. It selects the best label permutation of the
 classification output that minimizes the
 misclassification error when compared to the clustering labels.</p>
 <dl class="field-list simple">
@@ -404,7 +406,7 @@ for training and validation sets.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cv_score</strong> (<em>dictionary</em>) – collection of cv scores</p></li>
+<li><p><strong>cv_score</strong> (<em>dictionary</em>) – collection of cv scores as output by <cite>reval.best_nclust_cv.FindBestCLustCV.best_nclust</cite></p></li>
 <li><p><strong>title</strong> (<em>str</em>) – figure title</p></li>
 <li><p><strong>figsize</strong> (<em>tuple</em>) – (width, height)</p></li>
 <li><p><strong>save_fig</strong> (<em>str</em>) – file name for saving figure in png format, default None</p></li>
@@ -425,7 +427,7 @@ for training and validation sets.</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="experiments.html" class="btn btn-neutral float-left" title="Examples and performance" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="datadimension.html" class="btn btn-neutral float-left" title="Examples of how things can go wrong" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

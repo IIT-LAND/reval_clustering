@@ -1,7 +1,7 @@
-How to Use ``reval``
---------------------
+How to use ``reval``
+====================
 
-In the following, we are going to simulate N = 1,000 samples of dataset with two groups and two features
+In the following, we are going to simulate N = 1,000 sample dataset with two groups and two features
 (for visualization purposes), then we will show how to apply the ``reval`` package and investigate
 the result types. We will use hierarchical clustering and KNN classification algorithms.
 
@@ -60,9 +60,9 @@ selected number of clusters we need to call:
     nbest
     # 2
     metrics['train'][nbest]
-    # (0.0, (0.0, 0.0)) (stab, CI)
+    # (0.0, (0.0, 0.0)) (stab, (stab, error))
     metrics['val'][nbest]
-    # (0.0, (0.0, 0.0)) (stab, CI)
+    # (0.0, (0.0, 0.0)) (stab, (stab, error))
 
 In ``chk_dist`` we have access to the misclassification errors during
 cross-validation. ``out`` returns train/test accuracies and test set clustering labels.
@@ -78,7 +78,8 @@ cross-validation. ``out`` returns train/test accuracies and test set clustering 
     out.test_acc
     # 1.0
 
-To visualize performance metrics:
+To visualize performance metrics during cross-validation, i.e., training stability and validation normalized stability
+with confidence intervals:
 
 .. code:: python3
 

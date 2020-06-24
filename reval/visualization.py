@@ -10,7 +10,7 @@ def plot_metrics(cv_score, title, figsize=(20, 10), save_fig=None):
     Function that plots the average performance (i.e., normalized stability) over cross-validation
     for training and validation sets.
 
-    :param cv_score: collection of cv scores
+    :param cv_score: collection of cv scores as output by `reval.best_nclust_cv.FindBestCLustCV.best_nclust`
     :type cv_score: dictionary
     :param title: figure title
     :type title: str
@@ -36,7 +36,7 @@ def plot_metrics(cv_score, title, figsize=(20, 10), save_fig=None):
     plt.ylabel('Normalized stability', fontsize=18)
     plt.title(title, fontsize=18)
     if save_fig is not None:
-        plt.savefig(f'./plot/{save_fig}', format='png')
+        plt.savefig(f'./{save_fig}', format='png')
     else:
         plt.show()
 
