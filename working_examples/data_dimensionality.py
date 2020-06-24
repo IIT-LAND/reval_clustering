@@ -112,7 +112,7 @@ plt.scatter(X_ts[:, 0], X_ts[:, 1],
             c=_kuhn_munkres_algorithm(np.array(y_ts),
                                       out.test_cllab),
             cmap='rainbow_r')
-plt.title(f'Predicted labels for classes with Ns=(100, 50, 50')
+plt.title(f'Predicted labels for classes with Ns=(100, 50, 50)')
 
 # We now increase the number of samples in groups 2 and 3 to 500
 data1 = np.random.normal(-5, size=(100, 2))
@@ -145,7 +145,7 @@ plot_metrics(metrics, "Reval performance for synthetic dataset with Ns=(100, 500
 plt.scatter(X_ts[:, 0], X_ts[:, 1],
             c=y_ts,
             cmap='rainbow_r')
-plt.title(f'Test set true labels for classes with Ns=(100, 500, 500')
+plt.title(f'Test set true labels for classes with Ns=(100, 500, 500)')
 
 plt.scatter(X_ts[:, 0], X_ts[:, 1],
             c=_kuhn_munkres_algorithm(np.array(y_ts),
