@@ -5,16 +5,23 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import AgglomerativeClustering
 import math
 
+# Modify to test other functions and parameters
+RNDLABELS_ITER = 10
+CLASSIFIER = KNeighborsClassifier(n_neighbors=5)
+CLUSTERING = AgglomerativeClustering()
+NCLUST_RANGE = [2, 4]
+NFOLD = 2
+
 
 class TestBestNclusterCV(unittest.TestCase):
 
     @classmethod
     def setUp(cls):
-        cls.s = KNeighborsClassifier(n_neighbors=5)
-        cls.c = AgglomerativeClustering()
-        cls.nrand = 10
-        cls.nfold = 2
-        cls.nclust_range = [2, 4]
+        cls.s = CLASSIFIER
+        cls.c = CLUSTERING
+        cls.nrand = RNDLABELS_ITER
+        cls.nfold = NFOLD
+        cls.nclust_range = NCLUST_RANGE
         cls.findbest = FindBestClustCV(cls.nfold, cls.nclust_range, cls.s, cls.c, cls.nrand)
 
     def test_best_nclust(self):

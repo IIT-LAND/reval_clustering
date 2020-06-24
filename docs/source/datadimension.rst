@@ -2,13 +2,14 @@ Examples of how things can go wrong
 ===================================
 
 We discuss now typical situations that might happen when processing real-world datasets and
-how these can modify ``reval`` performance.
+how these can modify ``reval`` performance. Code can be found in
+*reval_clustering/working_examples/*, ``data_dimensionality.py`` file.
 
 Number of features: when enough is enough?
 ------------------------------------------
 
-With ``make_blobs`` function from ``sklearn.datasets`` module, we generate a noisy dataset
-(i.e., we set ``cluster_std=5``) with 5 classes, 1,000 samples and 10 features (see scatterplot below).
+With ``make_blobs`` function from ``sklearn.datasets``, we generate a noisy dataset
+(i.e., we set ``cluster_std=5``) with 5 classes, 1,000 samples, and 10 features (see scatterplot below).
 We partition it into training and test sets (30%) and we apply the relative validation algorithm with 10-fold cross-validation,
 number of clusters ranging from 2 to 6, k-nearest neighbors and hierarchical clustering as classification
 and clustering algorithms, respectively, and 100 iterations of random labeling.
@@ -96,8 +97,8 @@ parameters as before (see scatterplot with true labels below).
     relabeling = _kuhn_munkres_algorithm(y_ts, out.test_cllab)
     print(f'ACC test set = {1 - zero_one_loss(y_ts, relabeling)}')
 
-Because we increased the space volume data become more sparse, but still preserving their group structure.
-For this reason now the algorithm is able to detect all 5 clusters. (See performance plot and scatterplot).
+Because we increased the space volume, data become more sparse, but still preserving their group structure.
+For this reason, now the algorithm is able to detect all 5 clusters. (See performance plot and scatterplot).
 
 .. image:: images/performance20features.png
     :align: center
@@ -117,11 +118,12 @@ On the test set, we obtain:
     AMI = 0.98; ACC = 0.99
 
 
-_Remark_: in situations where we are able to increase the number of features for a dataset,
+**Remark**: in situations where we are able to increase the number of features for a dataset,
 it is important to remember the
 `curse of dimensionality <https://en.wikipedia.org/wiki/Curse_of_dimensionality>`__, i.e.,
-if the number of samples is not enough, with respect to the number of features, the increase of the space dimension
-will not help detecting dataset subgroups, because the data would become sparse, hence losing their structure.
+the increase of the space dimension determines available data to become sparse and the number of samples required to
+detect an effect to grow exponentially. For this reason, increasing the number of features might not help detect
+dataset subgroups, because the data would become sparse, hence losing their structure.
 
 
 Number of samples: too few, not good
@@ -195,7 +197,7 @@ least number of subjects and higher standard deviation, are considered as a uniq
 .. image:: images/predlab1005050.png
     :align: center
 
-We try to increase the number of samples for groups 2 and 3 from 50 to 500 (see scatterplot)
+To fix this, we try to increase the number of samples for groups 2 and 3 from 50 to 500 (see scatterplot)
 and we rerun the algorithm with the same parameters.
 
 .. image:: images/classes100500500.png
@@ -234,7 +236,7 @@ and we rerun the algorithm with the same parameters.
     plt.scatter(X_ts[:, 0], X_ts[:, 1],
                 c=y_ts,
                 cmap='rainbow_r')
-    plt.title(f'Test set true labels for classes with Ns=(100, 500, 500')
+    plt.title(f'Test set true labels for classes with Ns=(100, 500, 500)')
 
     plt.scatter(X_ts[:, 0], X_ts[:, 1],
                 c=_kuhn_munkres_algorithm(np.array(y_ts),
@@ -265,5 +267,4 @@ validation and testing metrics, i.e., normalized stability with 95% CI and testi
 
     AMI = 0.75; ACC (external) = 0.93; Normalized stability: 0.1 (0.004; 0.194); ACC = 0.98
 
-Increasing the sampling size, the algorithm was able to correctly identify the three distributions
-and correctly identify groups 2 and 3.
+Increasing the sampling size, the algorithm was able to correctly identify the three distributions.

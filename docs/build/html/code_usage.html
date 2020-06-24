@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>How to Use reval &mdash; Relative clustering validation 0.0.1 documentation</title>
+  <title>How to use reval &mdash; Relative clustering validation 0.0.1 documentation</title>
   
 
   
@@ -80,14 +80,14 @@
               
             
             
-              <p class="caption"><span class="caption-text">User Guide / Tutorial</span></p>
+              <p class="caption"><span class="caption-text">User guide / Tutorial</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="experiments.html">Performance on baseline datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datadimension.html">Examples of how things can go wrong</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Code Guide</span></p>
+<p class="caption"><span class="caption-text">Code guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="code_description.html">Code description</a></li>
 </ul>
@@ -135,7 +135,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code></li>
+      <li>How to use <code class="docutils literal notranslate"><span class="pre">reval</span></code></li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -155,8 +155,8 @@
            <div itemprop="articleBody">
             
   <div class="section" id="how-to-use-reval">
-<h1>How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code><a class="headerlink" href="#how-to-use-reval" title="Permalink to this headline">¶</a></h1>
-<p>In the following, we are going to simulate N = 1,000 samples of dataset with two groups and two features
+<h1>How to use <code class="docutils literal notranslate"><span class="pre">reval</span></code><a class="headerlink" href="#how-to-use-reval" title="Permalink to this headline">¶</a></h1>
+<p>In the following, we are going to simulate N = 1,000 sample dataset with two groups and two features
 (for visualization purposes), then we will show how to apply the <code class="docutils literal notranslate"><span class="pre">reval</span></code> package and investigate
 the result types. We will use hierarchical clustering and KNN classification algorithms.</p>
 <p>First, let us import a bunch of useful libraries and our class <code class="docutils literal notranslate"><span class="pre">reval.best_nclust_cv.FindBestClustCV</span></code>:</p>
@@ -201,9 +201,9 @@ selected number of clusters we need to call:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">nbest</span>
 <span class="c1"># 2</span>
 <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">][</span><span class="n">nbest</span><span class="p">]</span>
-<span class="c1"># (0.0, (0.0, 0.0)) (stab, CI)</span>
+<span class="c1"># (0.0, (0.0, 0.0)) (stab, (stab, error))</span>
 <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">][</span><span class="n">nbest</span><span class="p">]</span>
-<span class="c1"># (0.0, (0.0, 0.0)) (stab, CI)</span>
+<span class="c1"># (0.0, (0.0, 0.0)) (stab, (stab, error))</span>
 </pre></div>
 </div>
 <p>In <code class="docutils literal notranslate"><span class="pre">chk_dist</span></code> we have access to the misclassification errors during
@@ -218,7 +218,8 @@ cross-validation. <code class="docutils literal notranslate"><span class="pre">o
 <span class="c1"># 1.0</span>
 </pre></div>
 </div>
-<p>To visualize performance metrics:</p>
+<p>To visualize performance metrics during cross-validation, i.e., training stability and validation normalized stability
+with confidence intervals:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">reval.visualization</span> <span class="kn">import</span> <span class="n">plot_metrics</span>
 <span class="n">plot_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Reval metrics&quot;</span><span class="p">)</span>
 </pre></div>

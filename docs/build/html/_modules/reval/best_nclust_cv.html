@@ -78,14 +78,14 @@
               
             
             
-              <p class="caption"><span class="caption-text">User Guide / Tutorial</span></p>
+              <p class="caption"><span class="caption-text">User guide / Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../code_usage.html">How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../experiments.html">Performance on baseline datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code_usage.html">How to use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../experiments.html">Performance on benchmark datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../datadimension.html">Examples of how things can go wrong</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Code Guide</span></p>
+<p class="caption"><span class="caption-text">Code guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../code_description.html">Code description</a></li>
 </ul>
@@ -160,10 +160,11 @@
 
 
 <div class="viewcode-block" id="FindBestClustCV"><a class="viewcode-back" href="../../code_description.html#reval.best_nclust_cv.FindBestClustCV">[docs]</a><span class="k">class</span> <span class="nc">FindBestClustCV</span><span class="p">(</span><span class="n">RelativeValidation</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Child class of :class:`reval.relative_validation.RelativeValidation`.</span>
-<span class="sd">    It performs cross validation on the training set to</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Child class of :class:`reval.relative_validation.RelativeValidation`.</span>
+<span class="sd">    It performs k-fold cross validation on the training set to</span>
 <span class="sd">    select the best number of clusters, i.e., the number that minimizes the</span>
-<span class="sd">    misclassification error.</span>
+<span class="sd">    normalized stability (i.e., average misclassification error/asymptotic misclassification rate).</span>
 
 <span class="sd">    :param nfold: number of CV folds</span>
 <span class="sd">    :type nfold: int</span>
@@ -171,31 +172,35 @@
 <span class="sd">    :type nclust_range: list ([int, int])</span>
 <span class="sd">    :param s: classification object inherited from :class:`reval.relative_validation.RelativeValidation`</span>
 <span class="sd">    :type s: class</span>
-<span class="sd">    :param s: classification object inherited from :class:`reval.relative_validation.RelativeValidation`</span>
+<span class="sd">    :param c: clustering object inherited from :class:`reval.relative_validation.RelativeValidation`</span>
 <span class="sd">    :type c: class</span>
-<span class="sd">    :param nrand: number of iterations for normalized misclassification error, inherited from</span>
+<span class="sd">    :param nrand: number of random labeling iterations to compute asymptotic misclassification rate, inherited from</span>
 <span class="sd">        :class:`reval.relative_validation.RelativeValidation` class</span>
+<span class="sd">    :type nrand: int</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nfold</span><span class="p">,</span> <span class="n">nclust_range</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">nrand</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Construct method</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct method</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">nrand</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nfold</span> <span class="o">=</span> <span class="n">nfold</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nclust_range</span> <span class="o">=</span> <span class="n">nclust_range</span>
 
 <div class="viewcode-block" id="FindBestClustCV.best_nclust"><a class="viewcode-back" href="../../code_description.html#reval.best_nclust_cv.FindBestClustCV.best_nclust">[docs]</a>    <span class="k">def</span> <span class="nf">best_nclust</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">strat_vect</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This method takes as input the training dataset and the</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method takes as input the training dataset and the</span>
 <span class="sd">        stratification vector (if available) and performs a</span>
 <span class="sd">        CV to select the best number of clusters that minimizes</span>
-<span class="sd">        normalized misclassification error.</span>
+<span class="sd">        normalized stability.</span>
 
 <span class="sd">        :param data: training dataset</span>
 <span class="sd">        :type data: ndarray, (n_samples, n_features)</span>
 <span class="sd">        :param strat_vect: vector for stratification, defaults to None</span>
 <span class="sd">        :type strat_vect: ndarray, (n_samples,)</span>
-<span class="sd">        :return: CV metrics for training and validation sets, best number of clusters</span>
-<span class="sd">        :rtype: dictionary, int</span>
+<span class="sd">        :return: CV metrics for training and validation sets, best number of clusters,</span>
+<span class="sd">            misclassification errors at each CV iteration</span>
+<span class="sd">        :rtype: dictionary, int, dictionary</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">reval</span> <span class="o">=</span> <span class="n">RelativeValidation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">class_method</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nrand</span><span class="p">)</span>
@@ -232,8 +237,9 @@
         <span class="k">return</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">bestncl</span><span class="p">,</span> <span class="n">check_dist</span></div>
 
 <div class="viewcode-block" id="FindBestClustCV.evaluate"><a class="viewcode-back" href="../../code_description.html#reval.best_nclust_cv.FindBestClustCV.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_tr</span><span class="p">,</span> <span class="n">data_ts</span><span class="p">,</span> <span class="n">nclust</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Method that applies clustering algorithm with the best number of clusters</span>
-<span class="sd">        to the test set. It returns the clustering labels.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method that applies the selected clustering algorithm with the best number of clusters</span>
+<span class="sd">        to the test set. It returns clustering labels.</span>
 
 <span class="sd">        :param data_tr: training dataset</span>
 <span class="sd">        :type data_tr: ndarray, (n_samples, n_features)</span>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Performance on baseline datasets &mdash; Relative clustering validation 0.0.1 documentation</title>
+  <title>Performance on benchmark datasets &mdash; Relative clustering validation 0.0.1 documentation</title>
   
 
   
@@ -36,7 +36,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Examples of how things can go wrong" href="datadimension.html" />
-    <link rel="prev" title="How to Use reval" href="code_usage.html" /> 
+    <link rel="prev" title="How to use reval" href="code_usage.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -80,11 +80,11 @@
               
             
             
-              <p class="caption"><span class="caption-text">User Guide / Tutorial</span></p>
+              <p class="caption"><span class="caption-text">User guide / Tutorial</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="code_usage.html">How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Performance on baseline datasets</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="code_usage.html">How to use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Performance on benchmark datasets</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#gaussian-blobs">Gaussian blobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#gaussian-blobs-with-noise">Gaussian blobs with noise</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mnist-dataset">MNIST dataset</a></li>
@@ -92,7 +92,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="datadimension.html">Examples of how things can go wrong</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Code Guide</span></p>
+<p class="caption"><span class="caption-text">Code guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="code_description.html">Code description</a></li>
 </ul>
@@ -140,7 +140,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Performance on baseline datasets</li>
+      <li>Performance on benchmark datasets</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -159,17 +159,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="performance-on-baseline-datasets">
-<h1>Performance on baseline datasets<a class="headerlink" href="#performance-on-baseline-datasets" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="performance-on-benchmark-datasets">
+<h1>Performance on benchmark datasets<a class="headerlink" href="#performance-on-benchmark-datasets" title="Permalink to this headline">¶</a></h1>
 <p>We present here three examples to test <code class="docutils literal notranslate"><span class="pre">reval</span></code> performance. Code can be found in
-<em>relative_validation_clustering/working_examples</em> folder.</p>
+<em>reval_clustering/working_examples</em> folder.</p>
 <ol class="arabic simple">
 <li><p>N = 1,000 Gaussian blob samples with 10 features divided into 5 clusters (code in <code class="docutils literal notranslate"><span class="pre">blobs.py</span></code>);</p></li>
 </ol>
 <p>2. N = 1,000 Gaussian blob samples with 10 features divided into 5 clusters with noise parameter <em>cluster_std</em>
 set at 3 (code in <code class="docutils literal notranslate"><span class="pre">blobs.py</span></code>);</p>
 <ol class="arabic simple" start="3">
-<li><p>N = 28,000 samples from the MNIST handwritten digits dataset (code in <code class="docutils literal notranslate"><span class="pre">mnist.py</span></code>).</p></li>
+<li><p>N = 14,000 samples from the MNIST handwritten digits dataset (code in <code class="docutils literal notranslate"><span class="pre">mnist.py</span></code>).</p></li>
 </ol>
 <div class="section" id="gaussian-blobs">
 <h2>Gaussian blobs<a class="headerlink" href="#gaussian-blobs" title="Permalink to this headline">¶</a></h2>
@@ -209,19 +209,19 @@ set at 3 (code in <code class="docutils literal notranslate"><span class="pre">b
 100 random labeling iterations, and number of clusters varying from 2 to 6. We then plot model performance
 using the function <code class="docutils literal notranslate"><span class="pre">plot_metrics</span></code> from the <code class="docutils literal notranslate"><span class="pre">reval.visualization</span></code> module.</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">findbestclust</span> <span class="o">=</span> <span class="n">FindBestClustCV</span><span class="p">(</span><span class="n">nfold</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-                            <span class="n">nclust_range</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
-                            <span class="n">s</span><span class="o">=</span><span class="n">classifier</span><span class="p">,</span>
-                            <span class="n">c</span><span class="o">=</span><span class="n">clustering</span><span class="p">,</span>
-                            <span class="n">nrand</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="n">metrics</span><span class="p">,</span> <span class="n">nbest</span><span class="p">,</span> <span class="n">chk_dist</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">)</span>
+                                <span class="n">nclust_range</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+                                <span class="n">s</span><span class="o">=</span><span class="n">classifier</span><span class="p">,</span>
+                                <span class="n">c</span><span class="o">=</span><span class="n">clustering</span><span class="p">,</span>
+                                <span class="n">nrand</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">metrics</span><span class="p">,</span> <span class="n">nbest</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">)</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">X_ts</span><span class="p">,</span> <span class="n">nbest</span><span class="p">)</span>
 <span class="n">plot_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Reval performance&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We obtain that the best number of clusters returned by the model is 5 (see performance plot).</p>
 <img alt="_images/performanceblobs1.png" class="align-center" src="_images/performanceblobs1.png" />
-<p>Normalized stability in validation is 0.0 (i.e., perfect prediction) and test set accuracy is equal 1.0.</p>
-<p>We are now interested into comparing the clustering labels from the test set with the true labels.
+<p>Normalized stability in validation is 0.0 (i.e., perfect prediction) and test set accuracy is equal to 1.0.</p>
+<p>We are now interested in comparing the clustering labels from the test set with the true labels.
 Hence, we first apply Kuhn-Munkres algorithm to permute the labels returned by the model. This
 because they may not be ordered as the true labels and lead to an unreliable classification error.</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">perm_lab</span> <span class="o">=</span> <span class="n">_kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">y_ts</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">test_cllab</span><span class="p">)</span>
@@ -229,7 +229,8 @@ because they may not be ordered as the true labels and lead to an unreliable cla
 </div>
 <p>Then we compute the classification accuracy and the
 <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.adjusted_mutual_info_score.html#sklearn.metrics.adjusted_mutual_info_score">adjusted mutual information score (AMI)</a>
-to compare two partitions (this score is independent of label permutations):</p>
+to compare two partitions (this score is independent of label permutations and is equal to 1.0 when two partitions
+are identical:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test set external ACC: &quot;</span>
       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">1</span> <span class="o">-</span> <span class="n">zero_one_loss</span><span class="p">(</span><span class="n">y_ts</span><span class="p">,</span> <span class="n">perm_lab</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;AMI = </span><span class="si">{</span><span class="n">adjusted_mutual_info_score</span><span class="p">(</span><span class="n">y_ts</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">test_cllab</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -253,15 +254,19 @@ method is highly influenced by noise. We will show the importance of data pre-pr
 </div>
 <img alt="_images/blobsnoisy.png" class="align-center" src="_images/blobsnoisy.png" />
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">Xnoise_tr</span><span class="p">,</span> <span class="n">Xnoise_ts</span><span class="p">,</span> <span class="n">ynoise_tr</span><span class="p">,</span> <span class="n">ynoise_ts</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">data_noisy</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                                                          <span class="n">data_noisy</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                                                          <span class="n">test_size</span><span class="o">=</span><span class="mf">0.30</span><span class="p">,</span>
-                                                          <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
-                                                          <span class="n">stratify</span><span class="o">=</span><span class="n">data_noisy</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                                                              <span class="n">data_noisy</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                                              <span class="n">test_size</span><span class="o">=</span><span class="mf">0.30</span><span class="p">,</span>
+                                                              <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+                                                              <span class="n">stratify</span><span class="o">=</span><span class="n">data_noisy</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-<span class="n">metrics_noise</span><span class="p">,</span> <span class="n">nbest_noise</span><span class="p">,</span> <span class="n">chk_dist_noise</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">Xnoise_tr</span><span class="p">,</span> <span class="n">ynoise_tr</span><span class="p">)</span>
+<span class="n">metrics_noise</span><span class="p">,</span> <span class="n">nbest_noise</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">Xnoise_tr</span><span class="p">,</span> <span class="n">ynoise_tr</span><span class="p">)</span>
 <span class="n">out_noise</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">Xnoise_tr</span><span class="p">,</span> <span class="n">Xnoise_ts</span><span class="p">,</span> <span class="n">nbest_noise</span><span class="p">)</span>
 
 <span class="n">plot_metrics</span><span class="p">(</span><span class="n">metrics_noise</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Reval performance&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Xnoise_ts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">Xnoise_ts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="n">c</span><span class="o">=</span><span class="n">perm_lab_noise</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;rainbow_r&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Clustering labels for test set&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We observe that the best number of clusters selected is equal to 2, which does not reflect the true label
@@ -269,15 +274,15 @@ distributions of the synthetic dataset, although the misclassification performan
 (see performance plot and scatterplot with predicted labels for the test set).</p>
 <img alt="_images/performancenoisy.png" class="align-center" src="_images/performancenoisy.png" />
 <img alt="_images/predlabnoisy.png" class="align-center" src="_images/predlabnoisy.png" />
-<p>ADI score and accuracy value suggest that the model generalizes poorly on test set.</p>
+<p>AMI score and accuracy value suggest that the model generalizes poorly on test set.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AMI</span> <span class="o">=</span> <span class="mf">0.59</span><span class="p">,</span> <span class="n">ACC</span> <span class="o">=</span> <span class="mf">0.4</span>
 </pre></div>
 </div>
 <p>Uniform Manifold Approximation and Projection for Dimensionality Reduction (UMAP; McInnes et al., 2018) is a
 topology-based dimensionality reduction tool that can be used to pre-process data for clustering
-(see <a class="reference external" href="https://umap-learn.readthedocs.io/en/latest/clustering.html">link</a>). Applied to our noisy dataset with
-suggested parameters we obtain that clusters are correctly identified visually as dense and separated blobs,
-that <code class="docutils literal notranslate"><span class="pre">reval</span></code> now easily identifies.</p>
+(see <a class="reference external" href="https://umap-learn.readthedocs.io/en/latest/clustering.html">here</a>). Applied to our noisy dataset with
+suggested parameters, we obtain that clusters are correctly identified visually as dense and separated blobs,
+that <code class="docutils literal notranslate"><span class="pre">reval</span></code> now easily detects.</p>
 <p>McInnes, L, Healy, J, <em>UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction</em>,
 ArXiv e-prints 1802.03426, 2018.</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">umap</span> <span class="kn">import</span> <span class="n">UMAP</span>
@@ -381,7 +386,8 @@ number of features (from 784 to 10), see scatterplots below.</p>
 <img alt="_images/trainmnist.png" class="align-center" src="_images/trainmnist.png" />
 <img alt="_images/testmnist.png" class="align-center" src="_images/testmnist.png" />
 <p>We now apply <code class="docutils literal notranslate"><span class="pre">reval</span></code> with 10-fold cross-validation, number of clusters ranging from 2 to 11 and random
-labeling iterated 100 times.</p>
+labeling iterated 100 times. We again select hierarchical clustering with k-nearest neighbors classifier for
+number of cluster selection.</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">classifier</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
 <span class="n">clustering</span> <span class="o">=</span> <span class="n">AgglomerativeClustering</span><span class="p">()</span>
 
@@ -419,7 +425,7 @@ are low and high, respectively.</p>
 </pre></div>
 </div>
 <img alt="_images/performancemnist.png" class="align-center" src="_images/performancemnist.png" />
-<p>We observe that the classes correctly identified are those that after UMAP reduction show good cohesion and separation,
+<p>We observe that the classes correctly identified are those that, after UMAP reduction, show good cohesion and separation,
 which is why the model performance is good.
 On the contrary, clusters that are closer together receive the same labels (see scatterplot below) and are misclassified.
 This lowers the external ACC score although returning a high AMI score, which is based on cluster overlaps.</p>
@@ -444,7 +450,7 @@ This lowers the external ACC score although returning a high AMI score, which is
         <a href="datadimension.html" class="btn btn-neutral float-right" title="Examples of how things can go wrong" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="code_usage.html" class="btn btn-neutral float-left" title="How to Use reval" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="code_usage.html" class="btn btn-neutral float-left" title="How to use reval" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

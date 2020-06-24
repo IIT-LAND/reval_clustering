@@ -36,7 +36,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Code description" href="code_description.html" />
-    <link rel="prev" title="Performance on baseline datasets" href="experiments.html" /> 
+    <link rel="prev" title="Performance on benchmark datasets" href="experiments.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -80,18 +80,18 @@
               
             
             
-              <p class="caption"><span class="caption-text">User Guide / Tutorial</span></p>
+              <p class="caption"><span class="caption-text">User guide / Tutorial</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="code_usage.html">How to Use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="experiments.html">Performance on baseline datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code_usage.html">How to use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="experiments.html">Performance on benchmark datasets</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Examples of how things can go wrong</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#number-of-features-when-enough-is-enough">Number of features: when enough is enough?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#number-of-samples-too-few-not-good">Number of samples: too few, not good</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Code Guide</span></p>
+<p class="caption"><span class="caption-text">Code guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="code_description.html">Code description</a></li>
 </ul>
@@ -161,11 +161,12 @@
   <div class="section" id="examples-of-how-things-can-go-wrong">
 <h1>Examples of how things can go wrong<a class="headerlink" href="#examples-of-how-things-can-go-wrong" title="Permalink to this headline">¶</a></h1>
 <p>We discuss now typical situations that might happen when processing real-world datasets and
-how these can modify <code class="docutils literal notranslate"><span class="pre">reval</span></code> performance.</p>
+how these can modify <code class="docutils literal notranslate"><span class="pre">reval</span></code> performance. Code can be found in
+<em>reval_clustering/working_examples/</em>, <code class="docutils literal notranslate"><span class="pre">data_dimensionality.py</span></code> file.</p>
 <div class="section" id="number-of-features-when-enough-is-enough">
 <h2>Number of features: when enough is enough?<a class="headerlink" href="#number-of-features-when-enough-is-enough" title="Permalink to this headline">¶</a></h2>
-<p>With <code class="docutils literal notranslate"><span class="pre">make_blobs</span></code> function from <code class="docutils literal notranslate"><span class="pre">sklearn.datasets</span></code> module, we generate a noisy dataset
-(i.e., we set <code class="docutils literal notranslate"><span class="pre">cluster_std=5</span></code>) with 5 classes, 1,000 samples and 10 features (see scatterplot below).
+<p>With <code class="docutils literal notranslate"><span class="pre">make_blobs</span></code> function from <code class="docutils literal notranslate"><span class="pre">sklearn.datasets</span></code>, we generate a noisy dataset
+(i.e., we set <code class="docutils literal notranslate"><span class="pre">cluster_std=5</span></code>) with 5 classes, 1,000 samples, and 10 features (see scatterplot below).
 We partition it into training and test sets (30%) and we apply the relative validation algorithm with 10-fold cross-validation,
 number of clusters ranging from 2 to 6, k-nearest neighbors and hierarchical clustering as classification
 and clustering algorithms, respectively, and 100 iterations of random labeling.</p>
@@ -240,8 +241,8 @@ parameters as before (see scatterplot with true labels below).</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;ACC test set = </span><span class="si">{</span><span class="mi">1</span> <span class="o">-</span> <span class="n">zero_one_loss</span><span class="p">(</span><span class="n">y_ts</span><span class="p">,</span> <span class="n">relabeling</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Because we increased the space volume data become more sparse, but still preserving their group structure.
-For this reason now the algorithm is able to detect all 5 clusters. (See performance plot and scatterplot).</p>
+<p>Because we increased the space volume, data become more sparse, but still preserving their group structure.
+For this reason, now the algorithm is able to detect all 5 clusters. (See performance plot and scatterplot).</p>
 <img alt="_images/performance20features.png" class="align-center" src="_images/performance20features.png" />
 <img alt="_images/predlab20.png" class="align-center" src="_images/predlab20.png" />
 <p>We use the
@@ -253,11 +254,12 @@ On the test set, we obtain:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AMI</span> <span class="o">=</span> <span class="mf">0.98</span><span class="p">;</span> <span class="n">ACC</span> <span class="o">=</span> <span class="mf">0.99</span>
 </pre></div>
 </div>
-<p>_Remark_: in situations where we are able to increase the number of features for a dataset,
+<p><strong>Remark</strong>: in situations where we are able to increase the number of features for a dataset,
 it is important to remember the
 <a class="reference external" href="https://en.wikipedia.org/wiki/Curse_of_dimensionality">curse of dimensionality</a>, i.e.,
-if the number of samples is not enough, with respect to the number of features, the increase of the space dimension
-will not help detecting dataset subgroups, because the data would become sparse, hence losing their structure.</p>
+the increase of the space dimension determines available data to become sparse and the number of samples required to
+detect an effect to grow exponentially. For this reason, increasing the number of features might not help detect
+dataset subgroups, because the data would become sparse, hence losing their structure.</p>
 </div>
 <div class="section" id="number-of-samples-too-few-not-good">
 <h2>Number of samples: too few, not good<a class="headerlink" href="#number-of-samples-too-few-not-good" title="Permalink to this headline">¶</a></h2>
@@ -317,7 +319,7 @@ hierarchical clustering, number of clusters ranging from 2 to 6, and 100 random 
 least number of subjects and higher standard deviation, are considered as a unique group by the algorithm.</p>
 <img alt="_images/performance1005050.png" class="align-center" src="_images/performance1005050.png" />
 <img alt="_images/predlab1005050.png" class="align-center" src="_images/predlab1005050.png" />
-<p>We try to increase the number of samples for groups 2 and 3 from 50 to 500 (see scatterplot)
+<p>To fix this, we try to increase the number of samples for groups 2 and 3 from 50 to 500 (see scatterplot)
 and we rerun the algorithm with the same parameters.</p>
 <img alt="_images/classes100500500.png" class="align-center" src="_images/classes100500500.png" />
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We now increase the number of samples in groups 2 and 3 to 500</span>
@@ -351,7 +353,7 @@ and we rerun the algorithm with the same parameters.</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_ts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X_ts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
             <span class="n">c</span><span class="o">=</span><span class="n">y_ts</span><span class="p">,</span>
             <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;rainbow_r&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Test set true labels for classes with Ns=(100, 500, 500&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Test set true labels for classes with Ns=(100, 500, 500)&#39;</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_ts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X_ts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
             <span class="n">c</span><span class="o">=</span><span class="n">_kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_ts</span><span class="p">),</span>
@@ -376,8 +378,7 @@ validation and testing metrics, i.e., normalized stability with 95% CI and testi
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AMI</span> <span class="o">=</span> <span class="mf">0.75</span><span class="p">;</span> <span class="n">ACC</span> <span class="p">(</span><span class="n">external</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.93</span><span class="p">;</span> <span class="n">Normalized</span> <span class="n">stability</span><span class="p">:</span> <span class="mf">0.1</span> <span class="p">(</span><span class="mf">0.004</span><span class="p">;</span> <span class="mf">0.194</span><span class="p">);</span> <span class="n">ACC</span> <span class="o">=</span> <span class="mf">0.98</span>
 </pre></div>
 </div>
-<p>Increasing the sampling size, the algorithm was able to correctly identify the three distributions
-and correctly identify groups 2 and 3.</p>
+<p>Increasing the sampling size, the algorithm was able to correctly identify the three distributions.</p>
 </div>
 </div>
 
@@ -392,7 +393,7 @@ and correctly identify groups 2 and 3.</p>
         <a href="code_description.html" class="btn btn-neutral float-right" title="Code description" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="experiments.html" class="btn btn-neutral float-left" title="Performance on baseline datasets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="experiments.html" class="btn btn-neutral float-left" title="Performance on benchmark datasets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

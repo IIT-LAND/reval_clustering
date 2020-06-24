@@ -151,7 +151,7 @@ plt.scatter(X_ts[:, 0], X_ts[:, 1],
             c=_kuhn_munkres_algorithm(np.array(y_ts),
                                       out.test_cllab),
             cmap='rainbow_r')
-plt.title(f'Predicted labels for classes with Ns=(100, 500, 500')
+plt.title(f'Predicted labels for classes with Ns=(100, 500, 500)')
 
 # Performance scores
 # Test set ACC

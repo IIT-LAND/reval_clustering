@@ -2,8 +2,8 @@
 
 Determining the number of clusters that best partitions a dataset can be a challenging task because of 1) the lack of a 
 priori information within an unsupervised learning framework; and 2) the absence of a unique clustering validation 
-approach to evaluate clustering solutions. Here we present `reval`: a Python package [1] that leverages 
-stability-based relative clustering validation methods to determine best clustering solutions, as described in [2]. 
+approach to evaluate clustering solutions. Here we present `reval`: a Python package that leverages 
+stability-based relative clustering validation methods to determine best clustering solutions, as described in [1]. 
     
 Statistical software, both in R and Python, usually compute internal validation metrics that can be leveraged
 to select the number of clusters that best fit the data and open-source software solutions that easily implement 
@@ -35,7 +35,5 @@ and samples.
 
 ## Refrences
 
-[1] 
-
-[2] Lange, T., Roth, V., Braun, M. L., & Buhmann, J. M. (2004). Stability-based validation of clustering solutions. 
+[1] Lange, T., Roth, V., Braun, M. L., & Buhmann, J. M. (2004). Stability-based validation of clustering solutions. 
 *Neural computation*, 16(6), 1299-1323.
