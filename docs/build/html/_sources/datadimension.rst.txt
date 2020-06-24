@@ -186,7 +186,7 @@ hierarchical clustering, number of clusters ranging from 2 to 6, and 100 random 
                 c=_kuhn_munkres_algorithm(np.array(y_ts),
                                           out.test_cllab),
                 cmap='rainbow_r')
-    plt.title(f'Predicted labels for classes with Ns=(100, 50, 50')
+    plt.title(f'Predicted labels for classes with Ns=(100, 50, 50)')
 
 Result reports 2 as the best clustering solution (see performance plot and scatterplot). Groups 2 and 3, i.e., with
 least number of subjects and higher standard deviation, are considered as a unique group by the algorithm.
@@ -242,7 +242,7 @@ and we rerun the algorithm with the same parameters.
                 c=_kuhn_munkres_algorithm(np.array(y_ts),
                                           out.test_cllab),
                 cmap='rainbow_r')
-    plt.title(f'Predicted labels for classes with Ns=(100, 500, 500')
+    plt.title(f'Predicted labels for classes with Ns=(100, 500, 500)')
 
     # Performance scores
     # Test set ACC
