@@ -18,5 +18,11 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    project_urls={"Documentation": "https://reval.readthedocs.io/en/latest/"},
+    install_requires=["numpy",
+                      "scipy",
+                      "scikit-learn",
+                      "umap-learn",
+                      "matplotlib"],
     python_requires='>=3.6',
 )

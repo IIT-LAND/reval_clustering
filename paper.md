@@ -16,14 +16,14 @@ authors:
 
 affiliations:
 - name: Laboratory for Autism and Neurodevelopmental Disorders, Center for Neuroscience and Cognitive Systems @UniTn, 
-Istituto Italiano di Tecnologia, Rovereto, Italy
+Italian Institute of Technology, Rovereto, Italy
  index: 1
-- name: Center for Mind/Brain Sciences, University of Trento, Rovereto, Italy
+- name: Center for Mind/Brain Sciences, University of Trento, Corso Bettini 84, 38068 Rovereto (TN), Italy
  index: 2
 - name: Autism Research Centre, Department of Psychiatry, University of Cambridge, Cambridge, United Kingdom
  index: 3
 
-date: 15 June 2020
+date: 24 June 2020
 
 bibliography: paper.bib
 ---
@@ -43,12 +43,13 @@ techniques are lacking. Here we present the `reval` Python package (pronounced â
 that implements stability-based validation of clustering solutions to determine the number of clusters that best 
 partitions the data, as described by Lange and colleagues [@lange2004]. 
 
-Several methods exist to determine the number of clusters based on internal criteria. For example, the elbow method 
+Several methods help determine the best number of clusters based on internal criteria, e.g., the elbow method 
 [@thorndike1953] selects the number of clusters for which the within-cluster variability decrement is minimum. 
-Another popular method using internal criteria is the silhouette-based approach [@rousseeuw1987]. This method maximizes 
+Another popular method that leverages internal criteria is the silhouette-based approach [@rousseeuw1987], 
+ which returns the number of clusters that maximizes 
 cluster cohesion and separation - that is, how similar an object is to other elements of the same cluster compared to 
-elements of other clusters. Silhouette is one of many other statistics that have been developed using internal criteria 
-to suggest what the optimal number of clusters is. As an example, the NbClust library [@nbclust] compiles 30 different 
+elements of other clusters. Many other statistics have been developed using internal criteria 
+to suggest what the optimal number of clusters is, e.g., the NbClust library [@nbclust] compiles 30 different 
 internal metrics and users have the option to compute all or a subset of these metrics and use a majority vote rule to 
 select the optimal number of clusters.
 
@@ -57,7 +58,7 @@ clusters into a model selection problem, whereby selection is guided by minimiza
 dataset is split into training and test sets and then independently partitioned into clusters. Second, training set 
 labels are used within supervised classification methods to learn how to best predict the labels. Applying the 
 classification model to the test set, the modelâ€™s predicted labels are then compared to the actual clustering labels 
-derived from the test set. This procedure is repeated using cross-validation and the optimal number of clusters 
+derived from the test set. This procedure is repeated using cross validation and the optimal number of clusters 
 corresponds to the number of clusters that minimizes the prediction error. Prediction performance can be defined in 
 different ways. For example, Tibshirani and colleagues [@tibshirani2005] used prediction strength - that is, the 
 proportion of observation pairs that are assigned to the same cluster in both training and test sets. Other approaches 
@@ -88,32 +89,34 @@ model with the returned number of clusters to the held-out dataset.
 - `visualization`: This module includes the `plot_metrics` function to plot cross-validated performance 
 metrics with 95% confidence intervals for varying number of clustering solutions.
 
-Method details can be found in [@lange2004], code and documentation with working examples can be found 
-[here](https://github.com/IIT-LAND/reval_clustering). An overview of the `reval` framework is reported in figure \autoref{fig:framework}.
+Method details can be found in [@lange2004], [code](https://github.com/IIT-LAND/reval_clustering) and 
+[documentation](https://reval.readthedocs.io/en/latest/) are available.
+An overview of the `reval` framework is reported in Figure \autoref{fig:framework}.
 
-![Visualization of `reval` framework \label{fig:framework}](revalpipeline.png)
+![`reval` framework overview. \label{fig:framework}](revalpipeline.png)
 
 # Statement of needs
 
 The `reval` package allows users the ability to apply unsupervised clustering techniques to their data and then 
 offer a principled method for selecting the optimal number of clusters by embedding the clustering approach within a 
 supervised classification framework. `reval` works with the *scikit-learn* Python library for machine learning. 
-In particular, among clustering methods, because it requires the `n_clusters` parameter, users can 
-select `KMeans`, `SpectralClustering`, and `AgglomerativeClustering` from `sklearn.cluster`. Moreover, any classifiers 
+In particular, among clustering methods, because we need the `n_clusters` parameter, users can 
+select `KMeans`, `SpectralClustering`, and `AgglomerativeClustering` from `sklearn.cluster`. Moreover, any classifier 
 from *scikit-learn* can be selected (e.g., `KNeighborsClassifier` from `sklearn.neighbors`). `reval` returns the best 
 number of clusters based on a cross-validation procedure and can also evaluate the model with the parameter selected 
 on an held-out dataset, if available. The code has been optimized to speed up computations. However, it is worth 
 acknowledging that at each cross-validation iteration we:
 
-1) apply two clustering algorithms, one to each fold;
-2) fit a classifier to the training set and evaluate it on the test set;
-3) normalize the stability measure after estimating the stability from $N$ iterations of random labeling.
+1) Apply two clustering algorithms, one to each fold;
+2) Fit a classifier to the training set and evaluate it on the test set;
+3) Normalize the stability measure with the stability computed from $N$ iterations of random labeling.
 
-For these reasons, the computational cost tends to increase with dataset size (see \autoref{fig:1} for an example of 
-execution time performances).
+For these reasons, the computational cost tends to increase with dataset size (see Figure \autoref{fig:1} 
+for an example of execution time performances).
 
-![`best_nclust_cv` module applied to simulation blob data with 5 clusters and varying number of samples and features. 
-Number of clusters ranges from 2 to 6. We report execution time in seconds for algorithm performance. 
+![Execution time for `best_nclust_cv` module applied to synthetic data. 5 isotropic Gaussian blobs are simulated with 
+varying number of samples and features (``sklearn.datasets.make_blobs``). Number of clusters ranges from 2 to 6. 
+We report execution time in seconds for algorithm performance. 
 \label{fig:1}](makeblobs_performance.png)
 
 # Key references
@@ -122,7 +125,7 @@ Libraries and methods for the automated selection of the best number of clusters
 However, they mainly focus on internal validation criteria (e.g., Python
 `yellowbrick.cluster.KElbowVisualizer` [@yellowbrick:2018]; R `NbClust` [@nbclust]). In R, `clValid` [@clvalid] and 
 `cStability`[^1] apply stability-based relative validation models directly comparing clustering solutions with 
-leave-one-out cross-validation and bootstrapping, respectively. Nevertheless, users cannot select the preferred 
+leave-one-out cross validation and bootstrapping, respectively. Nevertheless, users cannot select the preferred 
 classifier nor the desired number of folds for the *k*-fold cross-validation procedure. `clValid` also enables 
 validation with internal measures, whereas `cStability` also includes a model-free approach, see [@haslbeck2016].
 

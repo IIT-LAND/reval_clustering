@@ -29,7 +29,8 @@ In alternative, with PyPI:
 
 ## Documentation
 
-Code documentation can be found [here](). Documents include Python code descriptions, `reval` usage examples, 
+Code documentation can be found [here](https://reval.readthedocs.io/en/latest/). Documents include Python code 
+descriptions, `reval` usage examples, 
 performance on benchmark datasets, and common issues that can be encountered related to a dataset number of features 
 and samples.
 
