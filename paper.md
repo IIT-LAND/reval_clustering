@@ -13,7 +13,7 @@ authors:
 - name: Michael V. Lombardo
   affiliation: "1, 3"
 affiliations:
-- name: Laboratory for Autism and Neurodevelopmental Disorders, Center for Neuroscience and Cognitive Systems @UniTn, 
+- name: Laboratory for Autism and Neurodevelopmental Disorders, Center for Neuroscience and Cognitive Systems at UniTn, 
         Italian Institute of Technology, Rovereto, Italy
   index: 1
 - name: Center for Mind/Brain Sciences, University of Trento, Corso Bettini 84, 38068 Rovereto (TN), Italy
@@ -55,10 +55,11 @@ dataset is split into training and test sets and then independently partitioned 
 labels are used within supervised classification methods to learn how to best predict the labels. Applying the 
 classification model to the test set, the model’s predicted labels are then compared to the actual clustering labels 
 derived from the test set. This procedure is repeated using cross validation and the optimal number of clusters 
-corresponds to the number of clusters that minimizes the prediction error. Prediction performance can be defined in 
+is the one that minimizes the prediction error. Prediction performance can be defined in 
 different ways. For example, Tibshirani and colleagues [@tibshirani2005] used prediction strength - that is, the 
-proportion of observation pairs that are assigned to the same cluster in both training and test sets. Other approaches 
-consider stability measures [@lange2004], which are based on misclassification error.
+proportion of observation pairs in test set that are assigned to the same cluster by both direct clustering and applying 
+training-learned centroids. Other approaches consider stability measures [@lange2004], which are based on 
+misclassification error.
 
 Internal and relative indices can exhibit similar behavior with respect to clustering errors, with the advantage of 
 the former being less computationally expensive [@brun2007]. However, in the case of complex models and clusters, an 
@@ -93,10 +94,10 @@ An overview of the `reval` framework is reported in Figure \autoref{fig:framewor
 
 # Statement of needs
 
-The `reval` package allows users the ability to apply unsupervised clustering techniques to their data and then 
-offer a principled method for selecting the optimal number of clusters by embedding the clustering approach within a 
+The `reval` package allows users the ability to apply unsupervised clustering techniques to their data and it 
+offers a principled method for selecting the optimal number of clusters by embedding the clustering approach within a 
 supervised classification framework. `reval` works with the *scikit-learn* Python library for machine learning. 
-In particular, among clustering methods, because we need the `n_clusters` parameter, users can 
+In particular, among clustering methods, due to the need of `n_clusters` parameter, users can 
 select `KMeans`, `SpectralClustering`, and `AgglomerativeClustering` from `sklearn.cluster`. Moreover, any classifier 
 from *scikit-learn* can be selected (e.g., `KNeighborsClassifier` from `sklearn.neighbors`). `reval` returns the best 
 number of clusters based on a cross-validation procedure and can also evaluate the model with the parameter selected 
