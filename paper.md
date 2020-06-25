@@ -71,6 +71,7 @@ contrary, internal indices are highly tied to the characteristics of the data at
 overfitting. Hence, they are not well suited when the aim is to assess clustering generalizability and replicability.
 
 The `reval` library has three modules:
+
 - `relative_validation`: This module includes training and test methods that return the misclassification errors 
 obtained by comparing classification labels, permuted according to the Kuhn-Munkres algorithm 
 [@kuhn1955; @munkres1957], and the clustering labels. Within this module, the 
@@ -100,6 +101,7 @@ from *scikit-learn* can be selected (e.g., `KNeighborsClassifier` from `sklearn.
 number of clusters based on a cross-validation procedure and can also evaluate the model with the parameter selected 
 on an held-out dataset, if available. The code has been optimized to speed up computations. However, it is worth 
 acknowledging that at each cross-validation iteration we:
+
 1) Apply two clustering algorithms, one to each fold;
 2) Fit a classifier to the training set and evaluate it on the test set;
 3) Normalize the stability measure with the stability computed from $N$ iterations of random labeling.
