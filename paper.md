@@ -1,5 +1,6 @@
 ---
-title: '`reval`: a Python package to determine the best number of clusters with stability-based relative clustering validation.'
+title: '`reval`: a Python package to determine the best number of clusters with stability-based relative clustering 
+        validation.'
 tags:
 - Python
 - Machine learning
@@ -8,12 +9,12 @@ authors:
 - name: Isotta Landi
   affiliation: 1
 - name: Veronica Mandelli
-  affiliation: 1, 2
+  affiliation: "1, 2"
 - name: Michael V. Lombardo
-  affiliation: 1, 3
+  affiliation: "1, 3"
 affiliations:
 - name: Laboratory for Autism and Neurodevelopmental Disorders, Center for Neuroscience and Cognitive Systems @UniTn, 
-  Italian Institute of Technology, Rovereto, Italy
+        Italian Institute of Technology, Rovereto, Italy
   index: 1
 - name: Center for Mind/Brain Sciences, University of Trento, Corso Bettini 84, 38068 Rovereto (TN), Italy
   index: 2
