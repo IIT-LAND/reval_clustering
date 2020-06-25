@@ -23,7 +23,7 @@ From github:
     git clone https://github.com/IIT-LAND/reval_clustering
     pip install -r requirements.txt
 
-In alternative, with PyPI:
+PyPI alternative:
 
     pip install reval
 
