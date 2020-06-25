@@ -35,7 +35,7 @@ this challenge leverage both relative and internal cluster validity methods. In 
 compare clustering solutions obtained with different parameter settings, whereas internal criteria focus on quantities 
 and features inherent to a grouping solution [@vazirgiannis2009]. While a variety of software packages contain 
 internal cluster validity methods and metrics, open-source software solutions to easily implement relative clustering 
-techniques are lacking. Here we present the `reval` Python package (pronounced “reh-val”, like the word “revel”), 
+techniques are lacking. Here we present the `reval` Python package (pronounced “reh-val”, like the word “revel”) 
 that implements stability-based validation of clustering solutions to determine the number of clusters that best 
 partitions the data, as described by Lange and colleagues [@lange2004]. 
 
@@ -71,24 +71,21 @@ contrary, internal indices are highly tied to the characteristics of the data at
 overfitting. Hence, they are not well suited when the aim is to assess clustering generalizability and replicability.
 
 The `reval` library has three modules:
-
 - `relative_validation`: This module includes training and test methods that return the misclassification errors 
 obtained by comparing classification labels, permuted according to the Kuhn-Munkres algorithm 
 [@kuhn1955; @munkres1957], and the clustering labels. Within this module, the 
 `relative_validation.RelativeValidation.rndlabel_traineval` method allows users to compute the asymptotic 
 misclassification rate via random labeling.
-
 - `best_nclust_cv`: This module implements the cross-validation procedure and returns the best number of clusters 
 along with the normalized stability scores, obtained from the average of the misclassification scores divided by 
 the asymptotic misclassification rate. The `best_nclust_cv.FindBestClustCV.evaluate` method applies the fitted 
 model with the returned number of clusters to the held-out dataset.
-
 - `visualization`: This module includes the `plot_metrics` function to plot cross-validated performance 
 metrics with 95% confidence intervals for varying number of clustering solutions.
 
 Method details can be found in [@lange2004], [code](https://github.com/IIT-LAND/reval_clustering) and 
 [documentation](https://reval.readthedocs.io/en/latest/) are available.
-An overview of the `reval` framework is reported in Figure \autoref{fig:framework}.
+An overview of the `reval` framework is reported in \autoref{fig:framework}.
 
 ![`reval` framework overview. \label{fig:framework}](revalpipeline.png)
 
@@ -103,18 +100,17 @@ from *scikit-learn* can be selected (e.g., `KNeighborsClassifier` from `sklearn.
 number of clusters based on a cross-validation procedure and can also evaluate the model with the parameter selected 
 on an held-out dataset, if available. The code has been optimized to speed up computations. However, it is worth 
 acknowledging that at each cross-validation iteration we:
-
 1) Apply two clustering algorithms, one to each fold;
 2) Fit a classifier to the training set and evaluate it on the test set;
 3) Normalize the stability measure with the stability computed from $N$ iterations of random labeling.
 
-For these reasons, the computational cost tends to increase with dataset size (see Figure \autoref{fig:1} 
+For these reasons, the computational cost tends to increase with dataset size (see \autoref{fig:1} 
 for an example of execution time performances).
 
-![Execution time for `best_nclust_cv` module applied to synthetic data. 5 isotropic Gaussian blobs are simulated with 
-varying number of samples and features (``sklearn.datasets.make_blobs``). Number of clusters ranges from 2 to 6. 
-We report execution time in seconds for algorithm performance. 
-\label{fig:1}](makeblobs_performance.png)
+![Execution time for `best_nclust_cv.best_nclust` method applied to synthetic data with 10-fold cross validation. 
+5 isotropic Gaussian blobs are simulated with varying number of samples and features (``sklearn.datasets.make_blobs``). 
+Number of clusters ranges from 2 to 6 and random labeling is repeated 100 times. 
+We report execution time in seconds for algorithm performance. \label{fig:1}](makeblobs_performance.png)
 
 # Key references
 
