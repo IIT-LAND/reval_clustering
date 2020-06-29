@@ -45,8 +45,38 @@ Stability-based validation of clustering solutions. *Neural computation*, 16(6),
 
    code_description
 
+Cite as
+=======
+
+.. parsed-literal::
+
+   Isotta Landi, Veronica Mandelli, & Michael Vincent Lombardo. (2020, June 29). reval: stability-based relative
+   clustering validation method to determine the best number of clusters (Version v1.0.0). Zenodo.
+   http://doi.org/10.5281/zenodo.3922334
+
+BibTeX alternative
+
+.. parsed-literal::
+
+   @software{isotta_landi_2020_3922334,
+              author       = {Isotta Landi and
+                              Veronica Mandelli and
+                              Michael Vincent Lombardo},
+              title        = {{reval: stability-based relative clustering
+                               validation method to determine the best number of
+                               clusters}},
+              month        = jun,
+              year         = 2020,
+              publisher    = {Zenodo},
+              version      = {v1.0.0},
+              doi          = {10.5281/zenodo.3922334},
+              url          = {https://doi.org/10.5281/zenodo.3922334}
+            }
+
 Indices and tables
 ==================
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
