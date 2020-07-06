@@ -1,6 +1,6 @@
 import numpy as np
-from scipy.optimize import linear_sum_assignment
 from sklearn.metrics import zero_one_loss
+from reval.utils import kuhn_munkres_algorithm
 
 
 class RelativeValidation:
@@ -65,8 +65,8 @@ class RelativeValidation:
         """
         clustlab_ts = self.clust_method.fit_predict(test_data)  # A_k(X')
         classlab_ts = fit_model.predict(test_data)
-        bestperm = _kuhn_munkres_algorithm(classlab_ts, clustlab_ts)  # array of integers
-        misclass = zero_one_loss(classlab_ts, bestperm)
+        bestperm = kuhn_munkres_algorithm(classlab_ts, clustlab_ts)  # array of integers
+        misclass = zero_one_loss(bestperm, classlab_ts)
         return misclass, bestperm
 
     def rndlabels_traineval(self, train_data, test_data, train_labels, test_labels):
@@ -110,50 +110,6 @@ class RelativeValidation:
         :rtype: float
         """
         self.class_method.fit(xtr, randlabtr)
-        me_ts = zero_one_loss(labts, _kuhn_munkres_algorithm(labts, self.class_method.predict(xts)))
+        pred_rndlab = self.class_method.predict(xts)
+        me_ts = zero_one_loss(pred_rndlab, kuhn_munkres_algorithm(pred_rndlab, labts))
         return me_ts
-
-
-def _kuhn_munkres_algorithm(true_lab, pred_lab):
-    """
-    Private function that implements the Kuhn-Munkres algorithm method. It selects the best label permutation of the
-    classification output that minimizes the
-    misclassification error when compared to the clustering labels.
-
-    :param true_lab: clustering algorithm labels
-    :type true_lab: ndarray, (n_samples,)
-    :param pred_lab: classification algorithm labels
-    :type pred_lab: ndarray, (n_samples,)
-    :return: permuted labels that minimize the misclassification error
-    :rtype: ndarray, (n_samples,)
-    """
-    if isinstance(true_lab, np.ndarray) and isinstance(pred_lab, np.ndarray):
-        nclass, nobs = len(set(true_lab)), len(true_lab)
-        wmat = np.zeros((nclass, nclass))
-        for lab in range(nclass):
-            for plab in range(lab, nclass):
-                n_intersec = len(set(np.flatnonzero(true_lab == lab)).intersection(
-                    set(np.flatnonzero(pred_lab == plab))))
-                w = (nobs - n_intersec) / nobs
-                if lab == plab:
-                    wmat[lab, plab] = w
-                else:
-                    wmat[lab, plab] = w
-                    n_intersec = len(set(np.flatnonzero(true_lab == plab)).intersection(
-                        set(np.flatnonzero(pred_lab == lab))))
-                    w = (nobs - n_intersec) / nobs
-                    wmat[plab, lab] = w
-        new_pred_lab = list(linear_sum_assignment(wmat)[1])
-        try:
-            pred_perm = np.array([new_pred_lab.index(i) for i in pred_lab])
-        except ValueError:
-            pred_perm = np.array([], dtype=int)
-            for i in pred_lab:
-                if len(new_pred_lab) <= i:
-                    pred_perm = np.append(pred_perm, i)
-                else:
-                    pred_perm = np.append(pred_perm, new_pred_lab.index(i))
-        return pred_perm
-    else:
-        raise TypeError(f'input variables should be (np.ndarray, np.ndarray)'
-                        f' not ({type(true_lab)}, {type(pred_lab)})')
