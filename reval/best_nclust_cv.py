@@ -115,6 +115,7 @@ def _confint(vect):
     :return: mean and error
     :rtype: tuple
     """
-    error = stats.t.ppf(1 - (0.05 / 2), len(vect) - 1) * (np.std(vect) / math.sqrt(len(vect)))
+    # interval = stats.t.ppf(1 - (0.05 / 2), len(vect) - 1) * (np.std(vect) / math.sqrt(len(vect)))
     mean = np.mean(vect)
-    return mean, error
+    interval = 1.96 * math.sqrt((mean * (1 - mean)) / len(vect))
+    return mean, interval
