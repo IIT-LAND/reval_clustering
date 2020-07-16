@@ -60,4 +60,3 @@ print(f'AMI = {adjusted_mutual_info_score(label_ts.astype(int), perm_lab)}')
 print(f"Validation set normalized stability (misclassification): {metrics['val'][nbest]}")
 print(f"Result accuracy (on test set): "
       f"{out.test_acc}")
-

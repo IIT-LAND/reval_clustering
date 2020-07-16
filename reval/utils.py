@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.optimize import linear_sum_assignment
+import logging
 
 
 def kuhn_munkres_algorithm(true_lab, pred_lab):
@@ -21,7 +22,8 @@ def kuhn_munkres_algorithm(true_lab, pred_lab):
     """
     if not (isinstance(true_lab, np.ndarray) and isinstance(pred_lab, np.ndarray)):
         true_lab, pred_lab = np.array(true_lab), np.array(pred_lab)
-    if true_lab.dtype == 'int' and pred_lab.dtype == 'int':
+    if (true_lab.dtype == 'int' or true_lab.dtype == 'int32') and (
+            pred_lab.dtype == 'int' or pred_lab.dtype == 'int32'):
         wmat = _build_weight_mat(true_lab, pred_lab)
         new_pred_lab = list(linear_sum_assignment(wmat)[1])
         try:
@@ -30,10 +32,10 @@ def kuhn_munkres_algorithm(true_lab, pred_lab):
         # Catch the case in which predicted array has more unique labels than true array. Raise ValueError
         # if input has length 1.
         except ValueError:
-            if len(new_pred_lab) == 1:
+            if len(true_lab) == 1 or len(pred_lab) == 1:
                 raise ValueError("Dimensions of input array should be greater than 1.")
             else:
-                print("True labels are less than predicted labels. Permuting only the available labels.")
+                logging.info("True labels are less than predicted labels. Permuting only the available labels.")
                 pred_perm = np.array([], dtype=int)
                 for i in pred_lab:
                     if len(new_pred_lab) <= i:

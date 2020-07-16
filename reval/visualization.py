@@ -5,7 +5,7 @@ from bokeh.io import export_png
 from matplotlib import pyplot as plt
 
 
-def plot_metrics(cv_score, title, figsize=(20, 10), save_fig=None):
+def plot_metrics(cv_score, title, figsize=(20, 10), legend_loc=1, save_fig=None):
     """
     Function that plots the average performance (i.e., normalized stability) over cross-validation
     for training and validation sets.
@@ -16,6 +16,8 @@ def plot_metrics(cv_score, title, figsize=(20, 10), save_fig=None):
     :type title: str
     :param figsize: (width, height)
     :type figsize: tuple
+    :param legend_loc: legend location, default 1
+    :type legend_loc: int
     :param save_fig: file name for saving figure in png format, default None
     :type save_fig: str
     """
@@ -29,7 +31,7 @@ def plot_metrics(cv_score, title, figsize=(20, 10), save_fig=None):
                 [me[1][1] for me in cv_score['val'].values()],
                 linewidth=5,
                 label='validation set')
-    ax.legend(fontsize=18, loc=1)
+    ax.legend(fontsize=18, loc=legend_loc)
     plt.xticks([lab for lab in cv_score['train'].keys()], fontsize=15)
     plt.yticks(fontsize=15)
     plt.xlabel('Number of clusters', fontsize=18)
