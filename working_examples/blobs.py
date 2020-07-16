@@ -6,11 +6,11 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import zero_one_loss, adjusted_mutual_info_score
 from reval.visualization import plot_metrics
 import matplotlib.pyplot as plt
-from reval.relative_validation import _kuhn_munkres_algorithm
+from reval.utils import kuhn_munkres_algorithm
 
 # Generate 1,000 samples for 5 blobs
 # ----------------------------------
-data = make_blobs(1000, 10, 5, random_state=42)
+data = make_blobs(1000, 2, 5, random_state=42)
 plt.scatter(data[0][:, 0],
             data[0][:, 1],
             c=data[1], cmap='rainbow_r')
@@ -34,7 +34,7 @@ findbestclust = FindBestClustCV(nfold=10,
 metrics, nbest, _ = findbestclust.best_nclust(X_tr, y_tr)
 out = findbestclust.evaluate(X_tr, X_ts, nbest)
 
-perm_lab = _kuhn_munkres_algorithm(y_ts, out.test_cllab)
+perm_lab = kuhn_munkres_algorithm(y_ts, out.test_cllab)
 
 print(f"Best number of clusters: {nbest}")
 print(f"Test set external ACC: "
@@ -72,7 +72,7 @@ out_noise = findbestclust.evaluate(Xnoise_tr, Xnoise_ts, nbest_noise)
 
 plot_metrics(metrics_noise, title="Reval performance")
 
-perm_lab_noise = _kuhn_munkres_algorithm(ynoise_ts, out_noise.test_cllab)
+perm_lab_noise = kuhn_munkres_algorithm(ynoise_ts, out_noise.test_cllab)
 
 print(f"Best number of clusters: {nbest_noise}")
 print(f"Test set external ACC: "
@@ -111,7 +111,7 @@ out = findbestclust.evaluate(Xtr_umap, Xts_umap, nbest)
 
 plot_metrics(metrics, title='Reval performance of UMAP-transformed dataset')
 
-perm_noise = _kuhn_munkres_algorithm(ynoise_ts, out.test_cllab)
+perm_noise = kuhn_munkres_algorithm(ynoise_ts, out.test_cllab)
 
 print(f"Best number of clusters: {nbest}")
 print(f"Test set external ACC: "
