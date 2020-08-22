@@ -34,8 +34,8 @@ def kuhn_munkres_algorithm(true_lab, pred_lab):
         except ValueError:
             if len(true_lab) == 1 or len(pred_lab) == 1:
                 raise ValueError("Dimensions of input array should be greater than 1.")
+            # True labels are less than predicted labels. Permuting only the available labels.
             else:
-                logging.info("True labels are less than predicted labels. Permuting only the available labels.")
                 pred_perm = np.array([], dtype=int)
                 for i in pred_lab:
                     if len(new_pred_lab) <= i:

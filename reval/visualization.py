@@ -1,7 +1,3 @@
-import pandas as pd
-from bokeh.models import HoverTool, ColumnDataSource, CategoricalColorMapper
-from bokeh.plotting import figure, show, output_notebook
-from bokeh.io import export_png
 from matplotlib import pyplot as plt
 
 

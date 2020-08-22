@@ -1,4 +1,4 @@
-from sklearn.model_selection import StratifiedKFold, KFold
+from sklearn.model_selection import RepeatedKFold, RepeatedStratifiedKFold
 from reval.relative_validation import RelativeValidation
 from collections import namedtuple
 from scipy import stats
@@ -34,7 +34,7 @@ class FindBestClustCV(RelativeValidation):
         self.nfold = nfold
         self.nclust_range = nclust_range
 
-    def best_nclust(self, data, strat_vect=None):
+    def best_nclust(self, data, iter_cv=1, strat_vect=None):
         """
         This method takes as input the training dataset and the
         stratification vector (if available) and performs a
@@ -43,6 +43,8 @@ class FindBestClustCV(RelativeValidation):
 
         :param data: training dataset
         :type data: ndarray, (n_samples, n_features)
+        :param iter_cv: number of iteration for repeated CV, default 1
+        :type iter_cv: integer
         :param strat_vect: vector for stratification, defaults to None
         :type strat_vect: ndarray, (n_samples,)
         :return: CV metrics for training and validation sets, best number of clusters,
@@ -55,27 +57,37 @@ class FindBestClustCV(RelativeValidation):
         check_dist = {'train': {}, 'val': {}}
         for ncl in range(self.nclust_range[0], self.nclust_range[1]):
             if strat_vect is not None:
-                kfold = StratifiedKFold(n_splits=self.nfold)
-                fold_gen = kfold.split(data_array, strat_vect)
+                kfold = RepeatedStratifiedKFold(n_splits=self.nfold, n_repeats=iter_cv, random_state=42)
             else:
-                kfold = KFold(n_splits=self.nfold)
-                fold_gen = kfold.split(data_array)
+                kfold = RepeatedKFold(n_splits=self.nfold, n_repeats=iter_cv, random_state=42)
+            fold_gen = kfold.split(data_array, strat_vect)
             norm_stab_tr, norm_stab_val = [], []
             for tr_idx, val_idx in fold_gen:
                 tr_set, val_set = data_array[tr_idx], data_array[val_idx]
                 reval.clust_method.n_clusters = ncl
-                miscl_tr, modelfit, tr_labels = reval.train(tr_set)
-                miscl_val, val_labels = reval.test(val_set, modelfit)
-                rndmisc_mean_val = reval.rndlabels_traineval(tr_set, val_set,
-                                                             tr_labels,
-                                                             val_labels)
-                ms_val = miscl_val / rndmisc_mean_val
-                norm_stab_tr.append(miscl_tr)
-                norm_stab_val.append(ms_val)
-                check_dist['train'].setdefault(ncl, list()).append(miscl_tr)
-                check_dist['val'].setdefault(ncl, list()).append(ms_val)
+                # Case in which the number of clusters identified is not sufficient
+                # (it happens particularly for SpectralClustering)
+                try:
+                    miscl_tr, modelfit, tr_labels = reval.train(tr_set)
+                    miscl_val, val_labels = reval.test(val_set, modelfit)
+                    rndmisc_mean_val = reval.rndlabels_traineval(tr_set, val_set,
+                                                                 tr_labels,
+                                                                 val_labels)
+                    # If random labeling gives perfect prediction, substitute
+                    # misclassification for validation loop with 1.0
+                    if rndmisc_mean_val > 0.0:
+                        ms_val = miscl_val / rndmisc_mean_val
+                    else:
+                        ms_val = 1.0
+                    norm_stab_tr.append(miscl_tr)
+                    norm_stab_val.append(ms_val)
+                    check_dist['train'].setdefault(ncl, list()).append(miscl_tr)
+                    check_dist['val'].setdefault(ncl, list()).append(ms_val)
+                except ValueError:
+                    pass
             metrics['train'][ncl] = (np.mean(norm_stab_tr), _confint(norm_stab_tr))
             metrics['val'][ncl] = (np.mean(norm_stab_val), _confint(norm_stab_val))
+
         val_score = np.array([val[0] for val in metrics['val'].values()])
         bestscore = min(val_score)
         # select the cluster with the minimum misclassification error
@@ -115,7 +127,7 @@ def _confint(vect):
     :return: mean and error
     :rtype: tuple
     """
-    # interval = stats.t.ppf(1 - (0.05 / 2), len(vect) - 1) * (np.std(vect) / math.sqrt(len(vect)))
     mean = np.mean(vect)
-    interval = 1.96 * math.sqrt((mean * (1 - mean)) / len(vect))
+    # interval = 1.96 * math.sqrt((mean * (1 - mean)) / len(vect))
+    interval = stats.t.ppf(1 - (0.05 / 2), len(vect) - 1) * (np.std(vect) / math.sqrt(len(vect)))
     return mean, interval
