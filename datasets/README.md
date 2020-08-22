@@ -1,5 +1,5 @@
-This folder includes 18 datasets for classification from the UCI Machine Learning repository 
-(see http://archive.ics.uci.edu/ml/index.php). Each dataset has been imported and cleaned and stored in a dictionary 
+This folder includes a function to load 18 datasets for classification from the UCI Machine Learning repository 
+(see http://archive.ics.uci.edu/ml/index.php). Each dataset is returned cleaned and stored in a dictionary 
 with keys: _data_ (data matrices samples X features), _target_ (array with integer labels for different classes), and
 _description_ with a short description of the data. Further information on each dataset can be found online.
 
@@ -25,14 +25,18 @@ in a named tuple with fields (original name):
 - urban: Urban Land Cover;
 - leaf: Leaf.
 
-This object was generated with Python 3.8.
+This code requires 
 
-To load the named tuple from _uci_datasets.pkl_:
+    Python>3.6
 
-    import pickle as pkl
+To run the code:
     
-    datasets = pkl.load(open('./datasets/uci_datasets.pkl', 'rb'))
+    from datasets.manuscript_builddatasets import build_ucidatasets
 
+Then:
+
+    uci_datasets = build_ucidatasets()
+     
 To access dataset field names:
 
     datasets._fields
