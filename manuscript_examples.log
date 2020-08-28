@@ -1,0 +1,458 @@
+18:48:02, INFO Processing dataset biodeg
+18:48:02, INFO Number of classes: 2
+
+18:48:03, INFO Clustering algorithm: AgglomerativeClustering(affinity='euclidean', compute_full_tree='auto',
+                        connectivity=None, distance_threshold=None,
+                        linkage='ward', memory=None, n_clusters=2) -- Classification algorithm KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='euclidean',
+                     metric_params=None, n_jobs=None, n_neighbors=1, p=2,
+                     weights='uniform')
+18:48:08, INFO Best number of clusters: 4
+18:48:08, INFO Test set prediction ACC: 0.34834123222748814
+18:48:08, INFO AMI (true labels vs predicted labels) = 0.03736297681562881
+18:48:08, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:48:08, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:48:08, INFO Clustering algorithm: KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
+       n_clusters=8, n_init=10, n_jobs=None, precompute_distances='auto',
+       random_state=42, tol=0.0001, verbose=0) -- Classification algorithm KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='euclidean',
+                     metric_params=None, n_jobs=None, n_neighbors=1, p=2,
+                     weights='uniform')
+18:48:14, INFO Best number of clusters: 4
+18:48:14, INFO Test set prediction ACC: 0.2559241706161137
+18:48:14, INFO AMI (true labels vs predicted labels) = 0.03736297681562881
+18:48:14, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:48:14, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:48:14, INFO Clustering algorithm: SpectralClustering(affinity='rbf', assign_labels='kmeans', coef0=1, degree=3,
+                   eigen_solver=None, eigen_tol=0.0, gamma=1.0,
+                   kernel_params=None, n_clusters=8, n_components=None,
+                   n_init=10, n_jobs=None, n_neighbors=10, random_state=42) -- Classification algorithm KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='euclidean',
+                     metric_params=None, n_jobs=None, n_neighbors=1, p=2,
+                     weights='uniform')
+18:48:21, INFO Best number of clusters: 4
+18:48:21, INFO Test set prediction ACC: 0.3270142180094786
+18:48:21, INFO AMI (true labels vs predicted labels) = 0.03736297681562881
+18:48:21, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:48:21, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:48:21, INFO Clustering algorithm: AgglomerativeClustering(affinity='euclidean', compute_full_tree='auto',
+                        connectivity=None, distance_threshold=None,
+                        linkage='ward', memory=None, n_clusters=4) -- Classification algorithm LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=100,
+                   multi_class='auto', n_jobs=None, penalty='l2',
+                   random_state=42, solver='liblinear', tol=0.0001, verbose=0,
+                   warm_start=False)
+18:48:23, INFO Best number of clusters: 4
+18:48:23, INFO Test set prediction ACC: 0.34834123222748814
+18:48:23, INFO AMI (true labels vs predicted labels) = 0.03736297681562881
+18:48:23, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:48:23, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:48:23, INFO Clustering algorithm: KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
+       n_clusters=4, n_init=10, n_jobs=None, precompute_distances='auto',
+       random_state=42, tol=0.0001, verbose=0) -- Classification algorithm LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=100,
+                   multi_class='auto', n_jobs=None, penalty='l2',
+                   random_state=42, solver='liblinear', tol=0.0001, verbose=0,
+                   warm_start=False)
+18:48:26, INFO Best number of clusters: 4
+18:48:26, INFO Test set prediction ACC: 0.2559241706161137
+18:48:26, INFO AMI (true labels vs predicted labels) = 0.03736297681562881
+18:48:26, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:48:26, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:48:26, INFO Clustering algorithm: SpectralClustering(affinity='rbf', assign_labels='kmeans', coef0=1, degree=3,
+                   eigen_solver=None, eigen_tol=0.0, gamma=1.0,
+                   kernel_params=None, n_clusters=4, n_components=None,
+                   n_init=10, n_jobs=None, n_neighbors=10, random_state=42) -- Classification algorithm LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=100,
+                   multi_class='auto', n_jobs=None, penalty='l2',
+                   random_state=42, solver='liblinear', tol=0.0001, verbose=0,
+                   warm_start=False)
+18:48:29, INFO Best number of clusters: 4
+18:48:29, INFO Test set prediction ACC: 0.3270142180094786
+18:48:29, INFO AMI (true labels vs predicted labels) = 0.03736297681562881
+18:48:29, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:48:29, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:48:29, INFO Clustering algorithm: AgglomerativeClustering(affinity='euclidean', compute_full_tree='auto',
+                        connectivity=None, distance_threshold=None,
+                        linkage='ward', memory=None, n_clusters=4) -- Classification algorithm SVC(C=1, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
+    decision_function_shape='ovr', degree=3, gamma=0.0009478672985781991,
+    kernel='rbf', max_iter=-1, probability=False, random_state=42,
+    shrinking=True, tol=0.001, verbose=False)
+18:48:40, INFO Best number of clusters: 4
+18:48:40, INFO Test set prediction ACC: 0.34834123222748814
+18:48:40, INFO AMI (true labels vs predicted labels) = 0.03736297681562881
+18:48:40, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:48:40, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:48:40, INFO Clustering algorithm: KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
+       n_clusters=4, n_init=10, n_jobs=None, precompute_distances='auto',
+       random_state=42, tol=0.0001, verbose=0) -- Classification algorithm SVC(C=1, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
+    decision_function_shape='ovr', degree=3, gamma=0.0009478672985781991,
+    kernel='rbf', max_iter=-1, probability=False, random_state=42,
+    shrinking=True, tol=0.001, verbose=False)
+18:48:51, INFO Best number of clusters: 4
+18:48:51, INFO Test set prediction ACC: 0.2559241706161137
+18:48:51, INFO AMI (true labels vs predicted labels) = 0.03736297681562881
+18:48:51, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:48:51, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:48:51, INFO Clustering algorithm: SpectralClustering(affinity='rbf', assign_labels='kmeans', coef0=1, degree=3,
+                   eigen_solver=None, eigen_tol=0.0, gamma=1.0,
+                   kernel_params=None, n_clusters=4, n_components=None,
+                   n_init=10, n_jobs=None, n_neighbors=10, random_state=42) -- Classification algorithm SVC(C=1, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
+    decision_function_shape='ovr', degree=3, gamma=0.0009478672985781991,
+    kernel='rbf', max_iter=-1, probability=False, random_state=42,
+    shrinking=True, tol=0.001, verbose=False)
+18:49:03, INFO Best number of clusters: 4
+18:49:03, INFO Test set prediction ACC: 0.3270142180094786
+18:49:03, INFO AMI (true labels vs predicted labels) = 0.03736297681562881
+18:49:03, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:49:03, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:49:03, INFO Clustering algorithm: AgglomerativeClustering(affinity='euclidean', compute_full_tree='auto',
+                        connectivity=None, distance_threshold=None,
+                        linkage='ward', memory=None, n_clusters=4) -- Classification algorithm RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
+                       criterion='gini', max_depth=None, max_features='auto',
+                       max_leaf_nodes=None, max_samples=None,
+                       min_impurity_decrease=0.0, min_impurity_split=None,
+                       min_samples_leaf=1, min_samples_split=2,
+                       min_weight_fraction_leaf=0.0, n_estimators=100,
+                       n_jobs=None, oob_score=False, random_state=42, verbose=0,
+                       warm_start=False)
+18:52:07, INFO Best number of clusters: 4
+18:52:07, INFO Test set prediction ACC: 0.34834123222748814
+18:52:07, INFO AMI (true labels vs predicted labels) = 0.03736297681562881
+18:52:07, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:52:07, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:52:07, INFO Clustering algorithm: KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
+       n_clusters=4, n_init=10, n_jobs=None, precompute_distances='auto',
+       random_state=42, tol=0.0001, verbose=0) -- Classification algorithm RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
+                       criterion='gini', max_depth=None, max_features='auto',
+                       max_leaf_nodes=None, max_samples=None,
+                       min_impurity_decrease=0.0, min_impurity_split=None,
+                       min_samples_leaf=1, min_samples_split=2,
+                       min_weight_fraction_leaf=0.0, n_estimators=100,
+                       n_jobs=None, oob_score=False, random_state=42, verbose=0,
+                       warm_start=False)
+18:55:13, INFO Best number of clusters: 4
+18:55:13, INFO Test set prediction ACC: 0.2559241706161137
+18:55:13, INFO AMI (true labels vs predicted labels) = 0.03736297681562881
+18:55:13, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:55:13, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:55:13, INFO Clustering algorithm: SpectralClustering(affinity='rbf', assign_labels='kmeans', coef0=1, degree=3,
+                   eigen_solver=None, eigen_tol=0.0, gamma=1.0,
+                   kernel_params=None, n_clusters=4, n_components=None,
+                   n_init=10, n_jobs=None, n_neighbors=10, random_state=42) -- Classification algorithm RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
+                       criterion='gini', max_depth=None, max_features='auto',
+                       max_leaf_nodes=None, max_samples=None,
+                       min_impurity_decrease=0.0, min_impurity_split=None,
+                       min_samples_leaf=1, min_samples_split=2,
+                       min_weight_fraction_leaf=0.0, n_estimators=100,
+                       n_jobs=None, oob_score=False, random_state=42, verbose=0,
+                       warm_start=False)
+18:58:18, INFO Best number of clusters: 4
+18:58:18, INFO Test set prediction ACC: 0.3270142180094786
+18:58:18, INFO AMI (true labels vs predicted labels) = 0.03736297681562881
+18:58:18, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:58:18, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:58:18, INFO ****************************************************************************************************
+18:58:18, INFO 
+
+
+18:58:18, INFO Processing dataset breastwi
+18:58:18, INFO Number of classes: 2
+
+18:58:20, INFO Clustering algorithm: AgglomerativeClustering(affinity='euclidean', compute_full_tree='auto',
+                        connectivity=None, distance_threshold=None,
+                        linkage='ward', memory=None, n_clusters=4) -- Classification algorithm KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='euclidean',
+                     metric_params=None, n_jobs=None, n_neighbors=1, p=2,
+                     weights='uniform')
+18:58:24, INFO Best number of clusters: 2
+18:58:24, INFO Test set prediction ACC: 0.948905109489051
+18:58:24, INFO AMI (true labels vs predicted labels) = 0.6928217151146303
+18:58:24, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:58:24, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:58:24, INFO Clustering algorithm: KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
+       n_clusters=4, n_init=10, n_jobs=None, precompute_distances='auto',
+       random_state=42, tol=0.0001, verbose=0) -- Classification algorithm KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='euclidean',
+                     metric_params=None, n_jobs=None, n_neighbors=1, p=2,
+                     weights='uniform')
+18:58:28, INFO Best number of clusters: 2
+18:58:28, INFO Test set prediction ACC: 0.948905109489051
+18:58:28, INFO AMI (true labels vs predicted labels) = 0.6928217151146303
+18:58:28, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:58:28, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:58:28, INFO Clustering algorithm: SpectralClustering(affinity='rbf', assign_labels='kmeans', coef0=1, degree=3,
+                   eigen_solver=None, eigen_tol=0.0, gamma=1.0,
+                   kernel_params=None, n_clusters=4, n_components=None,
+                   n_init=10, n_jobs=None, n_neighbors=10, random_state=42) -- Classification algorithm KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='euclidean',
+                     metric_params=None, n_jobs=None, n_neighbors=1, p=2,
+                     weights='uniform')
+18:58:33, INFO Best number of clusters: 2
+18:58:33, INFO Test set prediction ACC: 0.948905109489051
+18:58:33, INFO AMI (true labels vs predicted labels) = 0.6928217151146303
+18:58:33, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:58:33, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:58:33, INFO Clustering algorithm: AgglomerativeClustering(affinity='euclidean', compute_full_tree='auto',
+                        connectivity=None, distance_threshold=None,
+                        linkage='ward', memory=None, n_clusters=2) -- Classification algorithm LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=100,
+                   multi_class='auto', n_jobs=None, penalty='l2',
+                   random_state=42, solver='liblinear', tol=0.0001, verbose=0,
+                   warm_start=False)
+18:58:35, INFO Best number of clusters: 2
+18:58:35, INFO Test set prediction ACC: 0.948905109489051
+18:58:35, INFO AMI (true labels vs predicted labels) = 0.6928217151146303
+18:58:35, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:58:35, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:58:35, INFO Clustering algorithm: KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
+       n_clusters=2, n_init=10, n_jobs=None, precompute_distances='auto',
+       random_state=42, tol=0.0001, verbose=0) -- Classification algorithm LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=100,
+                   multi_class='auto', n_jobs=None, penalty='l2',
+                   random_state=42, solver='liblinear', tol=0.0001, verbose=0,
+                   warm_start=False)
+18:58:38, INFO Best number of clusters: 2
+18:58:38, INFO Test set prediction ACC: 0.948905109489051
+18:58:38, INFO AMI (true labels vs predicted labels) = 0.6928217151146303
+18:58:38, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:58:38, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:58:38, INFO Clustering algorithm: SpectralClustering(affinity='rbf', assign_labels='kmeans', coef0=1, degree=3,
+                   eigen_solver=None, eigen_tol=0.0, gamma=1.0,
+                   kernel_params=None, n_clusters=2, n_components=None,
+                   n_init=10, n_jobs=None, n_neighbors=10, random_state=42) -- Classification algorithm LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=100,
+                   multi_class='auto', n_jobs=None, penalty='l2',
+                   random_state=42, solver='liblinear', tol=0.0001, verbose=0,
+                   warm_start=False)
+18:58:41, INFO Best number of clusters: 2
+18:58:41, INFO Test set prediction ACC: 0.948905109489051
+18:58:41, INFO AMI (true labels vs predicted labels) = 0.6928217151146303
+18:58:41, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:58:41, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:58:41, INFO Clustering algorithm: AgglomerativeClustering(affinity='euclidean', compute_full_tree='auto',
+                        connectivity=None, distance_threshold=None,
+                        linkage='ward', memory=None, n_clusters=2) -- Classification algorithm SVC(C=1, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
+    decision_function_shape='ovr', degree=3, gamma=0.0014641288433382138,
+    kernel='rbf', max_iter=-1, probability=False, random_state=42,
+    shrinking=True, tol=0.001, verbose=False)
+18:58:46, INFO Best number of clusters: 2
+18:58:46, INFO Test set prediction ACC: 0.948905109489051
+18:58:46, INFO AMI (true labels vs predicted labels) = 0.6928217151146303
+18:58:46, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:58:46, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:58:46, INFO Clustering algorithm: KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
+       n_clusters=2, n_init=10, n_jobs=None, precompute_distances='auto',
+       random_state=42, tol=0.0001, verbose=0) -- Classification algorithm SVC(C=1, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
+    decision_function_shape='ovr', degree=3, gamma=0.0014641288433382138,
+    kernel='rbf', max_iter=-1, probability=False, random_state=42,
+    shrinking=True, tol=0.001, verbose=False)
+18:58:52, INFO Best number of clusters: 2
+18:58:52, INFO Test set prediction ACC: 0.948905109489051
+18:58:52, INFO AMI (true labels vs predicted labels) = 0.6928217151146303
+18:58:52, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:58:52, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:58:52, INFO Clustering algorithm: SpectralClustering(affinity='rbf', assign_labels='kmeans', coef0=1, degree=3,
+                   eigen_solver=None, eigen_tol=0.0, gamma=1.0,
+                   kernel_params=None, n_clusters=2, n_components=None,
+                   n_init=10, n_jobs=None, n_neighbors=10, random_state=42) -- Classification algorithm SVC(C=1, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
+    decision_function_shape='ovr', degree=3, gamma=0.0014641288433382138,
+    kernel='rbf', max_iter=-1, probability=False, random_state=42,
+    shrinking=True, tol=0.001, verbose=False)
+18:58:58, INFO Best number of clusters: 2
+18:58:58, INFO Test set prediction ACC: 0.948905109489051
+18:58:58, INFO AMI (true labels vs predicted labels) = 0.6928217151146303
+18:58:58, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+18:58:58, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+18:58:58, INFO Clustering algorithm: AgglomerativeClustering(affinity='euclidean', compute_full_tree='auto',
+                        connectivity=None, distance_threshold=None,
+                        linkage='ward', memory=None, n_clusters=2) -- Classification algorithm RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
+                       criterion='gini', max_depth=None, max_features='auto',
+                       max_leaf_nodes=None, max_samples=None,
+                       min_impurity_decrease=0.0, min_impurity_split=None,
+                       min_samples_leaf=1, min_samples_split=2,
+                       min_weight_fraction_leaf=0.0, n_estimators=100,
+                       n_jobs=None, oob_score=False, random_state=42, verbose=0,
+                       warm_start=False)
+19:01:44, INFO Best number of clusters: 2
+19:01:44, INFO Test set prediction ACC: 0.948905109489051
+19:01:44, INFO AMI (true labels vs predicted labels) = 0.6928217151146303
+19:01:44, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+19:01:44, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+19:01:44, INFO Clustering algorithm: KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
+       n_clusters=2, n_init=10, n_jobs=None, precompute_distances='auto',
+       random_state=42, tol=0.0001, verbose=0) -- Classification algorithm RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
+                       criterion='gini', max_depth=None, max_features='auto',
+                       max_leaf_nodes=None, max_samples=None,
+                       min_impurity_decrease=0.0, min_impurity_split=None,
+                       min_samples_leaf=1, min_samples_split=2,
+                       min_weight_fraction_leaf=0.0, n_estimators=100,
+                       n_jobs=None, oob_score=False, random_state=42, verbose=0,
+                       warm_start=False)
+19:04:30, INFO Best number of clusters: 4
+19:04:30, INFO Test set prediction ACC: 0.6167883211678832
+19:04:30, INFO AMI (true labels vs predicted labels) = 0.5320472069289361
+19:04:30, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+19:04:30, INFO Test set ACC = 0.8248175182481752 (true labels vs predicted labels)
+
+19:04:30, INFO Clustering algorithm: SpectralClustering(affinity='rbf', assign_labels='kmeans', coef0=1, degree=3,
+                   eigen_solver=None, eigen_tol=0.0, gamma=1.0,
+                   kernel_params=None, n_clusters=2, n_components=None,
+                   n_init=10, n_jobs=None, n_neighbors=10, random_state=42) -- Classification algorithm RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
+                       criterion='gini', max_depth=None, max_features='auto',
+                       max_leaf_nodes=None, max_samples=None,
+                       min_impurity_decrease=0.0, min_impurity_split=None,
+                       min_samples_leaf=1, min_samples_split=2,
+                       min_weight_fraction_leaf=0.0, n_estimators=100,
+                       n_jobs=None, oob_score=False, random_state=42, verbose=0,
+                       warm_start=False)
+19:07:16, INFO Best number of clusters: 2
+19:07:16, INFO Test set prediction ACC: 0.948905109489051
+19:07:16, INFO AMI (true labels vs predicted labels) = 0.6928217151146303
+19:07:16, INFO Validation set normalized stability (misclassification):(0.0, (0.0, 0.0))
+19:07:16, INFO Test set ACC = 1.0 (true labels vs predicted labels)
+
+19:07:16, INFO ****************************************************************************************************
+19:07:16, INFO 
+
+
+19:07:16, INFO Processing dataset climate
+19:07:16, INFO Number of classes: 2
+
+19:07:16, INFO Clustering algorithm: AgglomerativeClustering(affinity='euclidean', compute_full_tree='auto',
+                        connectivity=None, distance_threshold=None,
+                        linkage='ward', memory=None, n_clusters=2) -- Classification algorithm KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='euclidean',
+                     metric_params=None, n_jobs=None, n_neighbors=1, p=2,
+                     weights='uniform')
+19:07:20, INFO Best number of clusters: 4
+19:07:20, INFO Test set prediction ACC: 0.2777777777777778
+19:07:20, INFO AMI (true labels vs predicted labels) = 0.013848113221774259
+19:07:20, INFO Validation set normalized stability (misclassification):(0.43396034531412686, (0.43396034531412686, 0.1624691161134066))
+19:07:20, INFO Test set ACC = 0.5925925925925926 (true labels vs predicted labels)
+
+19:07:20, INFO Clustering algorithm: KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
+       n_clusters=4, n_init=10, n_jobs=None, precompute_distances='auto',
+       random_state=42, tol=0.0001, verbose=0) -- Classification algorithm KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='euclidean',
+                     metric_params=None, n_jobs=None, n_neighbors=1, p=2,
+                     weights='uniform')
+19:07:24, INFO Best number of clusters: 2
+19:07:24, INFO Test set prediction ACC: 0.5324074074074074
+19:07:24, INFO AMI (true labels vs predicted labels) = -0.004837149446571535
+19:07:24, INFO Validation set normalized stability (misclassification):(0.11135708588321058, (0.11135708588321058, 0.14539829505021018))
+19:07:24, INFO Test set ACC = 0.6157407407407407 (true labels vs predicted labels)
+
+19:07:24, INFO Clustering algorithm: SpectralClustering(affinity='rbf', assign_labels='kmeans', coef0=1, degree=3,
+                   eigen_solver=None, eigen_tol=0.0, gamma=1.0,
+                   kernel_params=None, n_clusters=2, n_components=None,
+                   n_init=10, n_jobs=None, n_neighbors=10, random_state=42) -- Classification algorithm KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='euclidean',
+                     metric_params=None, n_jobs=None, n_neighbors=1, p=2,
+                     weights='uniform')
+19:07:28, INFO Best number of clusters: 3
+19:07:28, INFO Test set prediction ACC: 0.45833333333333326
+19:07:28, INFO AMI (true labels vs predicted labels) = 0.010834680023840254
+19:07:28, INFO Validation set normalized stability (misclassification):(0.3519410786025357, (0.3519410786025357, 0.18617677167923977))
+19:07:28, INFO Test set ACC = 0.5555555555555556 (true labels vs predicted labels)
+
+19:07:28, INFO Clustering algorithm: AgglomerativeClustering(affinity='euclidean', compute_full_tree='auto',
+                        connectivity=None, distance_threshold=None,
+                        linkage='ward', memory=None, n_clusters=4) -- Classification algorithm LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=100,
+                   multi_class='auto', n_jobs=None, penalty='l2',
+                   random_state=42, solver='liblinear', tol=0.0001, verbose=0,
+                   warm_start=False)
+19:07:30, INFO Best number of clusters: 4
+19:07:30, INFO Test set prediction ACC: 0.2777777777777778
+19:07:30, INFO AMI (true labels vs predicted labels) = 0.013848113221774259
+19:07:30, INFO Validation set normalized stability (misclassification):(0.3818076897172333, (0.3818076897172333, 0.07488162725073953))
+19:07:30, INFO Test set ACC = 0.5972222222222222 (true labels vs predicted labels)
+
+19:07:30, INFO Clustering algorithm: KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
+       n_clusters=2, n_init=10, n_jobs=None, precompute_distances='auto',
+       random_state=42, tol=0.0001, verbose=0) -- Classification algorithm LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=100,
+                   multi_class='auto', n_jobs=None, penalty='l2',
+                   random_state=42, solver='liblinear', tol=0.0001, verbose=0,
+                   warm_start=False)
+19:07:32, INFO Best number of clusters: 2
+19:07:32, INFO Test set prediction ACC: 0.5324074074074074
+19:07:32, INFO AMI (true labels vs predicted labels) = -0.004837149446571535
+19:07:32, INFO Validation set normalized stability (misclassification):(0.16409990848490036, (0.16409990848490036, 0.11572185741478429))
+19:07:32, INFO Test set ACC = 0.5925925925925926 (true labels vs predicted labels)
+
+19:07:32, INFO Clustering algorithm: SpectralClustering(affinity='rbf', assign_labels='kmeans', coef0=1, degree=3,
+                   eigen_solver=None, eigen_tol=0.0, gamma=1.0,
+                   kernel_params=None, n_clusters=3, n_components=None,
+                   n_init=10, n_jobs=None, n_neighbors=10, random_state=42) -- Classification algorithm LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=100,
+                   multi_class='auto', n_jobs=None, penalty='l2',
+                   random_state=42, solver='liblinear', tol=0.0001, verbose=0,
+                   warm_start=False)
+19:07:35, INFO Best number of clusters: 3
+19:07:35, INFO Test set prediction ACC: 0.45833333333333326
+19:07:35, INFO AMI (true labels vs predicted labels) = 0.010834680023840252
+19:07:35, INFO Validation set normalized stability (misclassification):(0.4351926807642748, (0.4351926807642748, 0.266042744341261))
+19:07:35, INFO Test set ACC = 0.6018518518518519 (true labels vs predicted labels)
+
+19:07:35, INFO Clustering algorithm: AgglomerativeClustering(affinity='euclidean', compute_full_tree='auto',
+                        connectivity=None, distance_threshold=None,
+                        linkage='ward', memory=None, n_clusters=4) -- Classification algorithm SVC(C=1, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
+    decision_function_shape='ovr', degree=3, gamma=0.001851851851851852,
+    kernel='rbf', max_iter=-1, probability=False, random_state=42,
+    shrinking=True, tol=0.001, verbose=False)
+19:07:39, INFO Best number of clusters: 2
+19:07:39, INFO Test set prediction ACC: 0.6111111111111112
+19:07:39, INFO AMI (true labels vs predicted labels) = -0.0047892786644399025
+19:07:39, INFO Validation set normalized stability (misclassification):(0.6922302737520128, (0.6922302737520128, 0.21869673354545116))
+19:07:39, INFO Test set ACC = 0.5601851851851852 (true labels vs predicted labels)
+
+19:07:39, INFO Clustering algorithm: KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
+       n_clusters=2, n_init=10, n_jobs=None, precompute_distances='auto',
+       random_state=42, tol=0.0001, verbose=0) -- Classification algorithm SVC(C=1, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
+    decision_function_shape='ovr', degree=3, gamma=0.001851851851851852,
+    kernel='rbf', max_iter=-1, probability=False, random_state=42,
+    shrinking=True, tol=0.001, verbose=False)
+19:07:44, INFO Best number of clusters: 2
+19:07:44, INFO Test set prediction ACC: 0.5324074074074074
+19:07:44, INFO AMI (true labels vs predicted labels) = -0.004837149446571535
+19:07:44, INFO Validation set normalized stability (misclassification):(0.12399081890406576, (0.12399081890406576, 0.1190786714391108))
+19:07:44, INFO Test set ACC = 0.5879629629629629 (true labels vs predicted labels)
+
+19:07:44, INFO Clustering algorithm: SpectralClustering(affinity='rbf', assign_labels='kmeans', coef0=1, degree=3,
+                   eigen_solver=None, eigen_tol=0.0, gamma=1.0,
+                   kernel_params=None, n_clusters=3, n_components=None,
+                   n_init=10, n_jobs=None, n_neighbors=10, random_state=42) -- Classification algorithm SVC(C=1, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
+    decision_function_shape='ovr', degree=3, gamma=0.001851851851851852,
+    kernel='rbf', max_iter=-1, probability=False, random_state=42,
+    shrinking=True, tol=0.001, verbose=False)
+19:07:49, INFO Best number of clusters: 3
+19:07:49, INFO Test set prediction ACC: 0.45833333333333326
+19:07:49, INFO AMI (true labels vs predicted labels) = 0.010834680023840252
+19:07:49, INFO Validation set normalized stability (misclassification):(0.4565894236482471, (0.4565894236482471, 0.10312205812233219))
+19:07:49, INFO Test set ACC = 0.6018518518518519 (true labels vs predicted labels)
+
+19:07:49, INFO Clustering algorithm: AgglomerativeClustering(affinity='euclidean', compute_full_tree='auto',
+                        connectivity=None, distance_threshold=None,
+                        linkage='ward', memory=None, n_clusters=2) -- Classification algorithm RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
+                       criterion='gini', max_depth=None, max_features='auto',
+                       max_leaf_nodes=None, max_samples=None,
+                       min_impurity_decrease=0.0, min_impurity_split=None,
+                       min_samples_leaf=1, min_samples_split=2,
+                       min_weight_fraction_leaf=0.0, n_estimators=100,
+                       n_jobs=None, oob_score=False, random_state=42, verbose=0,
+                       warm_start=False)
