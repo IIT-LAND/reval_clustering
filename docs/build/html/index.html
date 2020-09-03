@@ -153,7 +153,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="stability-based-relative-clustering-validation-to-determine-the-best-number-of-cluster">
+  <p>sphinx-quickstart on Mon May 11 18:17:16 2020.</p>
+<div class="section" id="stability-based-relative-clustering-validation-to-determine-the-best-number-of-cluster">
 <h1>Stability-based relative clustering validation to determine the best number of cluster<a class="headerlink" href="#stability-based-relative-clustering-validation-to-determine-the-best-number-of-cluster" title="Permalink to this headline">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">reval</span></code> allows to determine the best number of clusters to partition datasets without a priori knowledge.
 It leverages a stability-based relative clustering validation method (Lange et al., 2004) that transforms
@@ -164,12 +165,12 @@ that leads to the minimum expected misclassification error, i.e., stability.</p>
 <li><p>Select any classification algorithm from <code class="docutils literal notranslate"><span class="pre">sklearn</span></code> library;</p></li>
 <li><p>Select a clustering algorithm with <code class="docutils literal notranslate"><span class="pre">n_clusters</span></code> parameter, i.e., choose among <code class="docutils literal notranslate"><span class="pre">sklearn.cluster.KMeans</span></code>,
 <code class="docutils literal notranslate"><span class="pre">sklearn.cluster.AgglomerativeClustering</span></code>, <code class="docutils literal notranslate"><span class="pre">sklearn.cluster.SpectralClustering</span></code>;</p></li>
-<li><p>Perform <em>k</em>-fold cross-validation to determine the best number of clusters;</p></li>
+<li><p>Perform (repeated) <em>k</em>-fold cross-validation to determine the best number of clusters;</p></li>
 <li><p>Test the final model on an held-out dataset.</p></li>
 </ol>
 <p>Underlying mathematics can be found in (Lange et al., 2004), whereas code can be found on <a class="reference external" href="https://github.com/IIT-LAND/reval_clustering">github</a>.</p>
 <p>The analysis steps performed by <code class="docutils literal notranslate"><span class="pre">reval</span></code> package are displayed below.</p>
-<img alt="_images/revalpipeline.png" class="align-center" src="_images/revalpipeline.png" />
+<img alt="_images/revalv0.0.2pipeline.png" class="align-center" src="_images/revalv0.0.2pipeline.png" />
 <p>Lange, T., Roth, V., Braun, M. L., &amp; Buhmann, J. M. (2004).
 Stability-based validation of clustering solutions. <em>Neural computation</em>, 16(6), 1299-1323.</p>
 <div class="toctree-wrapper compound">
@@ -181,6 +182,7 @@ Stability-based validation of clustering solutions. <em>Neural computation</em>,
 <li class="toctree-l2"><a class="reference internal" href="experiments.html#gaussian-blobs">Gaussian blobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="experiments.html#gaussian-blobs-with-noise">Gaussian blobs with noise</a></li>
 <li class="toctree-l2"><a class="reference internal" href="experiments.html#mnist-dataset">MNIST dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="experiments.html#more-examples">More examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="datadimension.html">Examples of how things can go wrong</a><ul>
@@ -200,6 +202,42 @@ Stability-based validation of clustering solutions. <em>Neural computation</em>,
 </ul>
 </li>
 </ul>
+</div>
+</div>
+<div class="section" id="cite-as">
+<h1>Cite as<a class="headerlink" href="#cite-as" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Isotta</span> <span class="n">Landi</span><span class="p">,</span> <span class="n">Veronica</span> <span class="n">Mandelli</span><span class="p">,</span> <span class="o">&amp;</span> <span class="n">Michael</span> <span class="n">Vincent</span> <span class="n">Lombardo</span><span class="o">.</span> <span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="n">June</span> <span class="mi">29</span><span class="p">)</span><span class="o">.</span> <span class="n">reval</span><span class="p">:</span> <span class="n">stability</span><span class="o">-</span><span class="n">based</span> <span class="n">relative</span>
+<span class="n">clustering</span> <span class="n">validation</span> <span class="n">method</span> <span class="n">to</span> <span class="n">determine</span> <span class="n">the</span> <span class="n">best</span> <span class="n">number</span> <span class="n">of</span> <span class="n">clusters</span> <span class="p">(</span><span class="n">Version</span> <span class="n">v1</span><span class="o">.</span><span class="mf">0.0</span><span class="p">)</span><span class="o">.</span> <span class="n">Zenodo</span><span class="o">.</span>
+<span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">doi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mf">10.5281</span><span class="o">/</span><span class="n">zenodo</span><span class="o">.</span><span class="mi">3922334</span>
+</pre></div>
+</div>
+<p>BibTeX alternative</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@software</span><span class="p">{</span><span class="n">isotta_landi_2020_3922334</span><span class="p">,</span>
+           <span class="n">author</span>       <span class="o">=</span> <span class="p">{</span><span class="n">Isotta</span> <span class="n">Landi</span> <span class="ow">and</span>
+                           <span class="n">Veronica</span> <span class="n">Mandelli</span> <span class="ow">and</span>
+                           <span class="n">Michael</span> <span class="n">Vincent</span> <span class="n">Lombardo</span><span class="p">},</span>
+           <span class="n">title</span>        <span class="o">=</span> <span class="p">{{</span><span class="n">reval</span><span class="p">:</span> <span class="n">stability</span><span class="o">-</span><span class="n">based</span> <span class="n">relative</span> <span class="n">clustering</span>
+                            <span class="n">validation</span> <span class="n">method</span> <span class="n">to</span> <span class="n">determine</span> <span class="n">the</span> <span class="n">best</span> <span class="n">number</span> <span class="n">of</span>
+                            <span class="n">clusters</span><span class="p">}},</span>
+           <span class="n">month</span>        <span class="o">=</span> <span class="n">jun</span><span class="p">,</span>
+           <span class="n">year</span>         <span class="o">=</span> <span class="mi">2020</span><span class="p">,</span>
+           <span class="n">publisher</span>    <span class="o">=</span> <span class="p">{</span><span class="n">Zenodo</span><span class="p">},</span>
+           <span class="n">version</span>      <span class="o">=</span> <span class="p">{</span><span class="n">v1</span><span class="o">.</span><span class="mf">0.0</span><span class="p">},</span>
+           <span class="n">doi</span>          <span class="o">=</span> <span class="p">{</span><span class="mf">10.5281</span><span class="o">/</span><span class="n">zenodo</span><span class="o">.</span><span class="mi">3922334</span><span class="p">},</span>
+           <span class="n">url</span>          <span class="o">=</span> <span class="p">{</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">doi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mf">10.5281</span><span class="o">/</span><span class="n">zenodo</span><span class="o">.</span><span class="mi">3922334</span><span class="p">}</span>
+         <span class="p">}</span>
+</pre></div>
+</div>
+<p>Pre-print manuscript</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@misc</span><span class="p">{</span><span class="n">l2020reval</span><span class="p">,</span>
+      <span class="n">title</span><span class="o">=</span><span class="p">{</span><span class="n">reval</span><span class="p">:</span> <span class="n">a</span> <span class="n">Python</span> <span class="n">package</span> <span class="n">to</span> <span class="n">determine</span> <span class="n">the</span> <span class="n">best</span> <span class="n">number</span> <span class="n">of</span> <span class="n">clusters</span> <span class="k">with</span> <span class="n">stability</span><span class="o">-</span><span class="n">based</span> <span class="n">relative</span> <span class="n">clustering</span> <span class="n">validation</span><span class="p">},</span>
+      <span class="n">author</span><span class="o">=</span><span class="p">{</span><span class="n">Isotta</span> <span class="n">Landi</span> <span class="ow">and</span> <span class="n">Veronica</span> <span class="n">Mandelli</span> <span class="ow">and</span> <span class="n">Michael</span> <span class="n">V</span><span class="o">.</span> <span class="n">Lombardo</span><span class="p">},</span>
+      <span class="n">year</span><span class="o">=</span><span class="p">{</span><span class="mi">2020</span><span class="p">},</span>
+      <span class="n">eprint</span><span class="o">=</span><span class="p">{</span><span class="mf">2009.01077</span><span class="p">},</span>
+      <span class="n">archivePrefix</span><span class="o">=</span><span class="p">{</span><span class="n">arXiv</span><span class="p">},</span>
+      <span class="n">primaryClass</span><span class="o">=</span><span class="p">{</span><span class="n">cs</span><span class="o">.</span><span class="n">LG</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
 </div>
 </div>
 <div class="section" id="indices-and-tables">

@@ -8,7 +8,7 @@ From github, navigate to the folder you want ``reval`` library in, open terminal
     git clone https://github.com/IIT-LAND/reval_clustering
     pip install -r requirements.txt
 
-In alternative, PyPI install:
+PyPI alternative:
 
 .. code:: bash
 

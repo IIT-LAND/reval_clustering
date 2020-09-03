@@ -152,8 +152,8 @@
             
   <h1>Source code for reval.relative_validation</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">linear_sum_assignment</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">zero_one_loss</span>
+<span class="kn">from</span> <span class="nn">reval.utils</span> <span class="kn">import</span> <span class="n">kuhn_munkres_algorithm</span>
 
 
 <div class="viewcode-block" id="RelativeValidation"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation.RelativeValidation">[docs]</a><span class="k">class</span> <span class="nc">RelativeValidation</span><span class="p">:</span>
@@ -218,7 +218,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">clustlab_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>  <span class="c1"># A_k(X&#39;)</span>
         <span class="n">classlab_ts</span> <span class="o">=</span> <span class="n">fit_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
-        <span class="n">bestperm</span> <span class="o">=</span> <span class="n">_kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">classlab_ts</span><span class="p">,</span> <span class="n">clustlab_ts</span><span class="p">)</span>  <span class="c1"># array of integers</span>
+        <span class="n">bestperm</span> <span class="o">=</span> <span class="n">kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">classlab_ts</span><span class="p">,</span> <span class="n">clustlab_ts</span><span class="p">)</span>  <span class="c1"># array of integers</span>
         <span class="n">misclass</span> <span class="o">=</span> <span class="n">zero_one_loss</span><span class="p">(</span><span class="n">classlab_ts</span><span class="p">,</span> <span class="n">bestperm</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">misclass</span><span class="p">,</span> <span class="n">bestperm</span></div>
 
@@ -263,53 +263,9 @@
 <span class="sd">        :rtype: float</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">class_method</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">xtr</span><span class="p">,</span> <span class="n">randlabtr</span><span class="p">)</span>
-        <span class="n">me_ts</span> <span class="o">=</span> <span class="n">zero_one_loss</span><span class="p">(</span><span class="n">labts</span><span class="p">,</span> <span class="n">_kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">labts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_method</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xts</span><span class="p">)))</span>
+        <span class="n">pred_lab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_method</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xts</span><span class="p">)</span>
+        <span class="n">me_ts</span> <span class="o">=</span> <span class="n">zero_one_loss</span><span class="p">(</span><span class="n">pred_lab</span><span class="p">,</span> <span class="n">kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">pred_lab</span><span class="p">,</span> <span class="n">labts</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">me_ts</span></div></div>
-
-
-<div class="viewcode-block" id="_kuhn_munkres_algorithm"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation._kuhn_munkres_algorithm">[docs]</a><span class="k">def</span> <span class="nf">_kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">true_lab</span><span class="p">,</span> <span class="n">pred_lab</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Private function that implements the Kuhn-Munkres algorithm method. It selects the best label permutation of the</span>
-<span class="sd">    classification output that minimizes the</span>
-<span class="sd">    misclassification error when compared to the clustering labels.</span>
-
-<span class="sd">    :param true_lab: clustering algorithm labels</span>
-<span class="sd">    :type true_lab: ndarray, (n_samples,)</span>
-<span class="sd">    :param pred_lab: classification algorithm labels</span>
-<span class="sd">    :type pred_lab: ndarray, (n_samples,)</span>
-<span class="sd">    :return: permuted labels that minimize the misclassification error</span>
-<span class="sd">    :rtype: ndarray, (n_samples,)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">true_lab</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pred_lab</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="n">nclass</span><span class="p">,</span> <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">true_lab</span><span class="p">)),</span> <span class="nb">len</span><span class="p">(</span><span class="n">true_lab</span><span class="p">)</span>
-        <span class="n">wmat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nclass</span><span class="p">,</span> <span class="n">nclass</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">lab</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nclass</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">plab</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">nclass</span><span class="p">):</span>
-                <span class="n">n_intersec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">true_lab</span> <span class="o">==</span> <span class="n">lab</span><span class="p">))</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
-                    <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">pred_lab</span> <span class="o">==</span> <span class="n">plab</span><span class="p">))))</span>
-                <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">n_intersec</span><span class="p">)</span> <span class="o">/</span> <span class="n">nobs</span>
-                <span class="k">if</span> <span class="n">lab</span> <span class="o">==</span> <span class="n">plab</span><span class="p">:</span>
-                    <span class="n">wmat</span><span class="p">[</span><span class="n">lab</span><span class="p">,</span> <span class="n">plab</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">wmat</span><span class="p">[</span><span class="n">lab</span><span class="p">,</span> <span class="n">plab</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span>
-                    <span class="n">n_intersec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">true_lab</span> <span class="o">==</span> <span class="n">plab</span><span class="p">))</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
-                        <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">pred_lab</span> <span class="o">==</span> <span class="n">lab</span><span class="p">))))</span>
-                    <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">n_intersec</span><span class="p">)</span> <span class="o">/</span> <span class="n">nobs</span>
-                    <span class="n">wmat</span><span class="p">[</span><span class="n">plab</span><span class="p">,</span> <span class="n">lab</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span>
-        <span class="n">new_pred_lab</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">linear_sum_assignment</span><span class="p">(</span><span class="n">wmat</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">pred_perm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">new_pred_lab</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pred_lab</span><span class="p">])</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="n">pred_perm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pred_lab</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_pred_lab</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="p">:</span>
-                    <span class="n">pred_perm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pred_perm</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">pred_perm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pred_perm</span><span class="p">,</span> <span class="n">new_pred_lab</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">pred_perm</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;input variables should be (np.ndarray, np.ndarray)&#39;</span>
-                        <span class="sa">f</span><span class="s1">&#39; not (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">true_lab</span><span class="p">)</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pred_lab</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

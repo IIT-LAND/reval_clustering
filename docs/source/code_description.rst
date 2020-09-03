@@ -18,7 +18,7 @@ Functions
 ---------
 
 Useful functions that can be used on their own are also available. In particular,
-``reval.relative_validation._kuhn_munkres_algorithm`` is an implementation of the Kuhn-Munkres algorithm
+``reval.utils.kuhn_munkres_algorithm`` is an implementation of the Kuhn-Munkres algorithm
 (Kuhn, 1955; Munkres, 1957), that performs consistent permutation of predicted labels
 in order to minimize the misclassification error with respect to true labels.
 
@@ -28,9 +28,9 @@ Kuhn, H. W. (1955). The Hungarian method for the assignment problem. *Naval rese
 Munkres, J. (1957). Algorithms for the assignment and transportation problems.
 *Journal of the society for industrial and applied mathematics*, 5(1), 32-38.
 
-.. automodule:: reval.relative_validation
-   :members: _kuhn_munkres_algorithm
-   :private-members:
+.. automodule:: reval.utils
+   :members: kuhn_munkres_algorithm
+   :private-members: _build_weight_mat
 
 The ``reval.best_nclust_cv._confint`` computes 95% confidence interval using ``scipy.stats.t.ppf()`` function.
 
