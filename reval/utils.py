@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.optimize import linear_sum_assignment
-import logging
 
 
 def kuhn_munkres_algorithm(true_lab, pred_lab):

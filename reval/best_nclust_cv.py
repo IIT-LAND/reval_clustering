@@ -9,7 +9,7 @@ import math
 class FindBestClustCV(RelativeValidation):
     """
     Child class of :class:`reval.relative_validation.RelativeValidation`.
-    It performs k-fold cross validation on the training set to
+    It performs (repeated) k-fold cross validation on the training set to
     select the best number of clusters, i.e., the number that minimizes the
     normalized stability (i.e., average misclassification error/asymptotic misclassification rate).
 
@@ -38,7 +38,7 @@ class FindBestClustCV(RelativeValidation):
         """
         This method takes as input the training dataset and the
         stratification vector (if available) and performs a
-        CV to select the best number of clusters that minimizes
+        (repeated) CV procedure to select the best number of clusters that minimizes
         normalized stability.
 
         :param data: training dataset

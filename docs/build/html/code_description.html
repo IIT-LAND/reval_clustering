@@ -280,7 +280,7 @@ and both clustering and classification labels.</p>
 <dt id="reval.best_nclust_cv.FindBestClustCV">
 <em class="property">class </em><code class="sig-prename descclassname">reval.best_nclust_cv.</code><code class="sig-name descname">FindBestClustCV</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nfold</span></em>, <em class="sig-param"><span class="n">nclust_range</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">nrand</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/best_nclust_cv.html#FindBestClustCV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.best_nclust_cv.FindBestClustCV" title="Permalink to this definition">¶</a></dt>
 <dd><p>Child class of <a class="reference internal" href="#reval.relative_validation.RelativeValidation" title="reval.relative_validation.RelativeValidation"><code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation</span></code></a>.
-It performs k-fold cross validation on the training set to
+It performs (repeated) k-fold cross validation on the training set to
 select the best number of clusters, i.e., the number that minimizes the
 normalized stability (i.e., average misclassification error/asymptotic misclassification rate).</p>
 <dl class="field-list simple">
@@ -297,15 +297,16 @@ normalized stability (i.e., average misclassification error/asymptotic misclassi
 </dl>
 <dl class="py method">
 <dt id="reval.best_nclust_cv.FindBestClustCV.best_nclust">
-<code class="sig-name descname">best_nclust</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">strat_vect</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/best_nclust_cv.html#FindBestClustCV.best_nclust"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.best_nclust_cv.FindBestClustCV.best_nclust" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">best_nclust</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">iter_cv</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">strat_vect</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/best_nclust_cv.html#FindBestClustCV.best_nclust"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.best_nclust_cv.FindBestClustCV.best_nclust" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method takes as input the training dataset and the
 stratification vector (if available) and performs a
-CV to select the best number of clusters that minimizes
+(repeated) CV procedure to select the best number of clusters that minimizes
 normalized stability.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – training dataset</p></li>
+<li><p><strong>iter_cv</strong> (<em>integer</em>) – number of iteration for repeated CV, default 1</p></li>
 <li><p><strong>strat_vect</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>,</em><em>)</em>) – vector for stratification, defaults to None</p></li>
 </ul>
 </dd>
@@ -347,24 +348,28 @@ to the test set. It returns clustering labels.</p>
 <div class="section" id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
 <p>Useful functions that can be used on their own are also available. In particular,
-<code class="docutils literal notranslate"><span class="pre">reval.relative_validation._kuhn_munkres_algorithm</span></code> is an implementation of the Kuhn-Munkres algorithm
+<code class="docutils literal notranslate"><span class="pre">reval.utils.kuhn_munkres_algorithm</span></code> is an implementation of the Kuhn-Munkres algorithm
 (Kuhn, 1955; Munkres, 1957), that performs consistent permutation of predicted labels
 in order to minimize the misclassification error with respect to true labels.</p>
 <p>Kuhn, H. W. (1955). The Hungarian method for the assignment problem. <em>Naval research logistics quarterly</em>,
 2(1‐2), 83-97.</p>
 <p>Munkres, J. (1957). Algorithms for the assignment and transportation problems.
 <em>Journal of the society for industrial and applied mathematics</em>, 5(1), 32-38.</p>
-<span class="target" id="module-reval.relative_validation"></span><dl class="py function">
-<dt id="reval.relative_validation._kuhn_munkres_algorithm">
-<code class="sig-prename descclassname">reval.relative_validation.</code><code class="sig-name descname">_kuhn_munkres_algorithm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">true_lab</span></em>, <em class="sig-param"><span class="n">pred_lab</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/relative_validation.html#_kuhn_munkres_algorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.relative_validation._kuhn_munkres_algorithm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Private function that implements the Kuhn-Munkres algorithm method. It selects the best label permutation of the
-classification output that minimizes the
-misclassification error when compared to the clustering labels.</p>
+<span class="target" id="module-reval.utils"></span><dl class="py function">
+<dt id="reval.utils.kuhn_munkres_algorithm">
+<code class="sig-prename descclassname">reval.utils.</code><code class="sig-name descname">kuhn_munkres_algorithm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">true_lab</span></em>, <em class="sig-param"><span class="n">pred_lab</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/utils.html#kuhn_munkres_algorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.utils.kuhn_munkres_algorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that implements the Kuhn-Munkres algorithm method. It selects the best label permutation of the
+predicted labels that minimizes the
+misclassification error when compared to the true labels. In order to allow for the investigation
+of replicability of findings between training and test sets, in the context of reval we permute
+clustering labels to match classification labels, in order to retain the label organization
+based on training dataset. This because otherwise we would loose the correspondence between training and test
+sets labels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>true_lab</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>,</em><em>)</em>) – clustering algorithm labels</p></li>
-<li><p><strong>pred_lab</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>,</em><em>)</em>) – classification algorithm labels</p></li>
+<li><p><strong>true_lab</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>,</em><em>)</em>) – classification algorithm labels (for reval)</p></li>
+<li><p><strong>pred_lab</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>,</em><em>)</em>) – clustering algorithm labels (for reval)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -400,7 +405,7 @@ misclassification error when compared to the clustering labels.</p>
 <p><code class="docutils literal notranslate"><span class="pre">reval.visualization</span></code> enables plotting the cross-validation performance.</p>
 <span class="target" id="module-reval.visualization"></span><dl class="py function">
 <dt id="reval.visualization.plot_metrics">
-<code class="sig-prename descclassname">reval.visualization.</code><code class="sig-name descname">plot_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cv_score</span></em>, <em class="sig-param"><span class="n">title</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">20, 10</span></em>, <em class="sig-param"><span class="n">save_fig</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/visualization.html#plot_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.visualization.plot_metrics" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reval.visualization.</code><code class="sig-name descname">plot_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cv_score</span></em>, <em class="sig-param"><span class="n">title</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">20, 10</span></em>, <em class="sig-param"><span class="n">legend_loc</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">save_fig</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/visualization.html#plot_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.visualization.plot_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function that plots the average performance (i.e., normalized stability) over cross-validation
 for training and validation sets.</p>
 <dl class="field-list simple">
@@ -409,6 +414,7 @@ for training and validation sets.</p>
 <li><p><strong>cv_score</strong> (<em>dictionary</em>) – collection of cv scores as output by <cite>reval.best_nclust_cv.FindBestCLustCV.best_nclust</cite></p></li>
 <li><p><strong>title</strong> (<em>str</em>) – figure title</p></li>
 <li><p><strong>figsize</strong> (<em>tuple</em>) – (width, height)</p></li>
+<li><p><strong>legend_loc</strong> (<em>int</em>) – legend location, default 1</p></li>
 <li><p><strong>save_fig</strong> (<em>str</em>) – file name for saving figure in png format, default None</p></li>
 </ul>
 </dd>

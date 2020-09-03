@@ -88,6 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#gaussian-blobs">Gaussian blobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#gaussian-blobs-with-noise">Gaussian blobs with noise</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mnist-dataset">MNIST dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#more-examples">More examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="datadimension.html">Examples of how things can go wrong</a></li>
@@ -165,10 +166,8 @@
 <em>reval_clustering/working_examples</em> folder.</p>
 <ol class="arabic simple">
 <li><p>N = 1,000 Gaussian blob samples with 10 features divided into 5 clusters (code in <code class="docutils literal notranslate"><span class="pre">blobs.py</span></code>);</p></li>
-</ol>
-<p>2. N = 1,000 Gaussian blob samples with 10 features divided into 5 clusters with noise parameter <em>cluster_std</em>
-set at 3 (code in <code class="docutils literal notranslate"><span class="pre">blobs.py</span></code>);</p>
-<ol class="arabic simple" start="3">
+<li><p>N = 1,000 Gaussian blob samples with 10 features divided into 5 clusters with noise parameter <em>cluster_std</em>
+set at 3 (code in <code class="docutils literal notranslate"><span class="pre">blobs.py</span></code>);</p></li>
 <li><p>N = 14,000 samples from the MNIST handwritten digits dataset (code in <code class="docutils literal notranslate"><span class="pre">mnist.py</span></code>).</p></li>
 </ol>
 <div class="section" id="gaussian-blobs">
@@ -436,6 +435,11 @@ This lowers the external ACC score although returning a high AMI score, which is
 <li><p>Pre-processing steps;</p></li>
 <li><p>Whether <code class="docutils literal notranslate"><span class="pre">reval</span></code> is the right method to use with the data at hand (e.g., very noisy dataset with unknown labels).</p></li>
 </ol>
+</div>
+<div class="section" id="more-examples">
+<h2>More examples<a class="headerlink" href="#more-examples" title="Permalink to this headline">¶</a></h2>
+<p>Check out more examples including repeated cross validation for blobs dataset and hand-written digits, and <code class="docutils literal notranslate"><span class="pre">reval</span></code> for ensemble learning
+<a class="reference external" href="https://arxiv.org/abs/2009.01077">here</a>.</p>
 </div>
 </div>
 

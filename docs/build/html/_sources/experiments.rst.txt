@@ -7,7 +7,7 @@ We present here three examples to test ``reval`` performance. Code can be found 
 1. N = 1,000 Gaussian blob samples with 10 features divided into 5 clusters (code in ``blobs.py``);
 
 2. N = 1,000 Gaussian blob samples with 10 features divided into 5 clusters with noise parameter *cluster_std*
-set at 3 (code in ``blobs.py``);
+   set at 3 (code in ``blobs.py``);
 
 3. N = 14,000 samples from the MNIST handwritten digits dataset (code in ``mnist.py``).
 
@@ -347,3 +347,8 @@ In these situations attention should be put in:
 1. Choosing the right clustering algorithm;
 2. Pre-processing steps;
 3. Whether ``reval`` is the right method to use with the data at hand (e.g., very noisy dataset with unknown labels).
+
+More examples
+-------------
+Check out more examples including repeated cross validation for blobs dataset and hand-written digits, and ``reval`` for ensemble learning
+`here <https://arxiv.org/abs/2009.01077>`__.
