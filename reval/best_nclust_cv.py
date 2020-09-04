@@ -4,7 +4,11 @@ from collections import namedtuple
 from scipy import stats
 import numpy as np
 import math
+import logging
 
+logging.basicConfig(format='%(asctime)s, %(levelname)s %(message)s',
+                    datefmt='%H:%M:%S',
+                    level=logging.INFO)
 
 class FindBestClustCV(RelativeValidation):
     """
@@ -15,8 +19,8 @@ class FindBestClustCV(RelativeValidation):
 
     :param nfold: number of CV folds
     :type nfold: int
-    :param nclust_range: list with minimum and maximum cluster numbers to look for
-    :type nclust_range: list ([int, int])
+    :param nclust_range: list with clusters to look for
+    :type nclust_range: list of int
     :param s: classification object inherited from :class:`reval.relative_validation.RelativeValidation`
     :type s: class
     :param c: clustering object inherited from :class:`reval.relative_validation.RelativeValidation`
@@ -34,7 +38,7 @@ class FindBestClustCV(RelativeValidation):
         self.nfold = nfold
         self.nclust_range = nclust_range
 
-    def best_nclust(self, data, iter_cv=1, strat_vect=None):
+    def best_nclust(self, data, iter_cv=1, strat_vect=None, verbose=False):
         """
         This method takes as input the training dataset and the
         stratification vector (if available) and performs a
@@ -47,6 +51,8 @@ class FindBestClustCV(RelativeValidation):
         :type iter_cv: integer
         :param strat_vect: vector for stratification, defaults to None
         :type strat_vect: ndarray, (n_samples,)
+        :param verbose: enable verbose running, default False
+        :type verbose: Bool
         :return: CV metrics for training and validation sets, best number of clusters,
             misclassification errors at each CV iteration
         :rtype: dictionary, int, dictionary
@@ -55,7 +61,11 @@ class FindBestClustCV(RelativeValidation):
         reval = RelativeValidation(self.class_method, self.clust_method, self.nrand)
         metrics = {'train': {}, 'val': {}}
         check_dist = {'train': {}, 'val': {}}
-        for ncl in range(self.nclust_range[0], self.nclust_range[1]):
+        for i, ncl in enumerate(self.nclust_range):
+            if verbose:
+                logging.info(
+                    f'{i} iter - ({ncl}) Clusters / {len(self.nclust_range)} iter - '
+                    f'max clusters({self.nclust_range[-1]})')
             if strat_vect is not None:
                 kfold = RepeatedStratifiedKFold(n_splits=self.nfold, n_repeats=iter_cv, random_state=42)
             else:
@@ -85,6 +95,9 @@ class FindBestClustCV(RelativeValidation):
                     check_dist['val'].setdefault(ncl, list()).append(ms_val)
                 except ValueError:
                     pass
+            if verbose:
+                logging.info(f'Normalized stability: {np.mean(norm_stab_tr)}, '
+                             f'Confidence interval (mean, error): {_confint(norm_stab_tr)}')
             metrics['train'][ncl] = (np.mean(norm_stab_tr), _confint(norm_stab_tr))
             metrics['val'][ncl] = (np.mean(norm_stab_val), _confint(norm_stab_val))
 
@@ -92,7 +105,7 @@ class FindBestClustCV(RelativeValidation):
         bestscore = min(val_score)
         # select the cluster with the minimum misclassification error
         # and the maximum number of clusters
-        bestncl = np.flatnonzero(val_score == bestscore)[-1] + self.nclust_range[0]
+        bestncl = self.nclust_range[np.flatnonzero(val_score == bestscore)[-1]]
         return metrics, bestncl, check_dist
 
     def evaluate(self, data_tr, data_ts, nclust):

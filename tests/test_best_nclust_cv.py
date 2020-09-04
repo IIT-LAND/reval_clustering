@@ -9,7 +9,7 @@ import math
 RNDLABELS_ITER = 10
 CLASSIFIER = KNeighborsClassifier(n_neighbors=5)
 CLUSTERING = AgglomerativeClustering()
-NCLUST_RANGE = [2, 4]
+NCLUST_RANGE = list(range(2, 4, 1))
 NFOLD = 2
 
 
