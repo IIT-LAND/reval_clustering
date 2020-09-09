@@ -10,6 +10,7 @@ logging.basicConfig(format='%(asctime)s, %(levelname)s %(message)s',
                     datefmt='%H:%M:%S',
                     level=logging.INFO)
 
+
 class FindBestClustCV(RelativeValidation):
     """
     Child class of :class:`reval.relative_validation.RelativeValidation`.
