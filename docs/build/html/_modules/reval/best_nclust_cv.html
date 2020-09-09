@@ -157,6 +157,11 @@
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1">, </span><span class="si">%(levelname)s</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%H:%M:%S&#39;</span><span class="p">,</span>
+                    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="FindBestClustCV"><a class="viewcode-back" href="../../code_description.html#reval.best_nclust_cv.FindBestClustCV">[docs]</a><span class="k">class</span> <span class="nc">FindBestClustCV</span><span class="p">(</span><span class="n">RelativeValidation</span><span class="p">):</span>
@@ -168,8 +173,8 @@
 
 <span class="sd">    :param nfold: number of CV folds</span>
 <span class="sd">    :type nfold: int</span>
-<span class="sd">    :param nclust_range: list with minimum and maximum cluster numbers to look for</span>
-<span class="sd">    :type nclust_range: list ([int, int])</span>
+<span class="sd">    :param nclust_range: list with clusters to look for</span>
+<span class="sd">    :type nclust_range: list of int</span>
 <span class="sd">    :param s: classification object inherited from :class:`reval.relative_validation.RelativeValidation`</span>
 <span class="sd">    :type s: class</span>
 <span class="sd">    :param c: clustering object inherited from :class:`reval.relative_validation.RelativeValidation`</span>
@@ -187,7 +192,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">nfold</span> <span class="o">=</span> <span class="n">nfold</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nclust_range</span> <span class="o">=</span> <span class="n">nclust_range</span>
 
-<div class="viewcode-block" id="FindBestClustCV.best_nclust"><a class="viewcode-back" href="../../code_description.html#reval.best_nclust_cv.FindBestClustCV.best_nclust">[docs]</a>    <span class="k">def</span> <span class="nf">best_nclust</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">iter_cv</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">strat_vect</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="FindBestClustCV.best_nclust"><a class="viewcode-back" href="../../code_description.html#reval.best_nclust_cv.FindBestClustCV.best_nclust">[docs]</a>    <span class="k">def</span> <span class="nf">best_nclust</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">iter_cv</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">strat_vect</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This method takes as input the training dataset and the</span>
 <span class="sd">        stratification vector (if available) and performs a</span>
@@ -200,6 +205,8 @@
 <span class="sd">        :type iter_cv: integer</span>
 <span class="sd">        :param strat_vect: vector for stratification, defaults to None</span>
 <span class="sd">        :type strat_vect: ndarray, (n_samples,)</span>
+<span class="sd">        :param verbose: enable verbose running, default False</span>
+<span class="sd">        :type verbose: Bool</span>
 <span class="sd">        :return: CV metrics for training and validation sets, best number of clusters,</span>
 <span class="sd">            misclassification errors at each CV iteration</span>
 <span class="sd">        :rtype: dictionary, int, dictionary</span>
@@ -208,7 +215,11 @@
         <span class="n">reval</span> <span class="o">=</span> <span class="n">RelativeValidation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">class_method</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nrand</span><span class="p">)</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;train&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="p">{}}</span>
         <span class="n">check_dist</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;train&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="p">{}}</span>
-        <span class="k">for</span> <span class="n">ncl</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nclust_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nclust_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ncl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nclust_range</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1"> iter - (</span><span class="si">{</span><span class="n">ncl</span><span class="si">}</span><span class="s1">) Clusters / </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nclust_range</span><span class="p">)</span><span class="si">}</span><span class="s1"> iter - &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;max clusters(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nclust_range</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">strat_vect</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">kfold</span> <span class="o">=</span> <span class="n">RepeatedStratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nfold</span><span class="p">,</span> <span class="n">n_repeats</span><span class="o">=</span><span class="n">iter_cv</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -238,6 +249,9 @@
                     <span class="n">check_dist</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">ncl</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ms_val</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                     <span class="k">pass</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Normalized stability: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">norm_stab_tr</span><span class="p">)</span><span class="si">}</span><span class="s1">, &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;Confidence interval (mean, error): </span><span class="si">{</span><span class="n">_confint</span><span class="p">(</span><span class="n">norm_stab_tr</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">][</span><span class="n">ncl</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">norm_stab_tr</span><span class="p">),</span> <span class="n">_confint</span><span class="p">(</span><span class="n">norm_stab_tr</span><span class="p">))</span>
             <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">][</span><span class="n">ncl</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">norm_stab_val</span><span class="p">),</span> <span class="n">_confint</span><span class="p">(</span><span class="n">norm_stab_val</span><span class="p">))</span>
 
@@ -245,7 +259,7 @@
         <span class="n">bestscore</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">val_score</span><span class="p">)</span>
         <span class="c1"># select the cluster with the minimum misclassification error</span>
         <span class="c1"># and the maximum number of clusters</span>
-        <span class="n">bestncl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">val_score</span> <span class="o">==</span> <span class="n">bestscore</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nclust_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">bestncl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nclust_range</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">val_score</span> <span class="o">==</span> <span class="n">bestscore</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
         <span class="k">return</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">bestncl</span><span class="p">,</span> <span class="n">check_dist</span></div>
 
 <div class="viewcode-block" id="FindBestClustCV.evaluate"><a class="viewcode-back" href="../../code_description.html#reval.best_nclust_cv.FindBestClustCV.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_tr</span><span class="p">,</span> <span class="n">data_ts</span><span class="p">,</span> <span class="n">nclust</span><span class="p">):</span>
