@@ -97,8 +97,10 @@ class FindBestClustCV(RelativeValidation):
                 except ValueError:
                     pass
             if verbose:
-                logging.info(f'Normalized stability: {np.mean(norm_stab_tr)}, '
+                logging.info(f'Normalized stability (training): {np.mean(norm_stab_tr)}, '
                              f'Confidence interval (mean, error): {_confint(norm_stab_tr)}')
+                logging.info(f'Normalized stability (validation): {np.mean(norm_stab_val)}, '
+                             f'Confidence interval (mean, error): {_confint(norm_stab_val)}')
             metrics['train'][ncl] = (np.mean(norm_stab_tr), _confint(norm_stab_tr))
             metrics['val'][ncl] = (np.mean(norm_stab_val), _confint(norm_stab_val))
 
