@@ -1,43 +1,60 @@
 from matplotlib import pyplot as plt
 
 
-def plot_metrics(cv_score, figsize=(20, 10), legend_loc=1, title="", save_fig=None):
+def plot_metrics(cv_score,
+                 figsize=(8, 5),
+                 linewidth=1,
+                 color=('black', 'black'),
+                 legend_loc=2,
+                 fontsize=12,
+                 title="",
+                 save_fig=None):
     """
     Function that plots the average performance (i.e., normalized stability) over cross-validation
-    for training and validation sets. The horizontal lines represent the random performance
+    for training and validation sets. The horizontal lines represent the random performance error
     for the correspondent number of clusters.
 
-    :param cv_score: collection of cv scores as output by `reval.best_nclust_cv.FindBestCLustCV.best_nclust`
+    :param cv_score: collection of cv scores as output by `reval.best_nclust_cv.FindBestCLustCV.best_nclust`.
     :type cv_score: dictionary
-    :param figsize: (width, height)
+    :param figsize: (width, height), default (8, 5).
     :type figsize: tuple
-    :param legend_loc: legend location, default 1
+    :param linewidth: width of the lines to draw.
+    :type linewidth: int
+    :param color: line colors for train and validation sets, default ('black', 'black').
+    :type color: tuple
+    :param legend_loc: legend location, default 2.
     :type legend_loc: int
-    :param title: figure title
+    :param fontsize: size of fonts, default 12.
+    :type fontsize: int
+    :param title: figure title, default "".
     :type title: str
-    :param save_fig: file name for saving figure in png format, default None
+    :param save_fig: file name for saving figure in png format, default None.
     :type save_fig: str
     """
     fig, ax = plt.subplots(figsize=figsize)
     cl_list = list(cv_score['train'].keys())
     ax.plot(list(cv_score['train'].keys()),
             [me[0] for me in cv_score['train'].values()],
-            linewidth=5,
-            label='training set')
+            linewidth=linewidth,
+            linestyle='-.',
+            label='training set',
+            color=color[0])
     ax.errorbar(list(cv_score['val'].keys()),
                 [me[0] for me in cv_score['val'].values()],
                 [me[1][1] for me in cv_score['val'].values()],
-                linewidth=5,
-                label='validation set')
-    print(len(cv_score['train'].keys()))
+                linewidth=linewidth,
+                linestyle='-',
+                label='validation set',
+                color=color[1])
     plt.hlines([(1 - (1 / k)) for k in cl_list], xmin=[k - 0.1 for k in cl_list],
-               xmax=[k + 0.1 for k in cl_list], linewidth=3)
-    ax.legend(fontsize=18, loc=legend_loc)
-    plt.xticks([lab for lab in cv_score['train'].keys()], fontsize=15)
-    plt.yticks(fontsize=15)
-    plt.xlabel('Number of clusters', fontsize=18)
-    plt.ylabel('Normalized stability', fontsize=18)
-    plt.title(title, fontsize=18)
+               xmax=[k + 0.1 for k in cl_list], linewidth=linewidth,
+               color=color[1])
+    ax.legend(fontsize=fontsize, loc=legend_loc)
+    plt.xticks([lab for lab in cv_score['train'].keys()], fontsize=fontsize)
+    plt.yticks(fontsize=fontsize)
+    plt.xlabel('Number of clusters', fontsize=fontsize)
+    plt.ylabel('Normalized stability', fontsize=fontsize)
+    plt.title(title)
     if save_fig is not None:
         plt.savefig(f'./{save_fig}', format='png')
     else:

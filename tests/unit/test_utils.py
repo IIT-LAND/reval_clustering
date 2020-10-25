@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from reval.utils import kuhn_munkres_algorithm, _build_weight_mat
+from reval.utils import kuhn_munkres_algorithm, _build_weight_mat, compute_metrics
 
 
 @pytest.mark.parametrize(
@@ -57,3 +57,19 @@ def test_build_weight_mat(true_lab, pred_lab, expected_type, expected_mat):
 def test_build_weight_mat_exception(true_lab, pred_lab, exception):
     with pytest.raises(exception):
         _build_weight_mat(true_lab, pred_lab)
+
+
+@pytest.mark.parametrize(
+    "class_lab, clust_lab, expected_type, expected_output",
+    (
+            # standard list
+            ([0, 0, 0, 1, 1, 1], [1, 1, 1, 0, 0, 0], dict, {'ACC': 0.0, 'MCC': -1.0, 'F1': 0.0,
+                                                            'precision': 0.0, 'recall': 0.0}),
+            # standard array
+            (np.array([0, 0, 0, 1, 1, 1]), np.array([0, 0, 0, 1, 1, 1]), dict, {'ACC': 1.0, 'MCC': 1.0, 'F1': 1.0,
+                                                                                'precision': 1.0, 'recall': 1.0}))
+)
+def test_compute_metrics(class_lab, clust_lab, expected_type, expected_output):
+    out = compute_metrics(class_lab, clust_lab)
+    assert isinstance(out, expected_type)
+    np.testing.assert_array_equal(out, expected_output)

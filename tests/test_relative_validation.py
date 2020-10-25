@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
-from reval import relative_validation
 from reval.relative_validation import RelativeValidation
+from reval.utils import kuhn_munkres_algorithm
 
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import AgglomerativeClustering
@@ -27,8 +27,8 @@ class TestReval(unittest.TestCase):
                             [1] * 10] * 20)
         misclass, model, labels = self.reval_cls.train(data_tr)
         self.assertSequenceEqual([misclass] + [labels.tolist()],
-                                 [0.0, relative_validation._kuhn_munkres_algorithm(labels,
-                                                                                   np.array([1, 0] * 20)).tolist()])
+                                 [0.0, kuhn_munkres_algorithm(labels,
+                                                              np.array([1, 0] * 20)).tolist()])
         self.assertEqual(type(model), type(self.s))
 
     def test_revaltest(self):
@@ -57,7 +57,7 @@ class TestReval(unittest.TestCase):
     def test_khun_munkres_algorithm(self):
         true_lab = np.array([1, 1, 1, 0, 0, 0])
         pred_lab = np.array([0, 0, 0, 1, 1, 1])
-        new_lab = relative_validation._kuhn_munkres_algorithm(true_lab, pred_lab)
+        new_lab = kuhn_munkres_algorithm(true_lab, pred_lab)
         self.assertSequenceEqual(new_lab.tolist(), [1, 1, 1, 0, 0, 0])
 
 
