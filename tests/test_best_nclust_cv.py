@@ -11,6 +11,7 @@ CLASSIFIER = KNeighborsClassifier(n_neighbors=5)
 CLUSTERING = AgglomerativeClustering()
 NCLUST_RANGE = list(range(2, 4, 1))
 NFOLD = 2
+N_JOBS = 4
 
 
 class TestBestNclusterCV(unittest.TestCase):
@@ -22,14 +23,15 @@ class TestBestNclusterCV(unittest.TestCase):
         cls.nrand = RNDLABELS_ITER
         cls.nfold = NFOLD
         cls.nclust_range = NCLUST_RANGE
-        cls.findbest = FindBestClustCV(cls.nfold, cls.nclust_range, cls.s, cls.c, cls.nrand)
+        cls.n_jobs = N_JOBS
+        cls.findbest = FindBestClustCV(cls.nfold, cls.nclust_range, cls.s, cls.c, cls.nrand, cls.n_jobs)
 
     def test_best_nclust(self):
         data = np.array([[0] * 20,
                          [1] * 20] * 20)
         strat_vect = np.array([0, 1] * 20)
-        metrics, best_nclust, _ = self.findbest.best_nclust(data,
-                                                            strat_vect=strat_vect)
+        metrics, best_nclust = self.findbest.best_nclust(data,
+                                                         strat_vect=strat_vect)
         m_tr = metrics['train'][best_nclust][0]
         m_val = metrics['val'][best_nclust][0]
         self.assertSequenceEqual([m_tr, m_val, best_nclust], [0, 0, 2])

@@ -9,17 +9,17 @@ class RelativeValidation:
     A supervised algorithm is required to test cluster stability.
     Labels output from a clustering algorithm are used as true labels.
 
-    :param s: initialized class for the supervised method
+    :param s: initialized class for the supervised method.
     :type s: class
-    :param c: initialized class for clustering algorithm
+    :param c: initialized class for clustering algorithm.
     :type c: class
-    :param nrand: number of iterations to normalize cluster stability
+    :param nrand: number of iterations to normalize cluster stability.
     :type nrand: int
     """
 
-    def __init__(self, s, c, nrand):
+    def __init__(self, s, c, nrand=10):
         """
-        Construct method
+        Construct method.
         """
         self.class_method = s
         self.clust_method = c
@@ -34,9 +34,9 @@ class RelativeValidation:
         It returns the misclassification error, the supervised model fitted to the data,
         and both clustering and classification labels.
 
-        :param train_data: training dataset
+        :param train_data: training dataset.
         :type train_data: ndarray, (n_samples, n_features)
-        :return: misclassification error, fitted supervised model object, clustering and classification labels
+        :return: misclassification error, fitted supervised model object, clustering and classification labels.
         :rtype: float, object, dictionary of ndarray (n_samples,)
         """
 
@@ -56,11 +56,11 @@ class RelativeValidation:
         It returns the misclassification error, together with
         both clustering and classification labels.
 
-        :param test_data: test dataset
+        :param test_data: test dataset.
         :type test_data: ndarray, (n_samples, n_features)
-        :param fit_model: fitted supervised model
+        :param fit_model: fitted supervised model.
         :type fit_model: class
-        :return: misclassification error, clustering and classification labels
+        :return: misclassification error, clustering and classification labels.
         :rtype: float, dictionary of ndarrays (n_samples,)
         """
         clustlab_ts = self.clust_method.fit_predict(test_data)  # A_k(X')
@@ -76,15 +76,15 @@ class RelativeValidation:
         :class:`reval.relative_validation.RelativeValidation.nrand` instance attribute) and evaluates
         the fitted models on test set.
 
-        :param train_data: training dataset
+        :param train_data: training dataset.
         :type train_data: ndarray, (n_samples, n_features)
-        :param test_data: test dataset
+        :param test_data: test dataset.
         :type test_data: ndarray, (n_samples, n_features)
-        :param train_labels: training set clustering labels
+        :param train_labels: training set clustering labels.
         :type train_labels: ndarray, (n_samples,)
-        :param test_labels: test set clustering labels
+        :param test_labels: test set clustering labels.
         :type test_labels: ndarray, (n_samples,)
-        :return: averaged misclassification error on the test set
+        :return: averaged misclassification error on the test set.
         :rtype: float
         """
         np.random.seed(0)
@@ -98,15 +98,15 @@ class RelativeValidation:
         Private method that computes the misclassification error when predicting test labels
         with classification model fitted on training set with random labels.
 
-        :param xtr: training dataset
+        :param xtr: training dataset.
         :type xtr: ndarray, (n_samples, n_features)
-        :param xts: test dataset
+        :param xts: test dataset.
         :type xts: ndarray, (n_samples, n_features)
-        :param randlabtr: random labels
+        :param randlabtr: random labels.
         :type randlabtr: ndarray, (n_samples,)
-        :param labts: test set labels
+        :param labts: test set labels.
         :type labts: ndarray, (n_samples,)
-        :return: misclassification error
+        :return: misclassification error.
         :rtype: float
         """
         self.class_method.fit(xtr, randlabtr)

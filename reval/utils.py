@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.optimize import linear_sum_assignment
+from sklearn.metrics import matthews_corrcoef, accuracy_score, f1_score, precision_score, recall_score
 
 
 def kuhn_munkres_algorithm(true_lab, pred_lab):
@@ -12,11 +13,11 @@ def kuhn_munkres_algorithm(true_lab, pred_lab):
     based on training dataset. This because otherwise we would loose the correspondence between training and test
     sets labels.
 
-    :param true_lab: classification algorithm labels (for reval)
+    :param true_lab: classification algorithm labels (for reval).
     :type true_lab: ndarray, (n_samples,)
-    :param pred_lab: clustering algorithm labels (for reval)
+    :param pred_lab: clustering algorithm labels (for reval).
     :type pred_lab: ndarray, (n_samples,)
-    :return: permuted labels that minimize the misclassification error
+    :return: permuted labels that minimize the misclassification error.
     :rtype: ndarray, (n_samples,)
     """
     if not (isinstance(true_lab, np.ndarray) and isinstance(pred_lab, np.ndarray)):
@@ -52,11 +53,11 @@ def _build_weight_mat(true_lab, pred_lab):
     This private function allows to build a weight matrix to select the best permutation of
     predicted labels that minimizes the misclassification error when compared to true labels.
 
-    :param true_lab: clustering labels, (n_samples,)
+    :param true_lab: clustering labels, (n_samples,).
     :type true_lab: ndarray
-    :param pred_lab: classification labels, (n_samples,)
+    :param pred_lab: classification labels, (n_samples,).
     :type pred_lab: ndarray
-    :return: weight matrix (number of true classes, number of true classes)
+    :return: weight matrix (number of true classes, number of true classes).
     :rtype: ndarray
     """
     if not (isinstance(true_lab, np.ndarray) and isinstance(pred_lab, np.ndarray)):
@@ -77,3 +78,40 @@ def _build_weight_mat(true_lab, pred_lab):
                 w = (nobs - n_intersec) / nobs
                 wmat[plab, lab] = w
     return wmat
+
+
+def compute_metrics(class_labels, clust_labels, perm=False):
+    """
+    Function that computes useful classification metrics. If needed the
+    clustering labels are permuted with :reval.utils.kuhn_munkres_algorithm:
+    The function returns a dictionary with ACC, MCC, F1, precision, recall as keys
+    for accuracy, Matthews correlation coefficient, F1 score, precision, and recall,
+    respectively.
+
+    :param class_labels: labels returned by the classifier.
+    :type class_labels: array-like
+    :param clust_labels: labels returned by the clustering.
+    :type clust_labels: array-like
+    :param perm: flag to enable permutation of clustering labels, default False.
+    :type perm: bool
+    :return: dictionary of scores.
+    :rtype: dict
+    """
+    if perm:
+        perm_clust_labels = kuhn_munkres_algorithm(class_labels, clust_labels)
+    else:
+        perm_clust_labels = clust_labels
+    if len(set(class_labels)) == 2 and len(set(perm_clust_labels)) == 2:
+        scores = {'ACC': accuracy_score(class_labels, perm_clust_labels),
+                  'MCC': matthews_corrcoef(class_labels, perm_clust_labels),
+                  'F1': f1_score(class_labels, perm_clust_labels),
+                  'precision': precision_score(class_labels, perm_clust_labels),
+                  'recall': recall_score(class_labels, perm_clust_labels)}
+    else:
+        scores = {'ACC': accuracy_score(class_labels, perm_clust_labels),
+                  'MCC': matthews_corrcoef(class_labels, perm_clust_labels),
+                  'F1': f1_score(class_labels, perm_clust_labels, average='macro'),
+                  'precision': precision_score(class_labels, perm_clust_labels, average='macro', zero_division=0),
+                  'recall': recall_score(class_labels, perm_clust_labels, average='macro',
+                                         zero_division=0)}
+    return scores

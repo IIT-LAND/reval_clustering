@@ -14,6 +14,14 @@ Classes
    :members:
    :private-members:
 
+.. autoclass:: reval.param_selection.SCParamSelection
+    :members:
+    :private-members:
+
+.. autoclass:: reval.param_selection.ParamSelection
+    :members:
+    :private-members:
+
 Functions
 ---------
 
@@ -29,7 +37,7 @@ Munkres, J. (1957). Algorithms for the assignment and transportation problems.
 *Journal of the society for industrial and applied mathematics*, 5(1), 32-38.
 
 .. automodule:: reval.utils
-   :members: kuhn_munkres_algorithm
+   :members: kuhn_munkres_algorithm, compute_metrics
    :private-members: _build_weight_mat
 
 The ``reval.best_nclust_cv._confint`` computes 95% confidence interval using ``scipy.stats.t.ppf()`` function.
@@ -38,6 +46,12 @@ The ``reval.best_nclust_cv._confint`` computes 95% confidence interval using ``s
    :members: _confint
    :private-members:
 
+
+The module ``reval.internal_baselines`` includes functions ``select_best`` and ``evaluate_best`` that allow comparisons
+between ``reval`` method and internal validation measures.
+
+.. automodule:: reval.internal_baselines
+    :members: select_best, evaluate_best
 
 Visualization
 -------------
