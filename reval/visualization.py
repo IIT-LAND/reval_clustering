@@ -58,4 +58,4 @@ def plot_metrics(cv_score,
     if save_fig is not None:
         plt.savefig(f'./{save_fig}', format='png')
     else:
-        plt.show()
+        plt.show(block=False)

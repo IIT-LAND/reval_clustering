@@ -11,6 +11,7 @@ from reval.utils import kuhn_munkres_algorithm
 # Generate 1,000 samples for 5 blobs
 # ----------------------------------
 data = make_blobs(1000, 2, 5, random_state=42)
+plt.figure(1)
 plt.scatter(data[0][:, 0],
             data[0][:, 1],
             c=data[1], cmap='rainbow_r')
@@ -26,14 +27,15 @@ X_tr, X_ts, y_tr, y_ts = train_test_split(data[0],
 classifier = KNeighborsClassifier()
 clustering = AgglomerativeClustering()
 
-findbestclust = FindBestClustCV(nfold=10,
-                                nclust_range=[2, 7],
+findbestclust = FindBestClustCV(nfold=2,
+                                nclust_range=list(range(2, 13, 1)),
                                 s=classifier,
                                 c=clustering,
-                                nrand=100)
-metrics, nbest, _ = findbestclust.best_nclust(X_tr, y_tr)
-out = findbestclust.evaluate(X_tr, X_ts, nbest)
+                                nrand=10)
 
+metrics, nbest = findbestclust.best_nclust(X_tr, iter_cv=10, strat_vect=y_tr)
+
+out = findbestclust.evaluate(X_tr, X_ts, nbest)
 perm_lab = kuhn_munkres_algorithm(y_ts, out.test_cllab)
 
 print(f"Best number of clusters: {nbest}")
@@ -42,20 +44,28 @@ print(f"Test set external ACC: "
 print(f'AMI = {adjusted_mutual_info_score(y_ts, out.test_cllab)}')
 print(f"Validation set normalized stability (misclassification): {metrics['val'][nbest]}")
 print(f'Test set ACC = {out.test_acc}')
+print("i am doing plot_metric")
 
-plot_metrics(metrics, title="Reval performance")
+plot_metrics(metrics, title="Reval performance blobs")
+#plt.close(2)
+print("done plot_metric")
 
+plt.figure(3)
 plt.scatter(X_ts[:, 0], X_ts[:, 1],
             c=y_ts, cmap='rainbow_r')
 plt.title("True labels for test set")
+
+plt.figure(4)
 
 plt.scatter(X_ts[:, 0], X_ts[:, 1],
             c=perm_lab, cmap='rainbow_r')
 plt.title("Clustering labels for test set")
 
+print("finish normal blobs")
 # Create a noisy dataset with 5 clusters
 # ----------------------------------------
 data_noisy = make_blobs(1000, 10, 5, random_state=42, cluster_std=3)
+plt.figure(5)
 plt.scatter(data_noisy[0][:, 0],
             data_noisy[0][:, 1],
             c=data_noisy[1],
@@ -65,12 +75,12 @@ Xnoise_tr, Xnoise_ts, ynoise_tr, ynoise_ts = train_test_split(data_noisy[0],
                                                               data_noisy[1],
                                                               test_size=0.30,
                                                               random_state=42,
-                                                              stratify=data_noisy[1])
+                                                              stratify = data_noisy[1])
 
-metrics_noise, nbest_noise, _ = findbestclust.best_nclust(Xnoise_tr, ynoise_tr)
+metrics_noise, nbest_noise = findbestclust.best_nclust(Xnoise_tr, iter_cv=10, strat_vect=ynoise_tr)
 out_noise = findbestclust.evaluate(Xnoise_tr, Xnoise_ts, nbest_noise)
 
-plot_metrics(metrics_noise, title="Reval performance")
+plot_metrics(metrics_noise, title="Reval performance Blobs_noise")
 
 perm_lab_noise = kuhn_munkres_algorithm(ynoise_ts, out_noise.test_cllab)
 
@@ -82,13 +92,18 @@ print(f"Validation set normalized stability (misclassification): {metrics_noise[
 print(f"Result accuracy (on test set): "
       f"{out_noise.test_acc}")
 
+plt.figure(7)
 plt.scatter(Xnoise_ts[:, 0], Xnoise_ts[:, 1],
             c=ynoise_ts, cmap='rainbow_r')
 plt.title("True labels")
 
+plt.figure(8)
 plt.scatter(Xnoise_ts[:, 0], Xnoise_ts[:, 1],
             c=perm_lab_noise, cmap='rainbow_r')
 plt.title("Clustering labels for test set")
+
+
+
 
 # Pre-processing with UMAP
 from umap import UMAP
@@ -98,15 +113,17 @@ transform = UMAP(n_components=10, n_neighbors=30, min_dist=0.0)
 Xtr_umap = transform.fit_transform(Xnoise_tr)
 Xts_umap = transform.transform(Xnoise_ts)
 
+plt.figure(9)
 plt.scatter(Xtr_umap[:, 0], Xtr_umap[:, 1],
             c=ynoise_tr, cmap='rainbow_r')
 plt.title("UMAP-transformed training set with true labels")
 
+plt.figure(10)
 plt.scatter(Xts_umap[:, 0], Xts_umap[:, 1],
             c=ynoise_ts, cmap='rainbow_r')
 plt.title("UMAP-transformed test set with true labels")
 
-metrics, nbest, _ = findbestclust.best_nclust(Xtr_umap, ynoise_tr)
+metrics, nbest = findbestclust.best_nclust(Xtr_umap,iter_cv=10, strat_vect = ynoise_tr)
 out = findbestclust.evaluate(Xtr_umap, Xts_umap, nbest)
 
 plot_metrics(metrics, title='Reval performance of UMAP-transformed dataset')
@@ -121,6 +138,10 @@ print(f"Validation set normalized stability (misclassification): {metrics['val']
 print(f"Result accuracy (on test set): "
       f"{out.test_acc}")
 
+plt.figure(12)
 plt.scatter(Xts_umap[:, 0], Xts_umap[:, 1],
             c=perm_noise, cmap='rainbow_r')
 plt.title("Predicted labels for UMAP-preprocessed test set")
+plt.show()
+print("finish")
+

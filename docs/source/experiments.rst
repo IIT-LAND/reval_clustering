@@ -61,12 +61,12 @@ using the function ``plot_metrics`` from the ``reval.visualization`` module.
 
 .. code:: python3
 
-    findbestclust = FindBestClustCV(nfold=10,
-                                    nclust_range=[2, 7],
+    findbestclust = FindBestClustCV(nfold=2,
+                                    nclust_range=list(range(2, 7, 1)),
                                     s=classifier,
                                     c=clustering,
                                     nrand=100)
-    metrics, nbest, _ = findbestclust.best_nclust(X_tr, y_tr)
+    metrics, nbest = findbestclust.best_nclust(X_tr, iter_cv=10, strat_vect=y_tr)
     out = findbestclust.evaluate(X_tr, X_ts, nbest)
     plot_metrics(metrics, title="Reval performance")
 
@@ -128,7 +128,7 @@ method is highly influenced by noise. We will show the importance of data pre-pr
                                                                   random_state=42,
                                                                   stratify=data_noisy[1])
 
-    metrics_noise, nbest_noise, _ = findbestclust.best_nclust(Xnoise_tr, ynoise_tr)
+    metrics_noise, nbest_noise,_ = findbestclust.best_nclust(Xnoise_tr, iter_cv=10, strat_vect=ynoise_tr)
     out_noise = findbestclust.evaluate(Xnoise_tr, Xnoise_ts, nbest_noise)
 
     plot_metrics(metrics_noise, title="Reval performance")
@@ -191,7 +191,7 @@ Now we apply ``reval`` method to the transformed dataset.
 
 .. code:: python3
 
-    metrics, nbest, _ = findbestclust.best_nclust(Xtr_umap, ynoise_tr)
+    metrics, nbest,_ = findbestclust.best_nclust(Xtr_umap,iter_cv=10, strat_vect = ynoise_tr)
     out = findbestclust.evaluate(Xtr_umap, Xts_umap, nbest)
 
     plot_metrics(metrics, title='Reval performance of UMAP-transformed dataset')
@@ -295,7 +295,7 @@ number of cluster selection.
     classifier = KNeighborsClassifier()
     clustering = AgglomerativeClustering()
 
-    findbestclust = FindBestClustCV(nfold=10, nclust_range=[2, 12],
+    findbestclust = FindBestClustCV(nfold=10, nclust_range=list(range(2, 12, 1)),
                                     s=classifier, c=clustering, nrand=100)
 
     metrics, nbest, _ = findbestclust.best_nclust(mnist_tr, label_tr)
