@@ -12,6 +12,10 @@ from reval.utils import kuhn_munkres_algorithm, _build_weight_mat, compute_metri
             ([0, 0, 1, 2, 1, 1], [0, 0, 1, 0, 1, 1], np.int64, np.array([0, 0, 1, 0, 1, 1])),
             # true labels < predicted labels
             ([0, 0, 0, 1, 1, 1], [0, 0, 1, 1, 2, 2], np.int64, np.array([0, 0, 1, 1, 2, 2])),
+            # unclassified label
+            ([0, 0, 0, 1, 1, 1], [-1, 0, 0, 1, 1, 1], np.int64, np.array([-1, 0, 0, 1, 1, 1])),
+            # unclassified label
+            ([0, 0, 0, 1, 1, 1], [-1, 1, 1, 0, 0, 0], np.int64, np.array([-1, 0, 0, 1, 1, 1])),
             # standard array
             (np.array([0, 0, 0, 1, 1, 1]), np.array([1, 1, 1, 0, 0, 0]), np.int64, np.array([0, 0, 0, 1, 1, 1]))
     )

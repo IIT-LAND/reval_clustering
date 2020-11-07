@@ -25,10 +25,12 @@ class SCParamSelection:
     :type cv: int
     :param nrand: number of random label iterations.
     :type nrand: int
-    :param clust_range: list with number of clusters to investigate.
-    :type clust_range: list
     :param n_jobs: number of jobs to run in parallel, default (number of cpus - 1).
     :type n_jobs: int
+    :param iter_cv: number of repeated cv, default 1.
+    :type iter_cv: int
+    :param clust_range: list with number of clusters to investigate, default None.
+    :type clust_range: list
     :param strat: stratification vector for cross-validation splits, default None.
     :type strat: numpy array
 
@@ -40,11 +42,13 @@ class SCParamSelection:
         rows of the `cv_results_` table. List.
     """
 
-    def __init__(self, sc_params, cv, nrand, clust_range,
+    def __init__(self, sc_params, cv, nrand,
                  n_jobs,
+                 iter_cv=1,
+                 clust_range=None,
                  strat=None):
         self.sc_params = sc_params
-        if len(self.sc_params['s']) == 1 & len(self.sc_params['c']) == 1:
+        if len(self.sc_params['s']) == 1 and len(self.sc_params['c']) == 1:
             raise AttributeError("Please add at least another classifier/clustering "
                                  "method to run the parameter selection.")
         self.cv = cv
@@ -54,13 +58,16 @@ class SCParamSelection:
             self.n_jobs = mp.cpu_count()
         else:
             self.n_jobs = abs(n_jobs)
+        self.iter_cv = iter_cv
         self.strat = strat
 
     def fit(self, data_tr, nclass=None):
         """
         Class method that performs grid search cross-validation on training data. If the number of
         true classes is known, the method returns both the best result with the correct number of
-        clusters (and minimum stability) and the overall best result (overall minimum stability).
+        clusters (and minimum stability), if available, and the overall best result (overall minimum stability).
+        The output reports None if the clustering algorithm does not find any cluster (e.g., HDBSCAN label
+        all points as -1).
 
         :param data_tr: training dataset.
         :type data_tr: numpy array
@@ -75,7 +82,6 @@ class SCParamSelection:
 
         p = mp.Pool(processes=self.n_jobs)
         out = list(zip(*p.starmap(self._run_gridsearchcv, params)))
-        print(out)
         p.close()
         p.join()
 
@@ -84,7 +90,14 @@ class SCParamSelection:
         SCParamSelection.cv_results_ = res_dict
 
         # best_param_, best_index_
-        idx_best = _return_best(res_dict['mean_val_score'])
+        val_scores = [vs for vs in res_dict['mean_val_score'] if vs is not None]
+        val_idx = [idx for idx, vs in enumerate(res_dict['mean_val_score']) if vs is not None]
+        if len(val_scores) > 0:
+            idx_best = [val_idx[i] for i in _return_best(val_scores)]
+        else:
+            logging.info(f"No clustering solutions were found with any parameter combinations.")
+            return self
+
         out_best = []
         if nclass is not None:
             logging.info(f'True number of clusters known: {nclass}\n')
@@ -126,18 +139,38 @@ class SCParamSelection:
         :return: performance list.
         :rtype: list
         """
-        findclust = FindBestClustCV(nfold=self.cv, nclust_range=self.clust_range,
-                                    s=sc['s'], c=sc['c'], nrand=self.nrand,
-                                    n_jobs=1)
-        metric, nclbest = findclust.best_nclust(data, strat_vect=self.strat)
-        sc['c'].n_clusters = nclbest
+        findclust = FindBestClustCV(s=sc['s'],
+                                    c=sc['c'],
+                                    nfold=self.cv,
+                                    nrand=self.nrand,
+                                    n_jobs=1,
+                                    nclust_range=self.clust_range)
+
+        if 'n_clusters' in sc['c'].get_params().keys():
+            metric, nclbest = findclust.best_nclust(data, iter_cv=self.iter_cv, strat_vect=self.strat)
+            sc['c'].n_clusters = nclbest
+            tr_lab = None
+        else:
+            try:
+                metric, nclbest, tr_lab = findclust.best_nclust(data, iter_cv=self.iter_cv, strat_vect=self.strat)
+            except TypeError:
+                perf = [('s', sc['s']), ('c', sc['c']), ('best_nclust', None),
+                        ('mean_train_score', None),
+                        ('sd_train_score', None),
+                        ('mean_val_score', None),
+                        ('sd_val_score', None),
+                        ('validation_meanerror', None),
+                        ('tr_label', None)]
+                return perf
+
         cv_scores = findclust.cv_results_
         perf = [('s', sc['s']), ('c', sc['c']), ('best_nclust', nclbest),
                 ('mean_train_score', np.mean(cv_scores.loc[cv_scores.ncl == nclbest]['ms_tr'])),
                 ('sd_train_score', np.std(cv_scores.loc[cv_scores.ncl == nclbest]['ms_tr'])),
                 ('mean_val_score', np.mean(cv_scores.loc[cv_scores.ncl == nclbest]['ms_val'])),
                 ('sd_val_score', np.std(cv_scores.loc[cv_scores.ncl == nclbest]['ms_val'])),
-                ('validation_meanerror', metric['val'][nclbest])]
+                ('validation_meanerror', metric['val'][nclbest]),
+                ('tr_label', tr_lab)]
         return perf
 
 
@@ -156,6 +189,8 @@ class ParamSelection(RelativeValidation):
     :type clust_range: list
     :param n_jobs: number of jobs to run in parallel, default (number of cpus - 1).
     :type n_jobs: int
+    :param iter_cv: number of repeated cv loops, default 1.
+    :type iter_cv: int
     :param strat: stratification vector for cross-validation splits, default None.
     :type strat: numpy array
 
@@ -168,11 +203,12 @@ class ParamSelection(RelativeValidation):
         rows of the `cv_results_` table. List.
     """
 
-    def __init__(self, params, cv, s, c, nrand, clust_range,
-                 n_jobs, strat=None):
+    def __init__(self, params, cv, s, c, nrand,
+                 n_jobs, iter_cv=1, strat=None, clust_range=None):
         super().__init__(s, c, nrand)
         self.params = params
         self.cv = cv
+        self.iter_cv = iter_cv
         self.clust_range = clust_range
         if abs(n_jobs) > mp.cpu_count():
             self.n_jobs = mp.cpu_count()
@@ -216,7 +252,14 @@ class ParamSelection(RelativeValidation):
         ParamSelection.cv_results_ = res_dict
 
         # best_param_, best_index_
-        idx_best = _return_best(res_dict['mean_val_score'])
+        val_scores = [vs for vs in res_dict['mean_val_score'] if vs is not None]
+        val_idx = [idx for idx, vs in enumerate(res_dict['mean_val_score']) if vs is not None]
+        if len(val_scores) > 0:
+            idx_best = [val_idx[i] for i in _return_best(val_scores)]
+        else:
+            logging.info(f"No clustering solutions were found with any parameter combinations.")
+            return self
+
         out_best = []
         if nclass is not None:
             logging.info(f'True number of clusters known: {nclass}\n')
@@ -270,10 +313,28 @@ class ParamSelection(RelativeValidation):
         """
         self.class_method.set_params(**param_s)
         self.clust_method.set_params(**param_c)
-        findclust = FindBestClustCV(nfold=self.cv, nclust_range=self.clust_range,
-                                    s=self.class_method, c=self.clust_method,
-                                    nrand=self.nrand, n_jobs=1)
-        metric, nclbest = findclust.best_nclust(data, strat_vect=self.strat)
+        findclust = FindBestClustCV(nfold=self.cv,
+                                    s=self.class_method,
+                                    c=self.clust_method,
+                                    nrand=self.nrand, n_jobs=1,
+                                    nclust_range=self.clust_range)
+        if self.clust_range is not None:
+            metric, nclbest = findclust.best_nclust(data, iter_cv=self.iter_cv, strat_vect=self.strat)
+            tr_lab = None
+        else:
+            try:
+                metric, nclbest, tr_lab = findclust.best_nclust(data, iter_cv=self.iter_cv, strat_vect=self.strat)
+            except TypeError:
+                perf = [(key, val) for key, val in param_s.items()] + \
+                       [(key, val) for key, val in param_c.items()] + \
+                       [('best_nclust', None),
+                        ('mean_train_score', None),
+                        ('sd_train_score', None),
+                        ('mean_val_score', None),
+                        ('sd_val_score', None),
+                        ('validation_meanerror', None),
+                        ('tr_label', None)]
+                return perf
 
         perf = [(key, val) for key, val in param_s.items()] + \
                [(key, val) for key, val in param_c.items()] + \
@@ -286,7 +347,8 @@ class ParamSelection(RelativeValidation):
                     findclust.cv_results_.loc[findclust.cv_results_.ncl == nclbest]['ms_val'])),
                 ('sd_val_score', np.std(
                     findclust.cv_results_.loc[findclust.cv_results_.ncl == nclbest]['ms_val'])),
-                ('validation_meanerror', metric['val'][nclbest])]
+                ('validation_meanerror', metric['val'][nclbest]),
+                ('tr_label', tr_lab)]
         return perf
 
     def _allowed_par(self, par_dict):
@@ -329,7 +391,7 @@ def _return_best(val_scores):
     :return: list of indices.
     :rtype: list
     """
-    bidx = list(np.where(np.array(val_scores) == min(val_scores))[0])
+    bidx = list(np.where(np.array(val_scores) == min([vs for vs in val_scores]))[0])
     return bidx
 
 
