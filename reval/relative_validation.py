@@ -1,6 +1,11 @@
 import numpy as np
 from sklearn.metrics import zero_one_loss
 from reval.utils import kuhn_munkres_algorithm
+import logging
+
+logging.basicConfig(format='%(asctime)s, %(levelname)s %(message)s',
+                    datefmt='%H:%M:%S',
+                    level=logging.INFO)
 
 
 class RelativeValidation:
@@ -25,7 +30,7 @@ class RelativeValidation:
         self.clust_method = c
         self.nrand = nrand
 
-    def train(self, train_data):
+    def train(self, train_data, tr_lab=None):
         """
         Method that performs training. It compares the clustering labels on training set
         (i.e., A(X) computed by :class:`reval.relative_validation.RelativeValidation.clust_method`) against
@@ -36,11 +41,19 @@ class RelativeValidation:
 
         :param train_data: training dataset.
         :type train_data: ndarray, (n_samples, n_features)
+        :param tr_lab: cluster labels found during CV for clustering methods with no `n_clusters` parameter.
+            If not None the clustering method is not performed on the whole test set. Default None.
+        :type tr_lab: list
         :return: misclassification error, fitted supervised model object, clustering and classification labels.
-        :rtype: float, object, dictionary of ndarray (n_samples,)
+        :rtype: float, object, ndarray (n_samples,)
         """
-
-        clustlab_tr = self.clust_method.fit_predict(train_data)  # A_k(X)
+        if tr_lab is None:
+            clustlab_tr = self.clust_method.fit_predict(train_data)  # A_k(X)
+        else:
+            clustlab_tr = tr_lab
+        if len([cl for cl in clustlab_tr if cl >= 0]) == 0:
+            logging.info(f"No clusters found during training with {self.clust_method}.")
+            return None
         fitclass_tr = self.class_method.fit(train_data, clustlab_tr)
         classlab_tr = fitclass_tr.predict(train_data)
         misclass = zero_one_loss(clustlab_tr, classlab_tr)
@@ -64,6 +77,9 @@ class RelativeValidation:
         :rtype: float, dictionary of ndarrays (n_samples,)
         """
         clustlab_ts = self.clust_method.fit_predict(test_data)  # A_k(X')
+        if len([cl for cl in clustlab_ts if cl >= 0]) == 0:
+            logging.info(f"No clusters found during testing with {self.clust_method}")
+            return None
         classlab_ts = fit_model.predict(test_data)
         bestperm = kuhn_munkres_algorithm(classlab_ts, clustlab_ts)  # array of integers
         misclass = zero_one_loss(classlab_ts, bestperm)

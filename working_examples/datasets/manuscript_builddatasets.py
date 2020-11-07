@@ -1,4 +1,4 @@
-# EXAMPLE 3: ensemble learning
+# EXAMPLE 4: UCI dataset classifier/clustering combinations
 import csv
 import re
 import numpy as np
@@ -58,21 +58,21 @@ def build_ucidatasets():
     for fn in file_names:
         name_dataset = fn.split('.')[0]
         if name_dataset == 'biodeg':
-            with open(os.path.join('./datasets', fn)) as f:
+            with open(os.path.join(os.getcwd(), 'working_examples/datasets', fn)) as f:
                 rd = csv.reader(f, delimiter=';')
                 data = []
                 for r in rd:
                     data.append(r)
             data_dict[name_dataset] = data
         elif re.search('seed', name_dataset):
-            with open(os.path.join('./datasets', fn)) as f:
+            with open(os.path.join(os.getcwd(), 'working_examples/datasets', fn)) as f:
                 rd = csv.reader(f, delimiter='\t')
                 data = []
                 for r in rd:
                     data.append(r)
             data_dict[name_dataset] = data
         else:
-            with open(os.path.join('./datasets', fn)) as f:
+            with open(os.path.join(os.getcwd(), 'working_examples/datasets', fn)) as f:
                 rd = csv.reader(f)
                 data = []
                 for r in rd:

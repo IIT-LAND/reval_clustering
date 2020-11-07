@@ -38,7 +38,7 @@ def kuhn_munkres_algorithm(true_lab, pred_lab):
             else:
                 pred_perm = np.array([], dtype=int)
                 for i in pred_lab:
-                    if len(new_pred_lab) <= i:
+                    if len(new_pred_lab) <= i or i < 0:
                         pred_perm = np.append(pred_perm, i)
                     else:
                         pred_perm = np.append(pred_perm, new_pred_lab.index(i))
@@ -111,7 +111,8 @@ def compute_metrics(class_labels, clust_labels, perm=False):
         scores = {'ACC': accuracy_score(class_labels, perm_clust_labels),
                   'MCC': matthews_corrcoef(class_labels, perm_clust_labels),
                   'F1': f1_score(class_labels, perm_clust_labels, average='macro'),
-                  'precision': precision_score(class_labels, perm_clust_labels, average='macro', zero_division=0),
+                  'precision': precision_score(class_labels, perm_clust_labels,
+                                               average='macro', zero_division=0),
                   'recall': recall_score(class_labels, perm_clust_labels, average='macro',
                                          zero_division=0)}
     return scores

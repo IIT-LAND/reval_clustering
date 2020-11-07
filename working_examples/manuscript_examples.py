@@ -1,41 +1,51 @@
+import sys
+sys.path.append('../../reval_clustering/')
+
+from reval.best_nclust_cv import FindBestClustCV
+from reval.internal_baselines import select_best, evaluate_best
+from reval.visualization import plot_metrics
+from reval.utils import kuhn_munkres_algorithm, compute_metrics
+from reval.param_selection import ParamSelection, SCParamSelection
+from datasets.manuscript_builddatasets import build_ucidatasets
+
 from sklearn.datasets import make_blobs, load_digits
 from sklearn.model_selection import train_test_split
-from reval.best_nclust_cv import FindBestClustCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import AgglomerativeClustering, KMeans, SpectralClustering
-from sklearn.metrics import zero_one_loss, adjusted_mutual_info_score
-from reval.visualization import plot_metrics
-import matplotlib.pyplot as plt
-from reval.utils import kuhn_munkres_algorithm
-from umap import UMAP
+from sklearn.metrics import zero_one_loss, adjusted_mutual_info_score, silhouette_score, davies_bouldin_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
+from sklearn.datasets import fetch_openml
+from sklearn.preprocessing import StandardScaler
+import hdbscan
+from umap import UMAP
 import numpy as np
-from datasets.manuscript_builddatasets import build_ucidatasets
+
 import warnings
+import pandas as pd
+import pickle as pkl
 import logging
+import matplotlib.pyplot as plt
+
+# Modify this variable for parallelization
+N_JOBS=7
 
 warnings.filterwarnings('ignore')
-logging.basicConfig(filename='manuscript_examples.log',
-                    filemode='a',
-                    format='%(asctime)s, %(levelname)s %(message)s',
-                    datefmt='%H:%M:%S',
-                    level=logging.INFO)
 
 """
-Three example functions that can be run from shell (change main at the bottom). 
+Three example functions that can also be run from shell (see manuscript_examples.py file). 
 
 Example 1: blobs dataset;
-Example 2: real-world dataset (handwritten digits)
-Example 3: ensamble learning with 18 datasets from UCI Machine Learning Repository.
-           Algorithm performances are saved to manuscript_example.log file.
+Example 2: hand-written digits dataset from UCI repository;
+Example 3: real-world dataset MNIST;
+Example 4: best clussifier-clustering combinations for 18 datasets from UCI Machine Learning Repository.
 """
 
 
 # EXAMPLE 1: Isotropic Gaussian blobs
-def example_1():
-    data = make_blobs(1000, 2, 5, center_box=(-20, 20),
+def example1():
+    data = make_blobs(1000, 2, centers=5, center_box=(-20, 20),
                       random_state=42)
     plt.figure(figsize=(6, 4))
     plt.scatter(data[0][:, 0],
@@ -50,31 +60,69 @@ def example_1():
                                               random_state=42,
                                               stratify=data[1])
 
-    classifier = KNeighborsClassifier(n_neighbors=5)
+    classifier = KNeighborsClassifier(n_neighbors=15)
     clustering = KMeans()
 
-    findbestclust = FindBestClustCV(nfold=10,
-                                    nclust_range=[2, 7],
+    findbestclust = FindBestClustCV(nfold=2,
+                                    nclust_range=list(range(2, 7, 1)),
                                     s=classifier,
                                     c=clustering,
-                                    nrand=100)
-    metrics, nbest, _ = findbestclust.best_nclust(X_tr, iter_cv=10, strat_vect=y_tr)
-    out = findbestclust.evaluate(X_tr, X_ts, nbest)
+                                    nrand=10,
+                                    n_jobs=N_JOBS)
+    metrics, nbest = findbestclust.best_nclust(X_tr, iter_cv=10, strat_vect=y_tr)
+    out = findbestclust.evaluate(X_tr, X_ts, nclust=nbest)
 
+    plot_metrics(metrics)
     perm_lab = kuhn_munkres_algorithm(y_ts, out.test_cllab)
 
-    print(f"Best number of clusters: {nbest}")
-    print(f"Test set prediction ACC: "
-          f"{1 - zero_one_loss(y_ts, perm_lab)}")
-    print(f'AMI (true labels vs predicted labels) = '
+    logging.info(f"Best number of clusters: {nbest}")
+    logging.info(f'AMI (true labels vs predicted labels) for test set = '
           f'{adjusted_mutual_info_score(y_ts, out.test_cllab)}')
-    print(f"Validation set normalized stability (misclassification):"
-          f"{metrics['val'][nbest]}")
-    print(f'Test set ACC = {out.test_acc} '
-          f'(true labels vs predicted labels)')
+    logging.info('\n\n')
 
-    plot_metrics(metrics, title="Reval performance blobs dataset",
-                 legend_loc=2)
+    # Compute metrics
+    logging.info("Metrics from true label comparisons on test set:")
+    class_scores = compute_metrics(y_ts, perm_lab, perm=False)
+    for k, val in class_scores.items():
+        logging.info(f"{k}, {val}")
+    logging.info("\n\n")
+
+    # Internal measures
+    # SILHOUETTE
+    logging.info("Silhouette score based selection")
+    sil_score_tr, sil_best_tr, sil_label_tr = select_best(X_tr, clustering, silhouette_score,
+                                                          select='max',
+                                                          nclust_range=list(range(2, 7, 1)))
+    sil_score_ts, sil_best_ts, sil_label_ts = select_best(X_ts, clustering, silhouette_score,
+                                                          select='max',
+                                                          nclust_range=list(range(2, 7, 1)))
+
+    sil_eval = evaluate_best(X_ts, clustering, silhouette_score, sil_best_tr)
+
+    logging.info(f"Best number of clusters (and scores) for tr/ts independent runs: {sil_best_tr}({sil_score_tr})/{sil_best_ts}({sil_score_ts})")
+    logging.info(f"Test set evaluation {sil_eval}")
+    logging.info(f'AMI (true labels vs clustering labels) training = '
+                     f'{adjusted_mutual_info_score(y_tr, kuhn_munkres_algorithm(y_tr, sil_label_tr))}')
+    logging.info(f'AMI (true labels vs clustering labels) test = '
+                     f'{adjusted_mutual_info_score(y_ts, kuhn_munkres_algorithm(y_ts, sil_label_ts))}')
+    logging.info('\n\n')
+
+    # DAVIES-BOULDIN
+    logging.info("Davies-Bouldin score based selection")
+    db_score_tr, db_best_tr, db_label_tr = select_best(X_tr, clustering, davies_bouldin_score,
+                                            select='min', nclust_range=list(range(2, 7, 1)))
+    db_score_ts, db_best_ts, db_label_ts = select_best(X_ts, clustering, davies_bouldin_score,
+                                            select='min', nclust_range=list(range(2, 7, 1)))
+
+    db_eval = evaluate_best(X_ts, clustering, davies_bouldin_score, db_best_tr)
+
+    logging.info(f"Best number of clusters (and scores) for tr/ts independent runs: {db_best_tr}({db_score_tr})/{db_best_ts}({db_score_ts})")
+    logging.info(f"Test set evaluation {db_eval}")
+    logging.info(f'AMI (true labels vs clustering labels) training = '
+                     f'{adjusted_mutual_info_score(y_tr, kuhn_munkres_algorithm(y_tr, db_label_tr))}')
+    logging.info(f'AMI (true labels vs clustering labels) test = '
+                     f'{adjusted_mutual_info_score(y_ts, kuhn_munkres_algorithm(y_ts, db_label_ts))}')
+    logging.info('\n\n')
 
     plt.figure(figsize=(6, 4))
     plt.scatter(X_ts[:, 0], X_ts[:, 1],
@@ -90,7 +138,8 @@ def example_1():
 
 
 # EXAMPLE 2: Handwritten digits dataset example
-def example_2():
+def example2():
+    # EXAMPLE 2: UCI handwritten digits dataset example
     digits_dataset = load_digits()
 
     digits_data = digits_dataset['data']
@@ -114,26 +163,70 @@ def example_2():
 
     reval = FindBestClustCV(s=s,
                             c=c,
-                            nfold=5,
-                            nclust_range=[2, 15],
-                            nrand=100)
+                            nfold=2,
+                            nclust_range=list(range(2, 13)),
+                            nrand=10,
+                            n_jobs=N_JOBS)
 
-    metrics, nclustbest, _ = reval.best_nclust(X_tr, iter_cv=10, strat_vect=y_tr)
+    metrics, nclustbest = reval.best_nclust(X_tr, iter_cv=10, strat_vect=y_tr)
 
-    plot_metrics(metrics, title='Reval performance digits dataset')
+    plot_metrics(metrics)
 
     out = reval.evaluate(X_tr, X_ts, nclust=nclustbest)
+
     perm_lab = kuhn_munkres_algorithm(y_ts, out.test_cllab)
 
-    print(f"Best number of clusters: {nclustbest}")
-    print(f"Test set prediction ACC: "
-          f"{1 - zero_one_loss(y_ts, perm_lab)}")
-    print(f'AMI (true labels vs predicted labels) = '
-          f'{adjusted_mutual_info_score(y_ts, out.test_cllab)}')
-    print(f"Validation set normalized stability (misclassification):"
-          f"{metrics['val'][nclustbest]}")
-    print(f'Test set ACC = {out.test_acc} '
-          f'(true labels vs predicted labels)')
+    logging.info(f"Best number of clusters: {nclustbest}")
+    logging.info(f'AMI (true labels vs predicted labels) for test set = '
+                 f'{adjusted_mutual_info_score(y_ts, out.test_cllab)}')
+    logging.info('\n\n')
+
+    logging.info("Metrics from true label comparisons on test set:")
+    class_scores = compute_metrics(y_ts, perm_lab)
+    for k, val in class_scores.items():
+        logging.info(f"{k}, {val}")
+    logging.info('\n\n')
+
+    # Internal measures
+    # SILHOUETTE
+    logging.info("Silhouette score based selection")
+    sil_score_tr, sil_best_tr, sil_label_tr = select_best(X_tr, c,
+                                                          silhouette_score,
+                                                          nclust_range=list(range(2, 13, 1)))
+    sil_score_ts, sil_best_ts, sil_label_ts = select_best(X_ts, c,
+                                                          silhouette_score,
+                                                          nclust_range=list(range(2, 13, 1)))
+
+    sil_eval = evaluate_best(X_ts, c, silhouette_score, sil_best_tr)
+
+    logging.info(
+        f"Best number of clusters (and scores) for tr/ts independent runs: {sil_best_tr}({sil_score_tr})/{sil_best_ts}({sil_score_ts})")
+    logging.info(f"Test set evaluation {sil_eval}")
+    logging.info(f'AMI (true labels vs clustering labels) training = '
+                 f'{adjusted_mutual_info_score(y_tr, kuhn_munkres_algorithm(y_tr, sil_label_tr))}')
+    logging.info(f'AMI (true labels vs clustering labels) test = '
+                 f'{adjusted_mutual_info_score(y_ts, kuhn_munkres_algorithm(y_ts, sil_label_ts))}')
+    logging.info('\n\n')
+
+    # DAVIES-BOULDIN
+    logging.info("Davies-Bouldin score based selection")
+    db_score_tr, db_best_tr, db_label_tr = select_best(X_tr, c, davies_bouldin_score,
+                                                       select='min',
+                                                       nclust_range=list(range(2, 13, 1)))
+    db_score_ts, db_best_ts, db_label_ts = select_best(X_ts, c, davies_bouldin_score,
+                                                       select='min',
+                                                       nclust_range=list(range(2, 13, 1)))
+
+    db_eval = evaluate_best(X_ts, c, davies_bouldin_score, db_best_tr)
+
+    logging.info(
+        f"Best number of clusters (and scores) for tr/ts independent runs: {db_best_tr}({db_score_tr})/{db_best_ts}({db_score_ts})")
+    logging.info(f"Test set evaluation {db_eval}")
+    logging.info(f'AMI (true labels vs clustering labels) training = '
+                 f'{adjusted_mutual_info_score(y_tr, kuhn_munkres_algorithm(y_tr, db_label_tr))}')
+    logging.info(f'AMI (true labels vs clustering labels) test = '
+                 f'{adjusted_mutual_info_score(y_ts, kuhn_munkres_algorithm(y_ts, db_label_ts))}')
+    logging.info('\n\n')
 
     plt.figure(figsize=(6, 4))
     plt.scatter(X_ts[:, 0],
@@ -150,72 +243,239 @@ def example_2():
     plt.show()
 
 
-# Example 3: ensemble learning
-def example_3():
-    # Classifiers
-    knn = KNeighborsClassifier(n_neighbors=1,
-                               metric='euclidean')
-    rf = RandomForestClassifier(n_estimators=100,
-                                random_state=42)
-    svm = SVC(C=1,
-              random_state=42)
-    logreg = LogisticRegression(solver='liblinear',
-                                random_state=42)
+def example3():
+    # Example 3: MNIST dataset
+    mnist = fetch_openml('mnist_784', version=1)
+    mnist.target = mnist.target.astype(int)
 
-    classifiers = [knn, logreg, svm, rf]
+    X_tr, y_tr = mnist['data'][:60000], mnist.target[:60000]
+    X_ts, y_ts = mnist['data'][60000::], mnist.target[60000::]
+    transform = UMAP(n_components=2,
+                     random_state=42,
+                     n_neighbors=30,
+                     min_dist=0.0)
+    X_tr = transform.fit_transform(X_tr)
+    X_ts = transform.transform(X_ts)
+
+    s = KNeighborsClassifier(n_neighbors=30)
+    c = hdbscan.HDBSCAN(min_samples=10, min_cluster_size=200)
+
+    reval = FindBestClustCV(s=s,
+                            c=c,
+                            nfold=2,
+                            nrand=10,
+                            n_jobs=N_JOBS)
+
+    metrics, nclustbest, tr_lab = reval.best_nclust(X_tr, iter_cv=10, strat_vect=y_tr)
+
+    plot_metrics(metrics)
+
+    out = reval.evaluate(X_tr, X_ts, nclust=nclustbest, tr_lab=tr_lab)
+    perm_lab = kuhn_munkres_algorithm(y_ts, out.test_cllab)
+
+    logging.info(f"Best number of clusters during CV: {nclustbest}")
+    logging.info(f"Best number of clusters on test set: {len([lab for lab in np.unique(out.test_cllab) if lab >= 0])}")
+    logging.info(f'AMI (true labels vs predicted labels) = '
+                 f'{adjusted_mutual_info_score(y_ts, out.test_cllab)}')
+    logging.info('\n\n')
+
+    logging.info("Metrics from true label comparisons on test set:")
+    class_scores = compute_metrics(y_ts, perm_lab)
+    for k, val in class_scores.items():
+        logging.info(f'{k}, {val}')
+    logging.info('\n\n')
+
+    # Visualization
+    fig, ax = plt.subplots(figsize=(10, 8))
+    scatter = ax.scatter(X_tr[:, 0],
+                         X_tr[:, 1],
+                         c=y_tr, cmap='rainbow_r',
+                         s=0.1)
+    legend = ax.legend(*scatter.legend_elements())
+    ax.add_artist(legend)
+    plt.title("Train set true labels (digits dataset)")
+    plt.show()
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+    scatter = ax.scatter(X_tr[:, 0],
+                         X_tr[:, 1],
+                         c=kuhn_munkres_algorithm(y_tr, tr_lab),
+                         cmap='tab20',
+                         s=0.1)
+    legend = ax.legend(*scatter.legend_elements())
+    ax.add_artist(legend)
+    plt.title("Train set predicted labels (digits dataset)")
+    plt.show()
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+    scatter = ax.scatter(X_ts[:, 0],
+                         X_ts[:, 1],
+                         c=y_ts, cmap='tab20',
+                         s=0.1)
+    legend = ax.legend(*scatter.legend_elements())
+    ax.add_artist(legend)
+    plt.title("Test set true labels (digits dataset)")
+    plt.show()
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+    scatter = ax.scatter(X_ts[:, 0],
+                         X_ts[:, 1],
+                         s=0.1,
+                         c=perm_lab, cmap='tab20')
+    legend = ax.legend(*scatter.legend_elements())
+    ax.add_artist(legend)
+    plt.title("Test set clustering labels (digits dataset)")
+    plt.show()
+
+    # Internal measures
+    # SILHOUETTE
+    logging.info("Silhouette score based selection")
+    sil_score_tr, sil_best_tr, sil_label_tr = select_best(X_tr, c, silhouette_score, select='max')
+    sil_score_ts, sil_best_ts, sil_label_ts = select_best(X_ts, c, silhouette_score, select='max')
+    logging.info(
+        f"Best number of clusters (and scores) for tr/ts independent runs: {sil_best_tr}({sil_score_tr})/{sil_best_ts}({sil_score_ts})")
+    logging.info(f'AMI (true labels vs clustering labels) training = '
+                 f'{adjusted_mutual_info_score(y_tr, kuhn_munkres_algorithm(y_tr, sil_label_tr))}')
+    logging.info(f'AMI (true labels vs clustering labels) test = '
+                 f'{adjusted_mutual_info_score(y_ts, kuhn_munkres_algorithm(y_ts, sil_label_ts))}')
+    logging.info('\n\n')
+
+    # DAVIES-BOULDIN
+    logging.info("Davies-Bouldin score based selection")
+    db_score_tr, db_best_tr, db_label_tr = select_best(X_tr, c, davies_bouldin_score,
+                                                       select='min')
+    db_score_ts, db_best_ts, db_label_ts = select_best(X_ts, c, davies_bouldin_score,
+                                                       select='min')
+
+    logging.info(
+        f"Best number of clusters (and scores) for tr/ts independent runs: {db_best_tr}({db_score_tr})/{db_best_ts}({db_score_ts})")
+    logging.info(f'AMI (true labels vs clustering labels) training = '
+                 f'{adjusted_mutual_info_score(y_tr, kuhn_munkres_algorithm(y_tr, db_label_tr))}')
+    logging.info(f'AMI (true labels vs clustering labels) test = '
+                 f'{adjusted_mutual_info_score(y_ts, kuhn_munkres_algorithm(y_ts, db_label_ts))}')
+    logging.info('\n\n')
+
+    # Visualization
+    fig, ax = plt.subplots(figsize=(10, 8))
+    scatter = ax.scatter(X_tr[:, 0],
+                         X_tr[:, 1],
+                         c=sil_label_tr, cmap='tab20',
+                         s=0.1)
+    legend = ax.legend(*scatter.legend_elements())
+    ax.add_artist(legend)
+    plt.title("Train set silhouette labels (digits dataset)")
+    plt.show()
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+    scatter = ax.scatter(X_ts[:, 0],
+                         X_ts[:, 1],
+                         c=sil_label_ts, cmap='tab20',
+                         s=0.1)
+    legend = ax.legend(*scatter.legend_elements())
+    ax.add_artist(legend)
+    legend = ax.legend(*scatter.legend_elements())
+    ax.add_artist(legend)
+    plt.title("Test set silhouette labels (digits dataset)")
+    plt.show()
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+    scatter = ax.scatter(X_tr[:, 0],
+                         X_tr[:, 1],
+                         c=db_label_tr, cmap='tab20',
+                         s=0.1)
+    legend = ax.legend(*scatter.legend_elements())
+    ax.add_artist(legend)
+    plt.title("Train set Davies-Bouldin labels (digits dataset)")
+    plt.show()
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+    scatter = ax.scatter(X_ts[:, 0],
+                         X_ts[:, 1],
+                         s=0.1,
+                         c=db_label_ts, cmap='tab20')
+    legend = ax.legend(*scatter.legend_elements())
+    ax.add_artist(legend)
+    plt.title("Test set Davies-Bouldin labels (digits dataset)")
+    plt.show()
+
+
+# Example 4: best classifier/clustering combination for UCI dataset
+def example_4(n_jobs, preprocess=None):
+    """
+    :param preprocess: it can be 'scaled',
+        'umap', 'scaled+umap', default None for raw processing.
+    :type preprocess: str
+    :return:
+    """
+    # Example 4: best clussifier/clustering for UCI dataset
+
+    # Classifiers
+    s = [LogisticRegression(solver='liblinear',
+                            random_state=42),
+         RandomForestClassifier(n_estimators=100,
+                                random_state=42),
+         KNeighborsClassifier(n_neighbors=1,
+                              metric='euclidean'),
+         SVC(C=1,
+             random_state=42)]
 
     # Clustering
-    hc = AgglomerativeClustering()
-    km = KMeans(random_state=42)
-    sc = SpectralClustering(random_state=42)
+    c = [AgglomerativeClustering(),
+         KMeans(random_state=42),
+         hdbscan.HDBSCAN()]
 
-    clustering = [hc, km, sc]
+    scparam = {'s': s,
+               'c': c}
 
-    # scaler = StandardScaler()
     transform = UMAP(n_neighbors=30, min_dist=0.0, random_state=42)
+    scale = StandardScaler()
 
     # Import benchmark datasets
     uci_data = build_ucidatasets()
     # Run ensemble learning algorithm
+    best_results = {}
     for data, name in zip(uci_data, uci_data._fields):
+        scparam['s'][-1].gamma = (1 / data['data'].shape[0])
         nclass = len(np.unique(data['target']))
         logging.info(f"Processing dataset {name}")
-        logging.info(f"Number of classes: {nclass}\n")
+        logging.info(f"True number of classes: {nclass}\n")
         X_tr, X_ts, y_tr, y_ts = train_test_split(data['data'],
                                                   data['target'],
                                                   test_size=0.40,
                                                   random_state=42,
                                                   stratify=data['target'])
-        X_tr = transform.fit_transform(X_tr)
-        X_ts = transform.transform(X_ts)
-        for s in classifiers:
-            if type(s) == type(svm):
-                svm.gamma = 1 / data['data'].shape[0]
-            for c in clustering:
-                logging.info(f"Clustering algorithm: {c} -- Classification algorithm {s}")
-                reval = FindBestClustCV(s=s,
-                                        c=c,
-                                        nfold=5,
-                                        nclust_range=[2, nclass + 3],
-                                        nrand=100)
-                metrics, nclustbest, _ = reval.best_nclust(X_tr, strat_vect=y_tr)
+        if preprocess == 'umap+scaled':
+            X_tr = transform.fit_transform(scale.fit_transform(X_tr))
+        elif preprocess == 'umap':
+            X_tr = transform.fit_transform(X_tr)
+        elif preprocess == 'scaled':
+            X_tr = scale.fit_transform(X_tr)
 
-                out = reval.evaluate(X_tr, X_ts, nclust=nclustbest)
-                perm_lab = kuhn_munkres_algorithm(y_ts, out.test_cllab)
-
-                logging.info(f"Best number of clusters: {nclustbest}")
-                logging.info(f"Test set prediction ACC: "
-                             f"{1 - zero_one_loss(y_ts, perm_lab)}")
-                logging.info(f'AMI (true labels vs predicted labels) = '
-                             f'{adjusted_mutual_info_score(y_ts, out.test_cllab)}')
-                logging.info(f"Validation set normalized stability (misclassification):"
-                             f"{metrics['val'][nclustbest]}")
-                logging.info(f'Test set ACC = {out.test_acc} '
-                             f'(true labels vs predicted labels)\n')
+        scparam_select = SCParamSelection(sc_params=scparam,
+                                          cv=2,
+                                          nrand=10,
+                                          clust_range=list(range(2, nclass + 3, 1)),
+                                          n_jobs=n_jobs,
+                                          iter_cv=10,
+                                          strat=y_tr)
+        scparam_select.fit(X_tr, nclass=nclass)
+        best_results[name] = scparam_select.best_param_
+        # Uncomment to save the results
+        #     pkl.dump(best_results, open('./best_resultUCI_scaledumap.pkl', 'wb'))
         logging.info('*' * 100)
         logging.info('\n\n')
 
 
 if __name__ == "__main__":
-    example_1()
-    example_2()
+    # Format logging output and save
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+    logging.basicConfig(format='%(asctime)s, %(levelname)s %(message)s',
+                        datefmt='%H:%M:%S',
+                        level=logging.INFO,
+                        filename='example_out.log',
+                        filemode='w')
+    example1()
+    example2()
+    example3()
+    example_4(n_jobs=7, preprocess='scaled+umap')
