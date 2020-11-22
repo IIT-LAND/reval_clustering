@@ -2,12 +2,14 @@ import cProfile
 import pstats
 from sklearn.datasets import make_blobs
 from sklearn.model_selection import train_test_split
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, AgglomerativeClustering
+from hdbscan import HDBSCAN
 from sklearn.neighbors import KNeighborsClassifier
 from reval.best_nclust_cv import FindBestClustCV
 
 s = KNeighborsClassifier()
-c = KMeans()
+# c = KMeans()
+c = AgglomerativeClustering()
 
 findbest = FindBestClustCV(s=s,
                            c=c,

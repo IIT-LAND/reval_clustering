@@ -1,16 +1,22 @@
 import numpy as np
 from scipy.optimize import linear_sum_assignment
-from sklearn.metrics import matthews_corrcoef, accuracy_score, f1_score, precision_score, recall_score
+from sklearn.metrics import matthews_corrcoef, accuracy_score, f1_score, \
+    precision_score, recall_score
 
 
 def kuhn_munkres_algorithm(true_lab, pred_lab):
     """
-    Function that implements the Kuhn-Munkres algorithm method. It selects the best label permutation of the
+    Function that implements the Kuhn-Munkres algorithm method.
+    It selects the best label permutation of the
     predicted labels that minimizes the
-    misclassification error when compared to the true labels. In order to allow for the investigation
-    of replicability of findings between training and test sets, in the context of reval we permute
-    clustering labels to match classification labels, in order to retain the label organization
-    based on training dataset. This because otherwise we would loose the correspondence between training and test
+    misclassification error when compared to the true labels.
+    In order to allow for the investigation
+    of replicability of findings between training and test sets,
+    in the context of reval we permute
+    clustering labels to match classification labels,
+    in order to retain the label organization
+    based on training dataset. This because otherwise we would loose the
+    correspondence between training and test
     sets labels.
 
     :param true_lab: classification algorithm labels (for reval).

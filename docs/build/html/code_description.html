@@ -163,7 +163,9 @@
             
   <div class="section" id="code-description">
 <h1>Code description<a class="headerlink" href="#code-description" title="Permalink to this headline">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">reval</span></code> module has one superclass <code class="xref py py-class docutils literal notranslate"><span class="pre">FindBestClustCV</span></code> and a subclass <code class="xref py py-class docutils literal notranslate"><span class="pre">RelativeValidation</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">reval</span></code> module has one superclass <code class="xref py py-class docutils literal notranslate"><span class="pre">FindBestClustCV</span></code> and a subclass <code class="xref py py-class docutils literal notranslate"><span class="pre">RelativeValidation</span></code>.
+<code class="xref py py-class docutils literal notranslate"><span class="pre">SCParamSelection</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">ParamSelection</span></code> have been added to later releases to perform
+hyperparameter selections.</p>
 <div class="section" id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
@@ -257,7 +259,7 @@ both clustering and classification labels.</p>
 
 <dl class="py method">
 <dt id="reval.relative_validation.RelativeValidation.train">
-<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">train_data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/relative_validation.html#RelativeValidation.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.relative_validation.RelativeValidation.train" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">train_data</span></em>, <em class="sig-param"><span class="n">tr_lab</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/relative_validation.html#RelativeValidation.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.relative_validation.RelativeValidation.train" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method that performs training. It compares the clustering labels on training set
 (i.e., A(X) computed by <code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation.clust_method</span></code>) against
 the labels obtained from the classification algorithm
@@ -266,13 +268,17 @@ It returns the misclassification error, the supervised model fitted to the data,
 and both clustering and classification labels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>train_data</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – training dataset.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>train_data</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – training dataset.</p></li>
+<li><p><strong>tr_lab</strong> (<em>list</em>) – cluster labels found during CV for clustering methods with no <cite>n_clusters</cite> parameter.
+If not None the clustering method is not performed on the whole test set. Default None.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>misclassification error, fitted supervised model object, clustering and classification labels.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float, object, dictionary of ndarray (n_samples,)</p>
+<dd class="field-odd"><p>float, object, ndarray (n_samples,)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -281,7 +287,7 @@ and both clustering and classification labels.</p>
 
 <dl class="py class">
 <dt id="reval.best_nclust_cv.FindBestClustCV">
-<em class="property">class </em><code class="sig-prename descclassname">reval.best_nclust_cv.</code><code class="sig-name descname">FindBestClustCV</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nclust_range</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">nrand</span></em>, <em class="sig-param"><span class="n">nfold</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/best_nclust_cv.html#FindBestClustCV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.best_nclust_cv.FindBestClustCV" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">reval.best_nclust_cv.</code><code class="sig-name descname">FindBestClustCV</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">nrand</span></em>, <em class="sig-param"><span class="n">nfold</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">nclust_range</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/best_nclust_cv.html#FindBestClustCV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.best_nclust_cv.FindBestClustCV" title="Permalink to this definition">¶</a></dt>
 <dd><p>Child class of <a class="reference internal" href="#reval.relative_validation.RelativeValidation" title="reval.relative_validation.RelativeValidation"><code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation</span></code></a>.
 It performs (repeated) k-fold cross validation on the training set to
 select the best number of clusters, i.e., the number that minimizes the
@@ -291,7 +297,7 @@ error/asymptotic misclassification rate).</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nfold</strong> (<em>int</em>) – number of CV folds.</p></li>
-<li><p><strong>nclust_range</strong> (<em>list of int</em>) – list with clusters to look for.</p></li>
+<li><p><strong>nclust_range</strong> (<em>list of int</em>) – list with clusters to look for, default None.</p></li>
 <li><p><strong>s</strong> (<em>class</em>) – classification object inherited
 from <a class="reference internal" href="#reval.relative_validation.RelativeValidation" title="reval.relative_validation.RelativeValidation"><code class="xref py py-class docutils literal notranslate"><span class="pre">reval.relative_validation.RelativeValidation</span></code></a>.</p></li>
 <li><p><strong>c</strong> (<em>class</em>) – clustering object inherited
@@ -308,6 +314,27 @@ ncl = number of clusters; ms_tr = misclassification training;
 ms_val = misclassification validation.</p>
 </dd>
 </dl>
+<dl class="py method">
+<dt id="reval.best_nclust_cv.FindBestClustCV._fit">
+<em class="property">static </em><code class="sig-name descname">_fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_obj</span></em>, <em class="sig-param"><span class="n">idxs</span></em>, <em class="sig-param"><span class="n">ncl</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/best_nclust_cv.html#FindBestClustCV._fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.best_nclust_cv.FindBestClustCV._fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that calls training, test, and random labeling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_obj</strong> (<em>tuple</em>) – dataset and <cite>reval.RelativeValidation</cite> class.</p></li>
+<li><p><strong>idxs</strong> (<em>tuple</em>) – lists of training and validation indices.</p></li>
+<li><p><strong>ncl</strong> (<em>int</em>) – number of clusters, default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of clusters and misclassification errors for training and validation.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (int, float, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt id="reval.best_nclust_cv.FindBestClustCV.best_nclust">
 <code class="sig-name descname">best_nclust</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">iter_cv</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">strat_vect</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/best_nclust_cv.html#FindBestClustCV.best_nclust"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.best_nclust_cv.FindBestClustCV.best_nclust" title="Permalink to this definition">¶</a></dt>
@@ -328,14 +355,14 @@ normalized stability.</p>
 misclassification errors at each CV iteration.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dictionary, int, dictionary</p>
+<dd class="field-odd"><p>dictionary, int, (list) if n_clusters parameter is not available</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="reval.best_nclust_cv.FindBestClustCV.evaluate">
-<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_tr</span></em>, <em class="sig-param"><span class="n">data_ts</span></em>, <em class="sig-param"><span class="n">nclust</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/best_nclust_cv.html#FindBestClustCV.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.best_nclust_cv.FindBestClustCV.evaluate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_tr</span></em>, <em class="sig-param"><span class="n">data_ts</span></em>, <em class="sig-param"><span class="n">nclust</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tr_lab</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/best_nclust_cv.html#FindBestClustCV.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.best_nclust_cv.FindBestClustCV.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method that applies the selected clustering algorithm with the best number of clusters
 to the test set. It returns clustering labels.</p>
 <dl class="field-list simple">
@@ -343,14 +370,17 @@ to the test set. It returns clustering labels.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_tr</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – training dataset.</p></li>
 <li><p><strong>data_ts</strong> (<em>ndarray</em><em>, </em><em>(</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – test dataset.</p></li>
-<li><p><strong>nclust</strong> (<em>int</em>) – best number of clusters.</p></li>
+<li><p><strong>nclust</strong> (<em>int</em>) – best number of clusters, default None.</p></li>
+<li><p><strong>tr_lab</strong> (<em>array-like</em>) – clustering labels for the training set. If not None
+the clustering algorithm is not performed and the classifier is fitted.
+Available for clustering methods without <cite>n_clusters</cite> parameter. Default None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>labels and accuracy for both training and test sets.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>namedtuple, (train_cllab, train_acc, test_cllab, test_acc)</p>
+<dd class="field-odd"><p>namedtuple, (train_cllab: array, train_acc:float, test_cllab:array, test_acc:float)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -359,7 +389,7 @@ to the test set. It returns clustering labels.</p>
 
 <dl class="py class">
 <dt id="reval.param_selection.SCParamSelection">
-<em class="property">class </em><code class="sig-prename descclassname">reval.param_selection.</code><code class="sig-name descname">SCParamSelection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sc_params</span></em>, <em class="sig-param"><span class="n">cv</span></em>, <em class="sig-param"><span class="n">nrand</span></em>, <em class="sig-param"><span class="n">clust_range</span></em>, <em class="sig-param"><span class="n">n_jobs</span></em>, <em class="sig-param"><span class="n">strat</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/param_selection.html#SCParamSelection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.param_selection.SCParamSelection" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">reval.param_selection.</code><code class="sig-name descname">SCParamSelection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sc_params</span></em>, <em class="sig-param"><span class="n">cv</span></em>, <em class="sig-param"><span class="n">nrand</span></em>, <em class="sig-param"><span class="n">n_jobs</span></em>, <em class="sig-param"><span class="n">iter_cv</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">clust_range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">strat</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/param_selection.html#SCParamSelection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.param_selection.SCParamSelection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class that implements grid search cross-validation in parallel to select the best
 combination of classifier/clustering methods.</p>
 <dl class="field-list simple">
@@ -369,8 +399,9 @@ combination of classifier/clustering methods.</p>
 of classifiers and clustering methods to fit to the data.</p></li>
 <li><p><strong>cv</strong> (<em>int</em>) – cross-validation folds.</p></li>
 <li><p><strong>nrand</strong> (<em>int</em>) – number of random label iterations.</p></li>
-<li><p><strong>clust_range</strong> (<em>list</em>) – list with number of clusters to investigate.</p></li>
 <li><p><strong>n_jobs</strong> (<em>int</em>) – number of jobs to run in parallel, default (number of cpus - 1).</p></li>
+<li><p><strong>iter_cv</strong> (<em>int</em>) – number of repeated cv, default 1.</p></li>
+<li><p><strong>clust_range</strong> (<em>list</em>) – list with number of clusters to investigate, default None.</p></li>
 <li><p><strong>strat</strong> (<em>numpy array</em>) – stratification vector for cross-validation splits, default None.</p></li>
 </ul>
 </dd>
@@ -413,7 +444,9 @@ rows of the <cite>cv_results_</cite> table. List.</p>
 <code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_tr</span></em>, <em class="sig-param"><span class="n">nclass</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/param_selection.html#SCParamSelection.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.param_selection.SCParamSelection.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class method that performs grid search cross-validation on training data. If the number of
 true classes is known, the method returns both the best result with the correct number of
-clusters (and minimum stability) and the overall best result (overall minimum stability).</p>
+clusters (and minimum stability), if available, and the overall best result (overall minimum stability).
+The output reports None if the clustering algorithm does not find any cluster (e.g., HDBSCAN label
+all points as -1).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -428,7 +461,7 @@ clusters (and minimum stability) and the overall best result (overall minimum st
 
 <dl class="py class">
 <dt id="reval.param_selection.ParamSelection">
-<em class="property">class </em><code class="sig-prename descclassname">reval.param_selection.</code><code class="sig-name descname">ParamSelection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em>, <em class="sig-param"><span class="n">cv</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">nrand</span></em>, <em class="sig-param"><span class="n">clust_range</span></em>, <em class="sig-param"><span class="n">n_jobs</span></em>, <em class="sig-param"><span class="n">strat</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/param_selection.html#ParamSelection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.param_selection.ParamSelection" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">reval.param_selection.</code><code class="sig-name descname">ParamSelection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em>, <em class="sig-param"><span class="n">cv</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">nrand</span></em>, <em class="sig-param"><span class="n">n_jobs</span></em>, <em class="sig-param"><span class="n">iter_cv</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">strat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">clust_range</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/param_selection.html#ParamSelection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.param_selection.ParamSelection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class that implements grid search cross-validation in parallel to select
 the best combinations of parameters for fixed classifier/clustering algorithms.</p>
 <dl class="field-list simple">
@@ -440,6 +473,7 @@ available, initialize key but leave dictionary empty.</p></li>
 <li><p><strong>cv</strong> (<em>int</em>) – cross-validation folds.</p></li>
 <li><p><strong>clust_range</strong> (<em>list</em>) – list with number of clusters to investigate.</p></li>
 <li><p><strong>n_jobs</strong> (<em>int</em>) – number of jobs to run in parallel, default (number of cpus - 1).</p></li>
+<li><p><strong>iter_cv</strong> (<em>int</em>) – number of repeated cv loops, default 1.</p></li>
 <li><p><strong>strat</strong> (<em>numpy array</em>) – stratification vector for cross-validation splits, default None.</p></li>
 </ul>
 </dd>
@@ -527,7 +561,9 @@ overall stability.</p>
 <p>Useful functions that can be used on their own are also available. In particular,
 <code class="docutils literal notranslate"><span class="pre">reval.utils.kuhn_munkres_algorithm</span></code> is an implementation of the Kuhn-Munkres algorithm
 (Kuhn, 1955; Munkres, 1957), that performs consistent permutation of predicted labels
-in order to minimize the misclassification error with respect to true labels.</p>
+in order to minimize the misclassification error with respect to true labels. <code class="docutils literal notranslate"><span class="pre">reval.utils.compute_metrics</span></code>
+takes as input clustering and classification labels and returns classification metrics, such as F1 score,
+accuracy and Matthews correlation coefficient for generalization.</p>
 <p>Kuhn, H. W. (1955). The Hungarian method for the assignment problem. <em>Naval research logistics quarterly</em>,
 2(1‐2), 83-97.</p>
 <p>Munkres, J. (1957). Algorithms for the assignment and transportation problems.
@@ -581,12 +617,17 @@ respectively.</p>
 <dl class="py function">
 <dt id="reval.utils.kuhn_munkres_algorithm">
 <code class="sig-prename descclassname">reval.utils.</code><code class="sig-name descname">kuhn_munkres_algorithm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">true_lab</span></em>, <em class="sig-param"><span class="n">pred_lab</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/utils.html#kuhn_munkres_algorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.utils.kuhn_munkres_algorithm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function that implements the Kuhn-Munkres algorithm method. It selects the best label permutation of the
+<dd><p>Function that implements the Kuhn-Munkres algorithm method.
+It selects the best label permutation of the
 predicted labels that minimizes the
-misclassification error when compared to the true labels. In order to allow for the investigation
-of replicability of findings between training and test sets, in the context of reval we permute
-clustering labels to match classification labels, in order to retain the label organization
-based on training dataset. This because otherwise we would loose the correspondence between training and test
+misclassification error when compared to the true labels.
+In order to allow for the investigation
+of replicability of findings between training and test sets,
+in the context of reval we permute
+clustering labels to match classification labels,
+in order to retain the label organization
+based on training dataset. This because otherwise we would loose the
+correspondence between training and test
 sets labels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -626,7 +667,7 @@ sets labels.</p>
 between <code class="docutils literal notranslate"><span class="pre">reval</span></code> method and internal validation measures.</p>
 <span class="target" id="module-reval.internal_baselines"></span><dl class="py function">
 <dt id="reval.internal_baselines.evaluate_best">
-<code class="sig-prename descclassname">reval.internal_baselines.</code><code class="sig-name descname">evaluate_best</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">int_measure</span></em>, <em class="sig-param"><span class="n">ncl</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/internal_baselines.html#evaluate_best"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.internal_baselines.evaluate_best" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reval.internal_baselines.</code><code class="sig-name descname">evaluate_best</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">int_measure</span></em>, <em class="sig-param"><span class="n">ncl</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/internal_baselines.html#evaluate_best"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.internal_baselines.evaluate_best" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function that, given a number of clusters, returns the corresponding internal measure
 for a dataset.</p>
 <dl class="field-list simple">
@@ -649,7 +690,7 @@ for a dataset.</p>
 
 <dl class="py function">
 <dt id="reval.internal_baselines.select_best">
-<code class="sig-prename descclassname">reval.internal_baselines.</code><code class="sig-name descname">select_best</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">int_measure</span></em>, <em class="sig-param"><span class="n">nclust_range</span></em>, <em class="sig-param"><span class="n">select</span><span class="o">=</span><span class="default_value">'max'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/internal_baselines.html#select_best"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.internal_baselines.select_best" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reval.internal_baselines.</code><code class="sig-name descname">select_best</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">int_measure</span></em>, <em class="sig-param"><span class="n">select</span><span class="o">=</span><span class="default_value">'max'</span></em>, <em class="sig-param"><span class="n">nclust_range</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/internal_baselines.html#select_best"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.internal_baselines.select_best" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select the best number of clusters that minimizes/maximizes
 the internal measure selected.</p>
 <dl class="field-list simple">
@@ -658,9 +699,9 @@ the internal measure selected.</p>
 <li><p><strong>data</strong> (<em>array-like</em>) – dataset.</p></li>
 <li><p><strong>c</strong> (<em>obj</em>) – clustering algorithm class.</p></li>
 <li><p><strong>int_measure</strong> (<em>obj</em>) – internal measure function.</p></li>
-<li><p><strong>nclust_range</strong> (<em>list</em>) – Range of clusters to consider.</p></li>
 <li><p><strong>select</strong> (<em>str</em>) – it can be ‘min’, if the internal measure is to be minimized
 or ‘max’ if the internal measure should be macimized.</p></li>
+<li><p><strong>nclust_range</strong> (<em>list</em>) – Range of clusters to consider, default None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -678,7 +719,7 @@ or ‘max’ if the internal measure should be macimized.</p></li>
 <p><code class="docutils literal notranslate"><span class="pre">reval.visualization</span></code> enables plotting the cross-validation performance.</p>
 <span class="target" id="module-reval.visualization"></span><dl class="py function">
 <dt id="reval.visualization.plot_metrics">
-<code class="sig-prename descclassname">reval.visualization.</code><code class="sig-name descname">plot_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cv_score</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">8, 5</span></em>, <em class="sig-param"><span class="n">linewidth</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">'black', 'black'</span></em>, <em class="sig-param"><span class="n">legend_loc</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">fontsize</span><span class="o">=</span><span class="default_value">12</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">save_fig</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/visualization.html#plot_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.visualization.plot_metrics" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">reval.visualization.</code><code class="sig-name descname">plot_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cv_score</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">8, 5</span></em>, <em class="sig-param"><span class="n">linewidth</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">'black', 'black'</span></em>, <em class="sig-param"><span class="n">legend_loc</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">fontsize</span><span class="o">=</span><span class="default_value">12</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">prob_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">save_fig</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/reval/visualization.html#plot_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reval.visualization.plot_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function that plots the average performance (i.e., normalized stability) over cross-validation
 for training and validation sets. The horizontal lines represent the random performance error
 for the correspondent number of clusters.</p>
@@ -692,6 +733,7 @@ for the correspondent number of clusters.</p>
 <li><p><strong>legend_loc</strong> (<em>int</em>) – legend location, default 2.</p></li>
 <li><p><strong>fontsize</strong> (<em>int</em>) – size of fonts, default 12.</p></li>
 <li><p><strong>title</strong> (<em>str</em>) – figure title, default “”.</p></li>
+<li><p><strong>prob_lines</strong> (<em>bool</em>) – plot the normalized stability of random labeling as thresholds, default False.</p></li>
 <li><p><strong>save_fig</strong> (<em>str</em>) – file name for saving figure in png format, default None.</p></li>
 </ul>
 </dd>

@@ -4,6 +4,7 @@ import re
 import numpy as np
 import os
 from collections import namedtuple
+from sklearn.datasets import load_digits
 
 
 def build_ucidatasets():
@@ -31,7 +32,8 @@ def build_ucidatasets():
                                                'yeast',
                                                'forest',
                                                'urban',
-                                               'leaf'])
+                                               'leaf',
+                                               'hwdigits'])
 
     # Datasets
     file_names = ['biodeg.csv',
@@ -58,21 +60,21 @@ def build_ucidatasets():
     for fn in file_names:
         name_dataset = fn.split('.')[0]
         if name_dataset == 'biodeg':
-            with open(os.path.join(os.getcwd(), 'working_examples/datasets', fn)) as f:
+            with open(os.path.join(os.getcwd(), 'datasets', fn)) as f:
                 rd = csv.reader(f, delimiter=';')
                 data = []
                 for r in rd:
                     data.append(r)
             data_dict[name_dataset] = data
         elif re.search('seed', name_dataset):
-            with open(os.path.join(os.getcwd(), 'working_examples/datasets', fn)) as f:
+            with open(os.path.join(os.getcwd(), 'datasets', fn)) as f:
                 rd = csv.reader(f, delimiter='\t')
                 data = []
                 for r in rd:
                     data.append(r)
             data_dict[name_dataset] = data
         else:
-            with open(os.path.join(os.getcwd(), 'working_examples/datasets', fn)) as f:
+            with open(os.path.join(os.getcwd(), 'datasets', fn)) as f:
                 rd = csv.reader(f)
                 data = []
                 for r in rd:
@@ -320,6 +322,6 @@ def build_ucidatasets():
 
     # Create dataset collection and dump it
     data_collection = UCI_datasets(biodeg, breastwi, climate, banknote, ecoli, glass, ionosphere, iris, liver, move,
-                                   parkinsons, seeds, transfusion, wholesale, yeast, forest, urban, leaf)
+                                   parkinsons, seeds, transfusion, wholesale, yeast, forest, urban, leaf, load_digits())
 
     return data_collection

@@ -165,14 +165,16 @@
             
   <div class="section" id="performance-on-benchmark-datasets">
 <h1>Performance on benchmark datasets<a class="headerlink" href="#performance-on-benchmark-datasets" title="Permalink to this headline">¶</a></h1>
-<p>We present here three examples to test <code class="docutils literal notranslate"><span class="pre">reval</span></code> performance. Code can be found in
-<em>reval_clustering/working_examples</em> folder.</p>
+<p>We present here three examples to test <code class="docutils literal notranslate"><span class="pre">reval</span></code> performance. If
+<a class="reference external" href="https://github.com/IIT-LAND/reval_clustering">github folder</a>
+is cloned, code for the following experiments can be found in <em>reval_clustering/working_examples</em> folder.</p>
 <ol class="arabic simple">
 <li><p>N = 1,000 Gaussian blob samples with 10 features divided into 5 clusters (code in <code class="docutils literal notranslate"><span class="pre">blobs.py</span></code>);</p></li>
 <li><p>N = 1,000 Gaussian blob samples with 10 features divided into 5 clusters with noise parameter <em>cluster_std</em>
 set at 3 (code in <code class="docutils literal notranslate"><span class="pre">blobs.py</span></code>);</p></li>
-<li><p>N = 14,000 samples from the MNIST handwritten digits dataset (code in <code class="docutils literal notranslate"><span class="pre">mnist.py</span></code>).</p></li>
 </ol>
+<p>3. N = 14,000 samples from the MNIST handwritten digits dataset loaded from
+<a class="reference external" href="https://openml.org/">openml</a> public repository (code in <code class="docutils literal notranslate"><span class="pre">handwrittend_digits.py</span></code>).</p>
 <div class="section" id="gaussian-blobs">
 <h2>Gaussian blobs<a class="headerlink" href="#gaussian-blobs" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_blobs</span>
@@ -183,11 +185,11 @@ set at 3 (code in <code class="docutils literal notranslate"><span class="pre">b
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">zero_one_loss</span><span class="p">,</span> <span class="n">adjusted_mutual_info_score</span>
 <span class="kn">from</span> <span class="nn">reval.visualization</span> <span class="kn">import</span> <span class="n">plot_metrics</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">reval.relative_validation</span> <span class="kn">import</span> <span class="n">_kuhn_munkres_algorithm</span>
+<span class="kn">from</span> <span class="nn">reval.utils</span> <span class="kn">import</span> <span class="n">kuhn_munkres_algorithm</span>
 </pre></div>
 </div>
 <p>Generate sample dataset and visualize blobs (only the first two features).</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">make_blobs</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">make_blobs</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">centers</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">],</span>
             <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">],</span>
             <span class="n">c</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;rainbow_r&#39;</span><span class="p">)</span>
@@ -207,15 +209,15 @@ set at 3 (code in <code class="docutils literal notranslate"><span class="pre">b
                                           <span class="n">stratify</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Apply <code class="docutils literal notranslate"><span class="pre">reval</span></code> with 10-fold cross-validation,
-100 random labeling iterations, and number of clusters varying from 2 to 6. We then plot model performance
+<p>Apply <code class="docutils literal notranslate"><span class="pre">reval</span></code> with 10 repetitions of 2-fold cross-validation,
+10 random labeling iterations, and number of clusters varying from 2 to 6. We then plot model performance
 using the function <code class="docutils literal notranslate"><span class="pre">plot_metrics</span></code> from the <code class="docutils literal notranslate"><span class="pre">reval.visualization</span></code> module.</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">findbestclust</span> <span class="o">=</span> <span class="n">FindBestClustCV</span><span class="p">(</span><span class="n">nfold</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-                                <span class="n">nclust_range</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">findbestclust</span> <span class="o">=</span> <span class="n">FindBestClustCV</span><span class="p">(</span><span class="n">nfold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                <span class="n">nclust_range</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">)),</span>
                                 <span class="n">s</span><span class="o">=</span><span class="n">classifier</span><span class="p">,</span>
                                 <span class="n">c</span><span class="o">=</span><span class="n">clustering</span><span class="p">,</span>
-                                <span class="n">nrand</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="n">metrics</span><span class="p">,</span> <span class="n">nbest</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">)</span>
+                                <span class="n">nrand</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">metrics</span><span class="p">,</span> <span class="n">nbest</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">iter_cv</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">strat_vect</span><span class="o">=</span><span class="n">y_tr</span><span class="p">)</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">X_ts</span><span class="p">,</span> <span class="n">nbest</span><span class="p">)</span>
 <span class="n">plot_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Reval performance&quot;</span><span class="p">)</span>
 </pre></div>
@@ -226,7 +228,7 @@ using the function <code class="docutils literal notranslate"><span class="pre">
 <p>We are now interested in comparing the clustering labels from the test set with the true labels.
 Hence, we first apply Kuhn-Munkres algorithm to permute the labels returned by the model. This
 because they may not be ordered as the true labels and lead to an unreliable classification error.</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">perm_lab</span> <span class="o">=</span> <span class="n">_kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">y_ts</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">test_cllab</span><span class="p">)</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">perm_lab</span> <span class="o">=</span> <span class="n">kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">y_ts</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">test_cllab</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Then we compute the classification accuracy and the
@@ -247,7 +249,7 @@ are identical:</p>
 clusters to 5, as previously. In the following, we will observe how the number of clusters returned by <code class="docutils literal notranslate"><span class="pre">reval</span></code>
 method is highly influenced by noise. We will show the importance of data pre-processing steps
 (e.g., PCA, UMAP for clustering) when applying this method.</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_noisy</span> <span class="o">=</span> <span class="n">make_blobs</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">cluster_std</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_noisy</span> <span class="o">=</span> <span class="n">make_blobs</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">centers</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">cluster_std</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">data_noisy</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">],</span>
             <span class="n">data_noisy</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">],</span>
             <span class="n">c</span><span class="o">=</span><span class="n">data_noisy</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
@@ -261,11 +263,12 @@ method is highly influenced by noise. We will show the importance of data pre-pr
                                                               <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
                                                               <span class="n">stratify</span><span class="o">=</span><span class="n">data_noisy</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-<span class="n">metrics_noise</span><span class="p">,</span> <span class="n">nbest_noise</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">Xnoise_tr</span><span class="p">,</span> <span class="n">ynoise_tr</span><span class="p">)</span>
+<span class="n">metrics_noise</span><span class="p">,</span> <span class="n">nbest_noise</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">Xnoise_tr</span><span class="p">,</span> <span class="n">iter_cv</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">strat_vect</span><span class="o">=</span><span class="n">ynoise_tr</span><span class="p">)</span>
 <span class="n">out_noise</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">Xnoise_tr</span><span class="p">,</span> <span class="n">Xnoise_ts</span><span class="p">,</span> <span class="n">nbest_noise</span><span class="p">)</span>
 
 <span class="n">plot_metrics</span><span class="p">(</span><span class="n">metrics_noise</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Reval performance&quot;</span><span class="p">)</span>
 
+<span class="n">perm_lab_noise</span> <span class="o">=</span> <span class="n">kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">ynoise_ts</span><span class="p">,</span> <span class="n">out_noise</span><span class="o">.</span><span class="n">test_cllab</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Xnoise_ts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">Xnoise_ts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
             <span class="n">c</span><span class="o">=</span><span class="n">perm_lab_noise</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;rainbow_r&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Clustering labels for test set&quot;</span><span class="p">)</span>
@@ -308,12 +311,12 @@ the training set and then applied it to the test set to avoid inflation of perfo
 <img alt="_images/trainumap.png" src="_images/trainumap.png" />
 <img alt="_images/testumap.png" src="_images/testumap.png" />
 <p>Now we apply <code class="docutils literal notranslate"><span class="pre">reval</span></code> method to the transformed dataset.</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">metrics</span><span class="p">,</span> <span class="n">nbest</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">Xtr_umap</span><span class="p">,</span> <span class="n">ynoise_tr</span><span class="p">)</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">metrics</span><span class="p">,</span> <span class="n">nbest</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">Xtr_umap</span><span class="p">,</span> <span class="n">iter_cv</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">strat_vect</span><span class="o">=</span><span class="n">ynoise_tr</span><span class="p">)</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">Xtr_umap</span><span class="p">,</span> <span class="n">Xts_umap</span><span class="p">,</span> <span class="n">nbest</span><span class="p">)</span>
 
 <span class="n">plot_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Reval performance of UMAP-transformed dataset&#39;</span><span class="p">)</span>
 
-<span class="n">perm_noise</span> <span class="o">=</span> <span class="n">_kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">ynoise_ts</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">test_cllab</span><span class="p">)</span>
+<span class="n">perm_noise</span> <span class="o">=</span> <span class="n">kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">ynoise_ts</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">test_cllab</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best number of clusters: </span><span class="si">{</span><span class="n">nbest</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test set external ACC: &quot;</span>
@@ -341,8 +344,8 @@ the training set and then applied it to the test set to avoid inflation of perfo
 </div>
 <div class="section" id="mnist-dataset">
 <h2>MNIST dataset<a class="headerlink" href="#mnist-dataset" title="Permalink to this headline">¶</a></h2>
-<p><strong>Remark: Estimated execution time
-(Mac Book Pro 2019, Processor 2,6 GHz 6-Core Intel Core i7, Memory 16 GB 2667 MHz DDR4) ~403.28 s</strong></p>
+<p><strong>Remark: This example enables multiprocessing to speed up computations. ``n_jobs`` parameter in
+:class:`FindBestClustCV` set to 7.</strong></p>
 <p>From <code class="docutils literal notranslate"><span class="pre">sklearn.datasets</span></code> we can import <code class="docutils literal notranslate"><span class="pre">fetch_openml</span></code> to load MNIST dataset. This dataset includes 70,000
 28X28 images of 10 hand-written digits from 0 to 9. To speed up computations we select 14,000 samples that are
 divided into training and test sets at 50%. Then, we pre-processed these images with UMAP to reduce the
@@ -356,7 +359,7 @@ number of features (from 784 to 10), see scatterplots below.</p>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">umap</span> <span class="kn">import</span> <span class="n">UMAP</span>
 <span class="kn">from</span> <span class="nn">reval.visualization</span> <span class="kn">import</span> <span class="n">plot_metrics</span>
-<span class="kn">from</span> <span class="nn">reval.relative_validation</span> <span class="kn">import</span> <span class="n">_kuhn_munkres_algorithm</span>
+<span class="kn">from</span> <span class="nn">reval.utils</span> <span class="kn">import</span> <span class="n">kuhn_munkres_algorithm</span>
 
 <span class="c1"># MNIST dataset with 10 classes</span>
 <span class="n">mnist</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">fetch_openml</span><span class="p">(</span><span class="s1">&#39;mnist_784&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -387,21 +390,21 @@ number of features (from 784 to 10), see scatterplots below.</p>
 </div>
 <img alt="_images/trainmnist.png" class="align-center" src="_images/trainmnist.png" />
 <img alt="_images/testmnist.png" class="align-center" src="_images/testmnist.png" />
-<p>We now apply <code class="docutils literal notranslate"><span class="pre">reval</span></code> with 10-fold cross-validation, number of clusters ranging from 2 to 11 and random
-labeling iterated 100 times. We again select hierarchical clustering with k-nearest neighbors classifier for
+<p>We now apply <code class="docutils literal notranslate"><span class="pre">reval</span></code> with 10 repetitions of  2-fold cross-validation, number of clusters ranging from 2 to 11 and random
+labeling iterated 10 times. We again select hierarchical clustering with k-nearest neighbors classifier for
 number of cluster selection.</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">classifier</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
 <span class="n">clustering</span> <span class="o">=</span> <span class="n">AgglomerativeClustering</span><span class="p">()</span>
 
-<span class="n">findbestclust</span> <span class="o">=</span> <span class="n">FindBestClustCV</span><span class="p">(</span><span class="n">nfold</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">nclust_range</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span>
-                                <span class="n">s</span><span class="o">=</span><span class="n">classifier</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">clustering</span><span class="p">,</span> <span class="n">nrand</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">findbestclust</span> <span class="o">=</span> <span class="n">FindBestClustCV</span><span class="p">(</span><span class="n">nfold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nclust_range</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">12</span><span class="p">)),</span>
+                                <span class="n">s</span><span class="o">=</span><span class="n">classifier</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">clustering</span><span class="p">,</span> <span class="n">nrand</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
 
-<span class="n">metrics</span><span class="p">,</span> <span class="n">nbest</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">mnist_tr</span><span class="p">,</span> <span class="n">label_tr</span><span class="p">)</span>
+<span class="n">metrics</span><span class="p">,</span> <span class="n">nbest</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">mnist_tr</span><span class="p">,</span> <span class="n">iter_cv</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">strat_vect</span><span class="o">=</span><span class="n">label_tr</span><span class="p">)</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mnist_tr</span><span class="p">,</span> <span class="n">mnist_ts</span><span class="p">,</span> <span class="n">nbest</span><span class="p">)</span>
 
-<span class="n">plot_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="s2">&quot;Relative clustering validation performance on MNIST dataset&quot;</span><span class="p">)</span>
+<span class="n">plot_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Relative clustering validation performance on MNIST dataset&quot;</span><span class="p">)</span>
 
-<span class="n">perm_lab</span> <span class="o">=</span> <span class="n">_kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">label_ts</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">out</span><span class="o">.</span><span class="n">test_cllab</span><span class="p">)</span>
+<span class="n">perm_lab</span> <span class="o">=</span> <span class="n">kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">label_ts</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">out</span><span class="o">.</span><span class="n">test_cllab</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mnist_ts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">mnist_ts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
             <span class="n">c</span><span class="o">=</span><span class="n">perm_lab</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;rainbow_r&#39;</span><span class="p">)</span>
@@ -441,8 +444,11 @@ This lowers the external ACC score although returning a high AMI score, which is
 </div>
 <div class="section" id="more-examples">
 <h2>More examples<a class="headerlink" href="#more-examples" title="Permalink to this headline">¶</a></h2>
-<p>Check out more examples including repeated cross validation for blobs dataset and hand-written digits, and <code class="docutils literal notranslate"><span class="pre">reval</span></code> for ensemble learning
-<a class="reference external" href="https://arxiv.org/abs/2009.01077">here</a>.</p>
+<p>Check out more examples including (1) repeated cross validation
+with HDBSCAN algorithm for the complete MNIST handwritten digits dataset,
+and (2) <code class="docutils literal notranslate"><span class="pre">reval</span></code> for classifier/clustering selection
+<a class="reference external" href="https://arxiv.org/abs/2009.01077">here</a>. Code can be found in the cloned folder
+in <em>reval_clustering/working_examples</em>.</p>
 </div>
 </div>
 
