@@ -159,19 +159,23 @@
   <p>sphinx-quickstart on Mon May 11 18:17:16 2020.</p>
 <div class="section" id="stability-based-relative-clustering-validation-to-determine-the-best-number-of-cluster">
 <h1>Stability-based relative clustering validation to determine the best number of cluster<a class="headerlink" href="#stability-based-relative-clustering-validation-to-determine-the-best-number-of-cluster" title="Permalink to this headline">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">reval</span></code> allows to determine the best number of clusters to partition datasets without a priori knowledge.
+<p><code class="docutils literal notranslate"><span class="pre">reval</span></code> allows to determine the best clustering solution without a priori knowledge.
 It leverages a stability-based relative clustering validation method (Lange et al., 2004) that transforms
 a clustering algorithm into a supervised classification problem and selects the number of clusters
 that leads to the minimum expected misclassification error, i.e., stability.</p>
 <p>This library allows to:</p>
-<ol class="arabic simple">
+<ol class="arabic">
 <li><p>Select any classification algorithm from <code class="docutils literal notranslate"><span class="pre">sklearn</span></code> library;</p></li>
-<li><p>Select a clustering algorithm with <code class="docutils literal notranslate"><span class="pre">n_clusters</span></code> parameter, i.e., choose among <code class="docutils literal notranslate"><span class="pre">sklearn.cluster.KMeans</span></code>,
-<code class="docutils literal notranslate"><span class="pre">sklearn.cluster.AgglomerativeClustering</span></code>, <code class="docutils literal notranslate"><span class="pre">sklearn.cluster.SpectralClustering</span></code>;</p></li>
+<li><dl class="simple">
+<dt>Select a clustering algorithm with <code class="docutils literal notranslate"><span class="pre">n_clusters</span></code> parameter or HDBSCAN density-based algorithm,</dt><dd><p>i.e., choose among <code class="docutils literal notranslate"><span class="pre">sklearn.cluster.KMeans</span></code>,</p>
+</dd>
+</dl>
+<p><code class="docutils literal notranslate"><span class="pre">sklearn.cluster.AgglomerativeClustering</span></code>, <code class="docutils literal notranslate"><span class="pre">sklearn.cluster.SpectralClustering</span></code>, <code class="docutils literal notranslate"><span class="pre">hdbscan.HDBSCAN</span></code>;</p>
+</li>
 <li><p>Perform (repeated) <em>k</em>-fold cross-validation to determine the best number of clusters;</p></li>
 <li><p>Test the final model on an held-out dataset.</p></li>
 </ol>
-<p>Underlying mathematics can be found in (Lange et al., 2004), whereas code can be found on <a class="reference external" href="https://github.com/IIT-LAND/reval_clustering">github</a>.</p>
+<p>Theoretical background can be found in (Lange et al., 2004), whereas code can be found on <a class="reference external" href="https://github.com/IIT-LAND/reval_clustering">github</a>.</p>
 <p>The analysis steps performed by <code class="docutils literal notranslate"><span class="pre">reval</span></code> package are displayed below.</p>
 <img alt="_images/revalv0.0.2pipeline.png" class="align-center" src="_images/revalv0.0.2pipeline.png" />
 <p>Lange, T., Roth, V., Braun, M. L., &amp; Buhmann, J. M. (2004).
@@ -180,7 +184,11 @@ Stability-based validation of clustering solutions. <em>Neural computation</em>,
 <p class="caption"><span class="caption-text">User guide / Tutorial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="code_usage.html">How to use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="code_usage.html">How to use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="code_usage.html#classifier-clustering-selection">Classifier/clustering selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_usage.html#parameter-selection">Parameter selection</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="experiments.html">Performance on benchmark datasets</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="experiments.html#gaussian-blobs">Gaussian blobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="experiments.html#gaussian-blobs-with-noise">Gaussian blobs with noise</a></li>

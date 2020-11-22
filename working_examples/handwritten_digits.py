@@ -7,7 +7,7 @@ from sklearn.metrics import zero_one_loss, adjusted_mutual_info_score
 import matplotlib.pyplot as plt
 from umap import UMAP
 from reval.visualization import plot_metrics
-from reval.relative_validation import _kuhn_munkres_algorithm
+from reval.utils import kuhn_munkres_algorithm
 
 # MNIST dataset with 10 classes
 mnist, label = fetch_openml('mnist_784', version=1, return_X_y=True)
@@ -35,19 +35,18 @@ plt.scatter(mnist_ts[:, 0], mnist_ts[:, 1],
             c=label_ts.astype(int), s=0.1, cmap='rainbow_r')
 plt.title('UMAP-transformed test subsample of MNIST dataset (N=7,000)')
 
-# Run relative clustering validation
 classifier = KNeighborsClassifier()
 clustering = AgglomerativeClustering()
 
-findbestclust = FindBestClustCV(nfold=10, nclust_range=[2, 12],
-                                s=classifier, c=clustering, nrand=100)
+findbestclust = FindBestClustCV(nfold=2, nclust_range=list(range(2, 12)),
+                                s=classifier, c=clustering, nrand=10, n_jobs=7)
 
-metrics, nbest, _ = findbestclust.best_nclust(mnist_tr, label_tr)
+metrics, nbest = findbestclust.best_nclust(mnist_tr, iter_cv=10, strat_vect=label_tr)
 out = findbestclust.evaluate(mnist_tr, mnist_ts, nbest)
 
-plot_metrics(metrics, "Relative clustering validation performance on MNIST dataset")
+plot_metrics(metrics, title="Relative clustering validation performance on MNIST dataset")
 
-perm_lab = _kuhn_munkres_algorithm(label_ts.astype(int), out.test_cllab)
+perm_lab = kuhn_munkres_algorithm(label_ts.astype(int), out.test_cllab)
 
 plt.scatter(mnist_ts[:, 0], mnist_ts[:, 1],
             c=perm_lab, s=0.1, cmap='rainbow_r')

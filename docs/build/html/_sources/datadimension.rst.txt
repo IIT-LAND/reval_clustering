@@ -10,7 +10,8 @@ Number of features: when enough is enough?
 
 With ``make_blobs`` function from ``sklearn.datasets``, we generate a noisy dataset
 (i.e., we set ``cluster_std=5``) with 5 classes, 1,000 samples, and 10 features (see scatterplot below).
-We partition it into training and test sets (30%) and we apply the relative validation algorithm with 10-fold cross-validation,
+We partition it into training and test sets (30%) and we apply the relative validation algorithm with one iteration
+of 10-fold cross-validation,
 number of clusters ranging from 2 to 6, k-nearest neighbors and hierarchical clustering as classification
 and clustering algorithms, respectively, and 100 iterations of random labeling.
 
@@ -26,14 +27,14 @@ and clustering algorithms, respectively, and 100 iterations of random labeling.
     from sklearn.neighbors import KNeighborsClassifier
     from sklearn.cluster import AgglomerativeClustering
     from sklearn.metrics import adjusted_mutual_info_score, zero_one_loss
-    from reval.relative_validation import _kuhn_munkres_algorithm
+    from reval.utils import kuhn_munkres_algorithm
     import matplotlib.pyplot as plt
     import numpy as np
 
-    data1 = make_blobs(1000, 10, 5, cluster_std=5, random_state=42)
+    data1 = make_blobs(1000, 10, centers=5, cluster_std=5, random_state=42)
 
-    plt.scatter(data[0][:, 0], data[0][:, 1],
-                c=data[1], cmap='rainbow_r')
+    plt.scatter(data1[0][:, 0], data1[0][:, 1],
+                c=data1[1], cmap='rainbow_r')
     plt.title('True labels for 10-feature dataset')
 
     X_tr, X_ts, y_tr, y_ts = train_test_split(data1[0],
@@ -46,14 +47,14 @@ and clustering algorithms, respectively, and 100 iterations of random labeling.
     clustering = AgglomerativeClustering()
 
     findbestclust = FindBestClustCV(nfold=10,
-                                    nclust_range=[2, 7],
+                                    nclust_range=list(range(2, 7)),
                                     s=classifier,
                                     c=clustering,
                                     nrand=100)
-    metrics, nbest, _ = findbestclust.best_nclust(X_tr, y_tr)
+    metrics, nbest = findbestclust.best_nclust(data=X_tr, strat_vect=y_tr)
     out = findbestclust.evaluate(X_tr, X_ts, nbest)
 
-    plot_metrics(metrics, "Reval performance for synthetic dataset with 10 features")
+    plot_metrics(metrics, title="Reval performance for synthetic dataset with 10 features")
 
 The algorithm selects 2 as the best clustering solution (see performance plot and scatterplot with predicted labels).
 
@@ -63,7 +64,7 @@ The algorithm selects 2 as the best clustering solution (see performance plot an
 .. image:: images/predlab10.png
     :align: center
 
-We now increase the number of features from 10 to 20 and reapply the relative validation algorithm with the same
+We now increase the number of features from 10 to 20 and rerun the relative validation algorithm with the same
 parameters as before (see scatterplot with true labels below).
 
 .. image:: images/classes20.png
@@ -71,7 +72,7 @@ parameters as before (see scatterplot with true labels below).
 
 .. code:: python3
 
-    data2 = make_blobs(1000, 20, 5, cluster_std=5, random_state=42)
+    data2 = make_blobs(1000, 20, centers=5, cluster_std=5, random_state=42)
 
     plt.scatter(data2[0][:, 0], data2[0][:, 1],
                 c=data2[1], cmap='rainbow_r')
@@ -82,19 +83,19 @@ parameters as before (see scatterplot with true labels below).
                                               test_size=0.30, random_state=42,
                                               stratify=data2[1])
 
-    findbestclust = FindBestClustCV(nfold=10, nclust_range=[2, 7],
+    findbestclust = FindBestClustCV(nfold=10, nclust_range=list(range(2, 7)),
                                     s=classifier, c=clustering, nrand=100)
-    metrics, nbest, _ = findbestclust.best_nclust(X_tr, y_tr)
+    metrics, nbest = findbestclust.best_nclust(data=X_tr, strat_vect=y_tr)
     out = findbestclust.evaluate(X_tr, X_ts, nbest)
 
-    plot_metrics(metrics, "Reval performance for synthetic dataset with 20 features")
+    plot_metrics(metrics, title="Reval performance for synthetic dataset with 20 features")
 
     plt.scatter(X_ts[:, 0], X_ts[:, 1],
                 c=out.test_cllab, cmap='rainbow_r')
     plt.title("Predicted labels for 20-feature dataset")
 
     print(f'AMI test set = {adjusted_mutual_info_score(y_ts, out.test_cllab)}')
-    relabeling = _kuhn_munkres_algorithm(y_ts, out.test_cllab)
+    relabeling = kuhn_munkres_algorithm(y_ts, out.test_cllab)
     print(f'ACC test set = {1 - zero_one_loss(y_ts, relabeling)}')
 
 Because we increased the space volume, data become more sparse, but still preserving their group structure.
@@ -132,7 +133,7 @@ Number of samples: too few, not good
 In small datasets, that we suppose partitioned into groups, the number of samples is important to
 an algorithm result. Too few samples, in fact, are usually not representative of data distributions and may
 hinder clustering results. In the following, we randomly sample three groups from normal distributions
-and we demonstrate how ``reval`` is able to identify the right number of subgroups only if the number of samples is
+and we show how ``reval`` is able to identify the right number of subgroups only if the number of samples is
 enough for subgroups with greater standard deviation to reliably represent the different distributions.
 
 The first dataset generated comprises (see scatterplot):
@@ -146,7 +147,8 @@ The first dataset generated comprises (see scatterplot):
 .. image:: images/classes1005050.png
     :align: center
 
-We instantiate ``FindBestClustCV()`` class with 10-fold cross validation, k-nearest neighbors classifier and
+We instantiate ``FindBestClustCV()`` class with one repetition of 10-fold cross validation,
+k-nearest neighbors classifier and
 hierarchical clustering, number of clusters ranging from 2 to 6, and 100 random labeling iterations.
 
 .. code:: python3
@@ -176,14 +178,14 @@ hierarchical clustering, number of clusters ranging from 2 to 6, and 100 random 
                                               stratify=label)
 
     # Apply relative clustering validation with KNN and Hierarchical clustering
-    findbestclust = FindBestClustCV(nfold=10, nclust_range=[2, 7],
+    findbestclust = FindBestClustCV(nfold=10, nclust_range=list(range(2, 7)),
                                     s=classifier, c=clustering, nrand=100)
-    metrics, nbest, _ = findbestclust.best_nclust(X_tr, y_tr)
+    metrics, nbest = findbestclust.best_nclust(data=X_tr, strat_vect=y_tr)
     out = findbestclust.evaluate(X_tr, X_ts, nbest)
-    plot_metrics(metrics, "Reval performance for synthetic dataset with Ns=(100, 50, 50)")
+    plot_metrics(metrics, title="Reval performance for synthetic dataset with Ns=(100, 50, 50)")
 
     plt.scatter(X_ts[:, 0], X_ts[:, 1],
-                c=_kuhn_munkres_algorithm(np.array(y_ts),
+                c=kuhn_munkres_algorithm(np.array(y_ts),
                                           out.test_cllab),
                 cmap='rainbow_r')
     plt.title(f'Predicted labels for classes with Ns=(100, 50, 50)')
@@ -227,11 +229,11 @@ and we rerun the algorithm with the same parameters.
                                               stratify=label)
 
     # Apply relative clustering validation with KNN and Hierarchical clustering
-    findbestclust = FindBestClustCV(nfold=10, nclust_range=[2, 7],
+    findbestclust = FindBestClustCV(nfold=10, nclust_range=list(range(2, 7)),
                                     s=classifier, c=clustering, nrand=100)
-    metrics, nbest, _ = findbestclust.best_nclust(X_tr, y_tr)
+    metrics, nbest = findbestclust.best_nclust(X_tr, strat_vect=y_tr)
     out = findbestclust.evaluate(X_tr, X_ts, nbest)
-    plot_metrics(metrics, "Reval performance for synthetic dataset with Ns=(100, 500, 500)")
+    plot_metrics(metrics, title="Reval performance for synthetic dataset with Ns=(100, 500, 500)")
 
     plt.scatter(X_ts[:, 0], X_ts[:, 1],
                 c=y_ts,
@@ -239,7 +241,7 @@ and we rerun the algorithm with the same parameters.
     plt.title(f'Test set true labels for classes with Ns=(100, 500, 500)')
 
     plt.scatter(X_ts[:, 0], X_ts[:, 1],
-                c=_kuhn_munkres_algorithm(np.array(y_ts),
+                c=kuhn_munkres_algorithm(np.array(y_ts),
                                           out.test_cllab),
                 cmap='rainbow_r')
     plt.title(f'Predicted labels for classes with Ns=(100, 500, 500)')
@@ -247,9 +249,10 @@ and we rerun the algorithm with the same parameters.
     # Performance scores
     # Test set ACC
     print(f'Test set external '
-          f'ACC = {1 - zero_one_loss(y_ts, _kuhn_munkres_algorithm(np.array(y_ts), out.test_cllab))}')
+          f'ACC = {1 - zero_one_loss(y_ts, kuhn_munkres_algorithm(np.array(y_ts), out.test_cllab))}')
     print(f"Validation stability metrics: {metrics['val'][nbest]}")
     print(f"Test set model ACC = {out.test_acc}")
+    print(f"AMI = {adjusted_mutual_info_score(y_ts, out.test_cllab)}")
 
 This time the algorithm correctly identifies all three groups (see performance plot
 and scaterplot with predicted labels).
@@ -261,10 +264,11 @@ and scaterplot with predicted labels).
     :align: center
 
 To evaluate the algorithm performance we compute AMI and ACC between the true and ``reval`` partitions and report the
-validation and testing metrics, i.e., normalized stability with 95% CI and testing accuracy, respectively.
+validation and testing metrics, i.e., normalized stability with 95% confidence interval
+and testing accuracy, respectively.
 
 .. parsed-literal::
 
-    AMI = 0.75; ACC (external) = 0.93; Normalized stability: 0.1 (0.004; 0.194); ACC = 0.98
+    AMI = 0.75; ACC (external) = 0.97; Normalized stability: 0.08 (0.02; 0.14); ACC = 0.96
 
 Increasing the sampling size, the algorithm was able to correctly identify the three distributions.

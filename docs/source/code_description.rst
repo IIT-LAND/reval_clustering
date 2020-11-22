@@ -2,6 +2,8 @@ Code description
 ================
 
 ``reval`` module has one superclass :class:`FindBestClustCV` and a subclass :class:`RelativeValidation`.
+:class:`SCParamSelection` and :class:`ParamSelection` have been added to later releases to perform
+hyperparameter selections.
 
 Classes
 -------
@@ -28,7 +30,9 @@ Functions
 Useful functions that can be used on their own are also available. In particular,
 ``reval.utils.kuhn_munkres_algorithm`` is an implementation of the Kuhn-Munkres algorithm
 (Kuhn, 1955; Munkres, 1957), that performs consistent permutation of predicted labels
-in order to minimize the misclassification error with respect to true labels.
+in order to minimize the misclassification error with respect to true labels. ``reval.utils.compute_metrics``
+takes as input clustering and classification labels and returns classification metrics, such as F1 score,
+accuracy and Matthews correlation coefficient for generalization.
 
 Kuhn, H. W. (1955). The Hungarian method for the assignment problem. *Naval research logistics quarterly*,
 2(1‐2), 83-97.

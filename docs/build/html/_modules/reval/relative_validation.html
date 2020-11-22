@@ -157,6 +157,11 @@
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">zero_one_loss</span>
 <span class="kn">from</span> <span class="nn">reval.utils</span> <span class="kn">import</span> <span class="n">kuhn_munkres_algorithm</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1">, </span><span class="si">%(levelname)s</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%H:%M:%S&#39;</span><span class="p">,</span>
+                    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="RelativeValidation"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation.RelativeValidation">[docs]</a><span class="k">class</span> <span class="nc">RelativeValidation</span><span class="p">:</span>
@@ -181,7 +186,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span> <span class="o">=</span> <span class="n">c</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nrand</span> <span class="o">=</span> <span class="n">nrand</span>
 
-<div class="viewcode-block" id="RelativeValidation.train"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation.RelativeValidation.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_data</span><span class="p">):</span>
+<div class="viewcode-block" id="RelativeValidation.train"><a class="viewcode-back" href="../../code_description.html#reval.relative_validation.RelativeValidation.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_data</span><span class="p">,</span> <span class="n">tr_lab</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method that performs training. It compares the clustering labels on training set</span>
 <span class="sd">        (i.e., A(X) computed by :class:`reval.relative_validation.RelativeValidation.clust_method`) against</span>
@@ -192,11 +197,19 @@
 
 <span class="sd">        :param train_data: training dataset.</span>
 <span class="sd">        :type train_data: ndarray, (n_samples, n_features)</span>
+<span class="sd">        :param tr_lab: cluster labels found during CV for clustering methods with no `n_clusters` parameter.</span>
+<span class="sd">            If not None the clustering method is not performed on the whole test set. Default None.</span>
+<span class="sd">        :type tr_lab: list</span>
 <span class="sd">        :return: misclassification error, fitted supervised model object, clustering and classification labels.</span>
-<span class="sd">        :rtype: float, object, dictionary of ndarray (n_samples,)</span>
+<span class="sd">        :rtype: float, object, ndarray (n_samples,)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">clustlab_tr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>  <span class="c1"># A_k(X)</span>
+        <span class="k">if</span> <span class="n">tr_lab</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">clustlab_tr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>  <span class="c1"># A_k(X)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">clustlab_tr</span> <span class="o">=</span> <span class="n">tr_lab</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">([</span><span class="n">cl</span> <span class="k">for</span> <span class="n">cl</span> <span class="ow">in</span> <span class="n">clustlab_tr</span> <span class="k">if</span> <span class="n">cl</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No clusters found during training with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
         <span class="n">fitclass_tr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_method</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">clustlab_tr</span><span class="p">)</span>
         <span class="n">classlab_tr</span> <span class="o">=</span> <span class="n">fitclass_tr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>
         <span class="n">misclass</span> <span class="o">=</span> <span class="n">zero_one_loss</span><span class="p">(</span><span class="n">clustlab_tr</span><span class="p">,</span> <span class="n">classlab_tr</span><span class="p">)</span>
@@ -220,6 +233,9 @@
 <span class="sd">        :rtype: float, dictionary of ndarrays (n_samples,)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">clustlab_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>  <span class="c1"># A_k(X&#39;)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">([</span><span class="n">cl</span> <span class="k">for</span> <span class="n">cl</span> <span class="ow">in</span> <span class="n">clustlab_ts</span> <span class="k">if</span> <span class="n">cl</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No clusters found during testing with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">clust_method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
         <span class="n">classlab_ts</span> <span class="o">=</span> <span class="n">fit_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
         <span class="n">bestperm</span> <span class="o">=</span> <span class="n">kuhn_munkres_algorithm</span><span class="p">(</span><span class="n">classlab_ts</span><span class="p">,</span> <span class="n">clustlab_ts</span><span class="p">)</span>  <span class="c1"># array of integers</span>
         <span class="n">misclass</span> <span class="o">=</span> <span class="n">zero_one_loss</span><span class="p">(</span><span class="n">classlab_ts</span><span class="p">,</span> <span class="n">bestperm</span><span class="p">)</span>

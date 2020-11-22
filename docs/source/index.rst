@@ -4,7 +4,7 @@ sphinx-quickstart on Mon May 11 18:17:16 2020.
 Stability-based relative clustering validation to determine the best number of cluster
 ======================================================================================
 
-``reval`` allows to determine the best number of clusters to partition datasets without a priori knowledge.
+``reval`` allows to determine the best clustering solution without a priori knowledge.
 It leverages a stability-based relative clustering validation method (Lange et al., 2004) that transforms
 a clustering algorithm into a supervised classification problem and selects the number of clusters
 that leads to the minimum expected misclassification error, i.e., stability.
@@ -12,12 +12,13 @@ that leads to the minimum expected misclassification error, i.e., stability.
 This library allows to:
 
 1. Select any classification algorithm from ``sklearn`` library;
-2. Select a clustering algorithm with ``n_clusters`` parameter, i.e., choose among ``sklearn.cluster.KMeans``,
-   ``sklearn.cluster.AgglomerativeClustering``, ``sklearn.cluster.SpectralClustering``;
+2. Select a clustering algorithm with ``n_clusters`` parameter or HDBSCAN density-based algorithm,
+    i.e., choose among ``sklearn.cluster.KMeans``,
+   ``sklearn.cluster.AgglomerativeClustering``, ``sklearn.cluster.SpectralClustering``, ``hdbscan.HDBSCAN``;
 3. Perform (repeated) *k*-fold cross-validation to determine the best number of clusters;
 4. Test the final model on an held-out dataset.
 
-Underlying mathematics can be found in (Lange et al., 2004), whereas code can be found on `github
+Theoretical background can be found in (Lange et al., 2004), whereas code can be found on `github
 <https://github.com/IIT-LAND/reval_clustering>`__.
 
 The analysis steps performed by ``reval`` package are displayed below.

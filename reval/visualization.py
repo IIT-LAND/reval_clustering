@@ -8,6 +8,7 @@ def plot_metrics(cv_score,
                  legend_loc=2,
                  fontsize=12,
                  title="",
+                 prob_lines=False,
                  save_fig=None):
     """
     Function that plots the average performance (i.e., normalized stability) over cross-validation
@@ -28,6 +29,8 @@ def plot_metrics(cv_score,
     :type fontsize: int
     :param title: figure title, default "".
     :type title: str
+    :param prob_lines: plot the normalized stability of random labeling as thresholds, default False.
+    :type prob_lines: bool
     :param save_fig: file name for saving figure in png format, default None.
     :type save_fig: str
     """
@@ -46,9 +49,10 @@ def plot_metrics(cv_score,
                 linestyle='-',
                 label='validation set',
                 color=color[1])
-    plt.hlines([(1 - (1 / k)) for k in cl_list], xmin=[k - 0.1 for k in cl_list],
-               xmax=[k + 0.1 for k in cl_list], linewidth=linewidth,
-               color=color[1])
+    if prob_lines:
+        plt.hlines([(1 - (1 / k)) for k in cl_list], xmin=[k - 0.1 for k in cl_list],
+                   xmax=[k + 0.1 for k in cl_list], linewidth=linewidth,
+                   color=color[1])
     ax.legend(fontsize=fontsize, loc=legend_loc)
     plt.xticks([lab for lab in cv_score['train'].keys()], fontsize=fontsize)
     plt.yticks(fontsize=fontsize)
@@ -56,6 +60,6 @@ def plot_metrics(cv_score,
     plt.ylabel('Normalized stability', fontsize=fontsize)
     plt.title(title)
     if save_fig is not None:
-        plt.savefig(f'./{save_fig}', format='png')
+        plt.savefig(f'./{save_fig}', format=str.split(save_fig, '.')[1])
     else:
         plt.show()

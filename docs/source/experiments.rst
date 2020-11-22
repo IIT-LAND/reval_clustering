@@ -1,15 +1,17 @@
 Performance on benchmark datasets
 =================================
 
-We present here three examples to test ``reval`` performance. Code can be found in
-*reval_clustering/working_examples* folder.
+We present here three examples to test ``reval`` performance. If
+`github folder <https://github.com/IIT-LAND/reval_clustering>`__
+is cloned, code for the following experiments can be found in *reval_clustering/working_examples* folder.
 
 1. N = 1,000 Gaussian blob samples with 10 features divided into 5 clusters (code in ``blobs.py``);
 
 2. N = 1,000 Gaussian blob samples with 10 features divided into 5 clusters with noise parameter *cluster_std*
    set at 3 (code in ``blobs.py``);
 
-3. N = 14,000 samples from the MNIST handwritten digits dataset (code in ``mnist.py``).
+3. N = 14,000 samples from the MNIST handwritten digits dataset loaded from
+`openml <https://openml.org/>`__ public repository (code in ``handwrittend_digits.py``).
 
 Gaussian blobs
 --------------
@@ -24,13 +26,13 @@ Gaussian blobs
     from sklearn.metrics import zero_one_loss, adjusted_mutual_info_score
     from reval.visualization import plot_metrics
     import matplotlib.pyplot as plt
-    from reval.relative_validation import _kuhn_munkres_algorithm
+    from reval.utils import kuhn_munkres_algorithm
 
 Generate sample dataset and visualize blobs (only the first two features).
 
 .. code:: python3
 
-    data = make_blobs(1000, 10, 5, random_state=42)
+    data = make_blobs(1000, 10, centers=5, random_state=42)
     plt.scatter(data[0][:, 0],
                 data[0][:, 1],
                 c=data[1], cmap='rainbow_r')
@@ -55,18 +57,18 @@ Then we split the dataset into a training and test sets at 30%. We stratify for 
                                               random_state=42,
                                               stratify=data[1])
 
-Apply ``reval`` with 10-fold cross-validation,
-100 random labeling iterations, and number of clusters varying from 2 to 6. We then plot model performance
+Apply ``reval`` with 10 repetitions of 2-fold cross-validation,
+10 random labeling iterations, and number of clusters varying from 2 to 6. We then plot model performance
 using the function ``plot_metrics`` from the ``reval.visualization`` module.
 
 .. code:: python3
 
-    findbestclust = FindBestClustCV(nfold=10,
-                                    nclust_range=[2, 7],
+    findbestclust = FindBestClustCV(nfold=2,
+                                    nclust_range=list(range(2, 7)),
                                     s=classifier,
                                     c=clustering,
-                                    nrand=100)
-    metrics, nbest, _ = findbestclust.best_nclust(X_tr, y_tr)
+                                    nrand=10)
+    metrics, nbest = findbestclust.best_nclust(X_tr, iter_cv=10, strat_vect=y_tr)
     out = findbestclust.evaluate(X_tr, X_ts, nbest)
     plot_metrics(metrics, title="Reval performance")
 
@@ -83,7 +85,7 @@ because they may not be ordered as the true labels and lead to an unreliable cla
 
 .. code:: python3
 
-    perm_lab = _kuhn_munkres_algorithm(y_ts, out.test_cllab)
+    perm_lab = kuhn_munkres_algorithm(y_ts, out.test_cllab)
 
 Then we compute the classification accuracy and the
 `adjusted mutual information score (AMI) <https://scikit-learn.org/stable/modules/generated/sklearn.metrics.adjusted_mutual_info_score.html#sklearn.metrics.adjusted_mutual_info_score>`__
@@ -111,7 +113,7 @@ method is highly influenced by noise. We will show the importance of data pre-pr
 
 .. code:: python3
 
-    data_noisy = make_blobs(1000, 10, 5, random_state=42, cluster_std=3)
+    data_noisy = make_blobs(1000, 10, centers=5, random_state=42, cluster_std=3)
     plt.scatter(data_noisy[0][:, 0],
                 data_noisy[0][:, 1],
                 c=data_noisy[1],
@@ -128,11 +130,12 @@ method is highly influenced by noise. We will show the importance of data pre-pr
                                                                   random_state=42,
                                                                   stratify=data_noisy[1])
 
-    metrics_noise, nbest_noise, _ = findbestclust.best_nclust(Xnoise_tr, ynoise_tr)
+    metrics_noise, nbest_noise = findbestclust.best_nclust(Xnoise_tr, iter_cv=10, strat_vect=ynoise_tr)
     out_noise = findbestclust.evaluate(Xnoise_tr, Xnoise_ts, nbest_noise)
 
     plot_metrics(metrics_noise, title="Reval performance")
 
+    perm_lab_noise = kuhn_munkres_algorithm(ynoise_ts, out_noise.test_cllab)
     plt.scatter(Xnoise_ts[:, 0], Xnoise_ts[:, 1],
                 c=perm_lab_noise, cmap='rainbow_r')
     plt.title("Clustering labels for test set")
@@ -191,12 +194,12 @@ Now we apply ``reval`` method to the transformed dataset.
 
 .. code:: python3
 
-    metrics, nbest, _ = findbestclust.best_nclust(Xtr_umap, ynoise_tr)
+    metrics, nbest = findbestclust.best_nclust(Xtr_umap, iter_cv=10, strat_vect=ynoise_tr)
     out = findbestclust.evaluate(Xtr_umap, Xts_umap, nbest)
 
     plot_metrics(metrics, title='Reval performance of UMAP-transformed dataset')
 
-    perm_noise = _kuhn_munkres_algorithm(ynoise_ts, out.test_cllab)
+    perm_noise = kuhn_munkres_algorithm(ynoise_ts, out.test_cllab)
 
     print(f"Best number of clusters: {nbest}")
     print(f"Test set external ACC: "
@@ -231,8 +234,8 @@ Comparing clustering solution (see scatterplot below) with true labels we obtain
 
 MNIST dataset
 -------------
-**Remark: Estimated execution time
-(Mac Book Pro 2019, Processor 2,6 GHz 6-Core Intel Core i7, Memory 16 GB 2667 MHz DDR4) ~403.28 s**
+**Remark: This example enables multiprocessing to speed up computations. ``n_jobs`` parameter in
+:class:`FindBestClustCV` set to 7.**
 
 From ``sklearn.datasets`` we can import ``fetch_openml`` to load MNIST dataset. This dataset includes 70,000
 28X28 images of 10 hand-written digits from 0 to 9. To speed up computations we select 14,000 samples that are
@@ -250,7 +253,7 @@ number of features (from 784 to 10), see scatterplots below.
     import matplotlib.pyplot as plt
     from umap import UMAP
     from reval.visualization import plot_metrics
-    from reval.relative_validation import _kuhn_munkres_algorithm
+    from reval.utils import kuhn_munkres_algorithm
 
     # MNIST dataset with 10 classes
     mnist, label = fetch_openml('mnist_784', version=1, return_X_y=True)
@@ -284,8 +287,8 @@ number of features (from 784 to 10), see scatterplots below.
 .. image:: images/testmnist.png
     :align: center
 
-We now apply ``reval`` with 10-fold cross-validation, number of clusters ranging from 2 to 11 and random
-labeling iterated 100 times. We again select hierarchical clustering with k-nearest neighbors classifier for
+We now apply ``reval`` with 10 repetitions of  2-fold cross-validation, number of clusters ranging from 2 to 11 and random
+labeling iterated 10 times. We again select hierarchical clustering with k-nearest neighbors classifier for
 number of cluster selection.
 
 
@@ -295,15 +298,15 @@ number of cluster selection.
     classifier = KNeighborsClassifier()
     clustering = AgglomerativeClustering()
 
-    findbestclust = FindBestClustCV(nfold=10, nclust_range=[2, 12],
-                                    s=classifier, c=clustering, nrand=100)
+    findbestclust = FindBestClustCV(nfold=2, nclust_range=list(range(2, 12)),
+                                    s=classifier, c=clustering, nrand=10, n_jobs=7)
 
-    metrics, nbest, _ = findbestclust.best_nclust(mnist_tr, label_tr)
+    metrics, nbest = findbestclust.best_nclust(mnist_tr, iter_cv=10, strat_vect=label_tr)
     out = findbestclust.evaluate(mnist_tr, mnist_ts, nbest)
 
-    plot_metrics(metrics, "Relative clustering validation performance on MNIST dataset")
+    plot_metrics(metrics, title="Relative clustering validation performance on MNIST dataset")
 
-    perm_lab = _kuhn_munkres_algorithm(label_ts.astype(int), out.test_cllab)
+    perm_lab = kuhn_munkres_algorithm(label_ts.astype(int), out.test_cllab)
 
     plt.scatter(mnist_ts[:, 0], mnist_ts[:, 1],
                 c=perm_lab, s=0.1, cmap='rainbow_r')
@@ -350,5 +353,8 @@ In these situations attention should be put in:
 
 More examples
 -------------
-Check out more examples including repeated cross validation for blobs dataset and hand-written digits, and ``reval`` for ensemble learning
-`here <https://arxiv.org/abs/2009.01077>`__.
+Check out more examples including (1) repeated cross validation
+with HDBSCAN algorithm for the complete MNIST handwritten digits dataset,
+and (2) ``reval`` for classifier/clustering selection
+`here <https://arxiv.org/abs/2009.01077>`__. Code can be found in the cloned folder
+in *reval_clustering/working_examples*.

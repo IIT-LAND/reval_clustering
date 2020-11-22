@@ -85,7 +85,11 @@
               <p class="caption"><span class="caption-text">User guide / Tutorial</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">How to use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to use <code class="docutils literal notranslate"><span class="pre">reval</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#classifier-clustering-selection">Classifier/clustering selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameter-selection">Parameter selection</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="experiments.html">Performance on benchmark datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datadimension.html">Examples of how things can go wrong</a></li>
 </ul>
@@ -172,7 +176,7 @@ the result types. We will use hierarchical clustering and KNN classification alg
 </pre></div>
 </div>
 <p>Then we simulate the toy dataset and visualize it:</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">make_blobs</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">make_blobs</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">centers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">],</span>
             <span class="n">c</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;rainbow_r&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -186,16 +190,16 @@ the result types. We will use hierarchical clustering and KNN classification alg
                                           <span class="n">stratify</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>We apply the stability-based relative clustering validation approach with 10-fold cross-validation,
-100 iterations of random labeling, and number of clusters ranging from 2 to 10.</p>
+<p>We apply the stability-based relative clustering validation approach with 10x2 repeated cross-validation,
+10 iterations of random labeling, and number of clusters ranging from 2 to 10.</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">classifier</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
 <span class="n">clustering</span> <span class="o">=</span> <span class="n">AgglomerativeClustering</span><span class="p">()</span>
-<span class="n">findbestclust</span> <span class="o">=</span> <span class="n">FindBestClustCV</span><span class="p">(</span><span class="n">nfold</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-                                <span class="n">nclust_range</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span>
+<span class="n">findbestclust</span> <span class="o">=</span> <span class="n">FindBestClustCV</span><span class="p">(</span><span class="n">nfold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                <span class="n">nclust_range</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">11</span><span class="p">)),</span>
                                 <span class="n">s</span><span class="o">=</span><span class="n">classifier</span><span class="p">,</span>
                                 <span class="n">c</span><span class="o">=</span><span class="n">clustering</span><span class="p">,</span>
                                 <span class="n">nrand</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="n">metrics</span><span class="p">,</span> <span class="n">nbest</span><span class="p">,</span> <span class="n">chk_dist</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">)</span>
+<span class="n">metrics</span><span class="p">,</span> <span class="n">nbest</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">best_nclust</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">iter_cv</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">strat_vect</span><span class="o">=</span><span class="n">y_tr</span><span class="p">)</span>
 <span class="n">out</span> <span class="o">=</span> <span class="n">findbestclust</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">X_ts</span><span class="p">,</span> <span class="n">nbest</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -209,8 +213,7 @@ selected number of clusters we need to call:</p>
 <span class="c1"># (0.0, (0.0, 0.0)) (stab, (stab, error))</span>
 </pre></div>
 </div>
-<p>In <code class="docutils literal notranslate"><span class="pre">chk_dist</span></code> we have access to the misclassification errors during
-cross-validation. <code class="docutils literal notranslate"><span class="pre">out</span></code> returns train/test accuracies and test set clustering labels.</p>
+<p><code class="docutils literal notranslate"><span class="pre">out</span></code> returns train/test accuracies and test set clustering labels.</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">out</span><span class="o">.</span><span class="n">train_cllab</span>
 <span class="c1"># array([0, 1, 0, 1, 0, 0, 1...</span>
 <span class="n">out</span><span class="o">.</span><span class="n">test_cllab</span>
@@ -221,6 +224,11 @@ cross-validation. <code class="docutils literal notranslate"><span class="pre">o
 <span class="c1"># 1.0</span>
 </pre></div>
 </div>
+<p>Attribute <code class="docutils literal notranslate"><span class="pre">cv_results_</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">FindBestClustCV</span></code> returns a dataframe with training and validation
+misclassification errors.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">findbestclust</span><span class="o">.</span><span class="n">cv_results_</span>
+</pre></div>
+</div>
 <p>To visualize performance metrics during cross-validation, i.e., training stability and validation normalized stability
 with confidence intervals:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">reval.visualization</span> <span class="kn">import</span> <span class="n">plot_metrics</span>
@@ -228,6 +236,55 @@ with confidence intervals:</p>
 </pre></div>
 </div>
 <img alt="_images/performanceexample.png" class="align-center" src="_images/performanceexample.png" />
+<p>The plot can be customized and also show the normalized stability of a random classifier for each number of clusters
+to evaluate the model performance.</p>
+<img alt="_images/performanceexample2.png" class="align-center" src="_images/performanceexample2.png" />
+<div class="section" id="classifier-clustering-selection">
+<h2>Classifier/clustering selection<a class="headerlink" href="#classifier-clustering-selection" title="Permalink to this headline">¶</a></h2>
+<p>Let us now suppose that we are not sure which combination of clustering and classifier to use
+for the blobs dataset. We might want to try both hierarchical clustering and k-means and KNN and
+logistic regression. We import the libraries we have not imported before including the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">SCParamSelection</span></code> from the <code class="docutils literal notranslate"><span class="pre">param_selection.py</span></code> module.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+<span class="kn">from</span> <span class="nn">reval.param_selection</span> <span class="kn">import</span> <span class="n">SCParamSelection</span>
+</pre></div>
+</div>
+<p>We initialize the parameter selection class with a dictionary that includes the classification and
+clustering algorithms we want to run and we initialize a 10x2 repeated cross validation with 10 runs of random
+labeling. We set the number of parallel processes to 7 to speed up computations.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">sc_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">LogisticRegression</span><span class="p">(),</span> <span class="n">KNeighborsClassifier</span><span class="p">()],</span>
+             <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">AgglomerativeClustering</span><span class="p">(),</span> <span class="n">KMeans</span><span class="p">()]}</span>
+<span class="n">scparsel</span> <span class="o">=</span> <span class="n">SCParamSelection</span><span class="p">(</span><span class="n">sc_params</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nrand</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+                            <span class="n">iter_cv</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">clust_range</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">11</span><span class="p">)),</span>
+                            <span class="n">strat</span><span class="o">=</span><span class="n">y_tr</span><span class="p">)</span>
+<span class="n">scparsel</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">nclass</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this case we knew the true number of clusters a priori, so we passed it to the <code class="docutils literal notranslate"><span class="pre">fit()</span></code> method in
+order to prioritize the parameter combinations that select the true number of clusters, along with the
+combinations with global minimum stability. As a result, four different combinations are run and all of
+them selected two as the best number of clusters with minimum stability.</p>
+</div>
+<div class="section" id="parameter-selection">
+<h2>Parameter selection<a class="headerlink" href="#parameter-selection" title="Permalink to this headline">¶</a></h2>
+<p>Let us now settle with hierarchical clustering and KNN and suppose we want to try different number of
+neighbors for KNN, i.e., 5 and 15, and different methods for hierarchical clustering,
+i.e., Ward and single-linkage. We can then use the <code class="xref py py-class docutils literal notranslate"><span class="pre">ParamSelection</span></code> as follows:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">reval.param_selection</span> <span class="kn">import</span> <span class="n">ParamSelection</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;n_neighbors&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">15</span><span class="p">]},</span>
+          <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;linkage&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ward&#39;</span><span class="p">,</span> <span class="s1">&#39;single&#39;</span><span class="p">]}}</span>
+<span class="n">parsel</span> <span class="o">=</span> <span class="n">ParamSelection</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">KNeighborsClassifier</span><span class="p">(),</span> <span class="n">c</span><span class="o">=</span><span class="n">AgglomerativeClustering</span><span class="p">(),</span>
+                        <span class="n">nrand</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                        <span class="n">n_jobs</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+                        <span class="n">iter_cv</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                        <span class="n">strat</span><span class="o">=</span><span class="n">y_tr</span><span class="p">,</span> <span class="n">clust_range</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">11</span><span class="p">)))</span>
+<span class="n">parsel</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_tr</span><span class="p">,</span> <span class="n">nclass</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Also in this case we run four different hyperparameter combinations which all report 2 as the best number
+of clusters with minimum stability.</p>
+</div>
 </div>
 
 
