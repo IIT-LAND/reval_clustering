@@ -39,7 +39,7 @@ classifier = KNeighborsClassifier()
 clustering = AgglomerativeClustering()
 
 findbestclust = FindBestClustCV(nfold=2, nclust_range=list(range(2, 12)),
-                                s=classifier, c=clustering, nrand=10, n_jobs=7)
+                                s=classifier, c=clustering, nrand=10, n_jobs=1)
 
 metrics, nbest = findbestclust.best_nclust(mnist_tr, iter_cv=10, strat_vect=label_tr)
 out = findbestclust.evaluate(mnist_tr, mnist_ts, nbest)
