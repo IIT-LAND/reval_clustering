@@ -5,14 +5,14 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="reval",
-    version="1.1.0",
+    version="0.1.0",
     author="Isotta Landi",
-    author_email="isotta.landi@iit.it",
+    author_email="landi.isotta@gmail.com",
     description="Relative clustering validation to select best number of clusters",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/IIT-LAND/reval_clustering",
-    download_url="https://github.com/IIT-LAND/reval_clustering/releases/tag/v1.1.2",
+    download_url="https://github.com/IIT-LAND/reval_clustering/releases/tag/v0.1.0",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

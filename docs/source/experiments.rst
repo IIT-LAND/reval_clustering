@@ -36,6 +36,7 @@ Generate sample dataset and visualize blobs (only the first two features).
     plt.scatter(data[0][:, 0],
                 data[0][:, 1],
                 c=data[1], cmap='rainbow_r')
+    plt.show()
 
 .. image:: images/blobs1.png
     :align: center
@@ -118,6 +119,7 @@ method is highly influenced by noise. We will show the importance of data pre-pr
                 data_noisy[0][:, 1],
                 c=data_noisy[1],
                 cmap='rainbow_r')
+    plt.show()
 
 .. image:: images/blobsnoisy.png
     :align: center
@@ -151,11 +153,7 @@ distributions of the synthetic dataset, although the misclassification performan
 .. image:: images/predlabnoisy.png
     :align: center
 
-AMI score and accuracy value suggest that the model generalizes poorly on test set.
-
-.. parsed-literal::
-
-    AMI = 0.59, ACC = 0.4
+AMI score (0.59) and accuracy value (0.4) suggest that the model generalizes poorly on test set.
 
 Uniform Manifold Approximation and Projection for Dimensionality Reduction (UMAP; McInnes et al., 2018) is a
 topology-based dimensionality reduction tool that can be used to pre-process data for clustering
@@ -178,10 +176,12 @@ ArXiv e-prints 1802.03426, 2018.
     plt.scatter(Xtr_umap[:, 0], Xtr_umap[:, 1],
                 c=ynoise_tr, cmap='rainbow_r')
     plt.title("UMAP-transformed training set with true labels")
+    plt.show()
 
     plt.scatter(Xts_umap[:, 0], Xts_umap[:, 1],
                 c=ynoise_ts, cmap='rainbow_r')
     plt.title("UMAP-transformed test set with true labels")
+    plt.show()
 
 Hereafter, we display UMAP pre-processed training and test sets. We fit the UMAP dimensionality reduction technique on
 the training set and then applied it to the test set to avoid inflation of performance scores on the test set.
@@ -213,17 +213,10 @@ Now we apply ``reval`` method to the transformed dataset.
                 c=perm_noise, cmap='rainbow_r')
     plt.title("Predicted labels for UMAP-preprocessed test set")
 
-We obtain that 5 clusters are identified (see performance plot) with:
+We obtain that 5 clusters are identified (see performance plot) with ACC = 1.0;
+Normalized stability: 0.0 (0.0, 0.0).
 
-.. parsed-literal::
-
-    ACC = 1.0; Normalized stability: 0.0 (0.0, 0.0)
-
-Comparing clustering solution (see scatterplot below) with true labels we obtain:
-
-.. parsed-literal::
-
-    AMI = 1.0; ACC: 1.0
+Comparing clustering solution (see scatterplot below) with true labels we obtain AMI = 1.0; ACC: 1.0.
 
 .. image:: images/performanceumap.png
     :align: center
@@ -276,10 +269,12 @@ number of features (from 784 to 10), see scatterplots below.
                 s=0.1,
                 cmap='rainbow_r')
     plt.title('UMAP-transformed training subsample of MNIST dataset (N=7,000)')
+    plt.show()
 
     plt.scatter(mnist_ts[:, 0], mnist_ts[:, 1],
                 c=label_ts.astype(int), s=0.1, cmap='rainbow_r')
     plt.title('UMAP-transformed test subsample of MNIST dataset (N=7,000)')
+    plt.show()
 
 .. image:: images/trainmnist.png
     :align: center
@@ -311,6 +306,7 @@ number of cluster selection.
     plt.scatter(mnist_ts[:, 0], mnist_ts[:, 1],
                 c=perm_lab, s=0.1, cmap='rainbow_r')
     plt.title("Predicted labels for MNIST test set")
+    plt.show()
 
     print(f"Best number of clusters: {nbest}")
     print(f"Test set external ACC: "
@@ -321,18 +317,10 @@ number of cluster selection.
           f"{out.test_acc}")
 
 We obtain that the algorithm returns 6 as the best number of clusters (see performance plot). Comparing true and
-predicted labels we obtain a good AMI score, but a low accuracy score:
-
-.. parsed-literal::
-
-    AMI = 0.70; ACC = 0.58
+predicted labels we obtain a good AMI score, but a low accuracy score: AMI = 0.70; ACC = 0.58.
 
 Whereas performance metrics during validation (normalized stability: mean 95% CI) and on test set (ACC)
-are low and high, respectively.
-
-.. parsed-literal::
-
-    Normalized stability: 0.002 (0.0, 0.003); ACC = 0.99
+are low and high, respectively. Normalized stability: 0.002 (0.0, 0.003); ACC = 0.72.
 
 .. image:: images/performancemnist.png
     :align: center

@@ -180,14 +180,14 @@ def plot_one(file, save_name=None):
 
 if __name__ == "__main__":
     # time_cmplx(n_jobs=1)
-    plot('time_cv_njobs1.pkl', save_name='time_cv_njobs1')
-    plot('time_ev_njobs1.pkl', save_name='time_ev_njobs1')
-    plot_one('time_knnkmeans1.pkl', save_name='time_knnkmeans_njobs1')
+    plot('../files/time_cv_njobs1.pkl', save_name='time_cv_njobs1')
+    plot('../files/time_ev_njobs1.pkl', save_name='time_ev_njobs1')
+    plot_one('../files/time_knnkmeans1.pkl', save_name='time_knnkmeans_njobs1')
 
     # time_cmplx(n_jobs=7)
-    plot('time_cv_njobs7.pkl', save_name='time_cv_njobs7')
-    plot('time_ev_njobs7.pkl', save_name='time_ev_njobs7')
-    plot_one('time_knnkmeans7.pkl', save_name='time_knnkmeans_njobs7')
+    plot('../files/time_cv_njobs7.pkl', save_name='time_cv_njobs7')
+    plot('../files/time_ev_njobs7.pkl', save_name='time_ev_njobs7')
+    plot_one('../files/time_knnkmeans7.pkl', save_name='time_knnkmeans_njobs7')
 
 # out_ev = timeit.repeat(stmt=statement_2, setup=setup, repeat=1)
 # print(np.mean(out_cv), np.std(out_cv))

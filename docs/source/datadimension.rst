@@ -36,6 +36,7 @@ and clustering algorithms, respectively, and 100 iterations of random labeling.
     plt.scatter(data1[0][:, 0], data1[0][:, 1],
                 c=data1[1], cmap='rainbow_r')
     plt.title('True labels for 10-feature dataset')
+    plt.show()
 
     X_tr, X_ts, y_tr, y_ts = train_test_split(data1[0],
                                               data1[1],
@@ -77,6 +78,7 @@ parameters as before (see scatterplot with true labels below).
     plt.scatter(data2[0][:, 0], data2[0][:, 1],
                 c=data2[1], cmap='rainbow_r')
     plt.title('True labels for 20-feature dataset')
+    plt.show()
 
     X_tr, X_ts, y_tr, y_ts = train_test_split(data2[0],
                                               data2[1],
@@ -93,6 +95,7 @@ parameters as before (see scatterplot with true labels below).
     plt.scatter(X_ts[:, 0], X_ts[:, 1],
                 c=out.test_cllab, cmap='rainbow_r')
     plt.title("Predicted labels for 20-feature dataset")
+    plt.show()
 
     print(f'AMI test set = {adjusted_mutual_info_score(y_ts, out.test_cllab)}')
     relabeling = kuhn_munkres_algorithm(y_ts, out.test_cllab)
@@ -112,11 +115,7 @@ We use the
 to account for the amount of information shared between true labels and clustering labels returned by the algorithm.
 AMI returns 1 when two partitions are identical. Accuracy (ACC) is also used to compare the solutions after the
 clustering labels have been permuted to match true labels.
-On the test set, we obtain:
-
-.. parsed-literal::
-
-    AMI = 0.98; ACC = 0.99
+On the test set, we obtain: AMI = 0.98; ACC = 0.99.
 
 
 **Remark**: in situations where we are able to increase the number of features for a dataset,
@@ -168,6 +167,7 @@ hierarchical clustering, number of clusters ranging from 2 to 6, and 100 random 
     plt.scatter(data[:, 0], data[:, 1],
                 c=label, cmap='rainbow_r')
     plt.title('Random samples from normal distribution Ns=(100, 50, 50)')
+    plt.show()
 
     classifier = KNeighborsClassifier()
     clustering = AgglomerativeClustering()
@@ -189,6 +189,7 @@ hierarchical clustering, number of clusters ranging from 2 to 6, and 100 random 
                                           out.test_cllab),
                 cmap='rainbow_r')
     plt.title(f'Predicted labels for classes with Ns=(100, 50, 50)')
+    plt.show()
 
 Result reports 2 as the best clustering solution (see performance plot and scatterplot). Groups 2 and 3, i.e., with
 least number of subjects and higher standard deviation, are considered as a unique group by the algorithm.
@@ -219,6 +220,7 @@ and we rerun the algorithm with the same parameters.
     plt.scatter(data[:, 0], data[:, 1],
                 c=label, cmap='rainbow_r')
     plt.title('Random samples from normal distribution Ns=(100, 500, 500)')
+    plt.show()
 
     classifier = KNeighborsClassifier()
     clustering = AgglomerativeClustering()
@@ -239,12 +241,14 @@ and we rerun the algorithm with the same parameters.
                 c=y_ts,
                 cmap='rainbow_r')
     plt.title(f'Test set true labels for classes with Ns=(100, 500, 500)')
+    plt.show()
 
     plt.scatter(X_ts[:, 0], X_ts[:, 1],
                 c=kuhn_munkres_algorithm(np.array(y_ts),
                                           out.test_cllab),
                 cmap='rainbow_r')
     plt.title(f'Predicted labels for classes with Ns=(100, 500, 500)')
+    plt.show()
 
     # Performance scores
     # Test set ACC
@@ -265,10 +269,7 @@ and scaterplot with predicted labels).
 
 To evaluate the algorithm performance we compute AMI and ACC between the true and ``reval`` partitions and report the
 validation and testing metrics, i.e., normalized stability with 95% confidence interval
-and testing accuracy, respectively.
-
-.. parsed-literal::
-
-    AMI = 0.75; ACC (external) = 0.97; Normalized stability: 0.08 (0.02; 0.14); ACC = 0.96
+and testing accuracy, respectively. AMI = 0.79; ACC (external) = 0.95;
+Normalized stability: 0.08 (0.02; 0.14); ACC = 0.99
 
 Increasing the sampling size, the algorithm was able to correctly identify the three distributions.

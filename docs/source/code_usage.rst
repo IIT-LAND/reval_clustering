@@ -5,7 +5,8 @@ In the following, we are going to simulate N = 1,000 sample dataset with two gro
 (for visualization purposes), then we will show how to apply the ``reval`` package and investigate
 the result types. We will use hierarchical clustering and KNN classification algorithms.
 
-First, let us import a bunch of useful libraries and our class ``reval.best_nclust_cv.FindBestClustCV``:
+First (after starting ``ipython`` or a jupyter notebook),
+let us import a bunch of useful libraries and our class ``reval.best_nclust_cv.FindBestClustCV``:
 
 .. code:: python3
 
@@ -121,7 +122,7 @@ labeling. We set the number of parallel processes to 7 to speed up computations.
 
 .. code:: python3
 
-    sc_params = {'s': [LogisticRegression(), KNeighborsClassifier()],
+    sc_params = {'s': [LogisticRegression(max_iter=1000), KNeighborsClassifier()],
                  'c': [AgglomerativeClustering(), KMeans()]}
     scparsel = SCParamSelection(sc_params, cv=2, nrand=10, n_jobs=7,
                                 iter_cv=10, clust_range=list(range(2, 11)),

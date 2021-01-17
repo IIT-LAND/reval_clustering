@@ -26,3 +26,13 @@ jupyter-lab
 ```
 
 Then open the file `manuscript_examples.ipynb` and run the desired cells.
+
+## Additional examples
+
+To run `blobs.py`, `data_dimensionality.py`, `handwritten_digits.py`, `reval_bigocomplexity.py`, and 
+`reval_timeitcomplexity.py`, from the top-level directory:
+
+```
+cd working_examples
+python file_name.py
+```
