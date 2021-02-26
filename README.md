@@ -23,7 +23,7 @@ From github:
     git clone https://github.com/IIT-LAND/reval_clustering
     pip install -r requirements.txt
 
-PyPI alternative:
+PyPI alternative (latest version v0.1.0):
 
     pip install reval
 
@@ -33,6 +33,13 @@ Code documentation can be found [here](https://reval.readthedocs.io/en/latest/).
 descriptions, `reval` usage examples, 
 performance on benchmark datasets, and common issues that can be encountered related to a dataset number of features 
 and samples.
+
+## Manuscript
+
+`reval` package functionalities are presented in our recent work that, as of now, can be found as a 
+[preprint](https://arxiv.org/abs/2009.01077). The experiments presented in the manuscript are in 
+the Python file `./working_examples/manuscript_examples.py` of the github folder. For reproducibility, all experiments 
+were run with `reval v0.1.0`.
 
 ## Refrences
 
