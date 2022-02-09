@@ -49,41 +49,28 @@ Cite as
 
 .. parsed-literal::
 
-   Isotta Landi, Veronica Mandelli, & Michael Vincent Lombardo. (2020, June 29). reval: stability-based relative
-   clustering validation method to determine the best number of clusters (Version v1.0.0). Zenodo.
-   http://doi.org/10.5281/zenodo.3922334
+   Landi I, Mandelli V, Lombardo MV.
+   reval: A Python package to determine best clustering solutions with stability-based relative clustering validation.
+   Patterns (N Y). 2021 Apr 2;2(4):100228.
+   doi: 10.1016/j.patter.2021.100228. PMID: 33982023; PMCID: PMC8085609.
 
 BibTeX alternative
 
 .. parsed-literal::
 
-   @software{isotta_landi_2020_3922334,
-              author       = {Isotta Landi and
-                              Veronica Mandelli and
-                              Michael Vincent Lombardo},
-              title        = {{reval: stability-based relative clustering
-                               validation method to determine the best number of
-                               clusters}},
-              month        = jun,
-              year         = 2020,
-              publisher    = {Zenodo},
-              version      = {v1.0.0},
-              doi          = {10.5281/zenodo.3922334},
-              url          = {https://doi.org/10.5281/zenodo.3922334}
+   @article{landi2021100228,
+            title = {reval: A Python package to determine best clustering solutions with stability-based relative clustering validation},
+            journal = {Patterns},
+            volume = {2},
+            number = {4},
+            pages = {100228},
+            year = {2021},
+            issn = {2666-3899},
+            doi = {https://doi.org/10.1016/j.patter.2021.100228},
+            url = {https://www.sciencedirect.com/science/article/pii/S2666389921000428},
+            author = {Isotta Landi and Veronica Mandelli and Michael V. Lombardo},
+            keywords = {stability-based relative validation, clustering, unsupervised learning, clustering replicability}
             }
-
-Pre-print manuscript
-
-.. parsed-literal::
-
-    @misc{l2020reval,
-          title={reval: a Python package to determine the best number of clusters with stability-based relative clustering validation},
-          author={Isotta Landi and Veronica Mandelli and Michael V. Lombardo},
-          year={2020},
-          eprint={2009.01077},
-          archivePrefix={arXiv},
-          primaryClass={cs.LG}
-    }
 
 Indices and tables
 ==================
