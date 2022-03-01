@@ -48,7 +48,7 @@ were run with `reval v0.1.0`.
 
 ## Cite as
 
-   Landi, I., Mandelli, V., & Lombardo, M. V. (2021). reval: A Python package to determine best clustering solutions with stability-based relative clustering validation. Patterns, 2(4), 100228.
+   Landi, I., Mandelli, V., & Lombardo, M. V. (2021). reval: A Python package to determine best clustering solutions with stability-based relative clustering validation. _Patterns_, 2(4), 100228.
  
 BibTeX alternative
 
